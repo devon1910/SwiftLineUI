@@ -1,0 +1,48 @@
+import axios from "axios";
+
+
+const SWIFTLINE_API_AUTH_BASE_URL = "http://localhost:5267/api/v1/Auth/";
+
+export const listEmployees = () => {
+    const token = JSON.parse(localStorage.getItem("user")).token;
+    console.log("token: ", token);
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    return axios.get(EMPLOYEE_API_BASE_URL, config);
+};
+
+export const createEmployee = (employee) => axios.post(EMPLOYEE_API_BASE_URL, employee);
+
+export const getEmployeeById = (id) => axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
+
+export const updateEmployee = (id, employee) => axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
+
+export const deleteEmployee = (id) => axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
+
+
+export const loginUser = (loginRequest) => {
+    return axios
+        .post(SWIFTLINE_API_AUTH_BASE_URL + "Login", loginRequest)
+        .then((response) => {
+            if (response.data.token) {
+                localStorage.setItem("user", JSON.stringify(response.data));
+            }
+
+            return response.data;    
+        });
+};
+
+export const SignInUser = (SignInRequest) => {
+    return axios
+        .post(SWIFTLINE_API_AUTH_BASE_URL + "/SignUp", loginRequest)
+        .then((response) => {
+            if (response.data.token) {
+                localStorage.setItem("user", JSON.stringify(response.data));
+            }
+
+            return response.data;    
+        });
+};
