@@ -28,7 +28,7 @@ export const loginUser = (loginRequest) => {
         .post(SWIFTLINE_API_AUTH_BASE_URL + "Login", loginRequest)
         .then((response) => {
             if (response.data.token) {
-                localStorage.setItem("user", JSON.stringify(response.data));
+                localStorage.setItem("user", JSON.stringify(response.data.accessToken));
             }
 
             return response.data;    
@@ -40,7 +40,7 @@ export const SignInUser = (SignInRequest) => {
         .post(SWIFTLINE_API_AUTH_BASE_URL + "/SignUp", loginRequest)
         .then((response) => {
             if (response.data.token) {
-                localStorage.setItem("user", JSON.stringify(response.data));
+                localStorage.setItem("user", JSON.stringify(response.data.accessToken));
             }
 
             return response.data;    
