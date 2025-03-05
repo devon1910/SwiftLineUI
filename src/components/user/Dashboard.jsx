@@ -11,7 +11,7 @@ const Dashboard = ({onPageChange}) => {
             <Card.Text>
               Manage and monitor your own event queues.
             </Card.Text>
-            <Button variant="primary" onClick={() => onPageChange("eventForm")}>
+            <Button variant="primary" onClick={() => onPageChange("myevents")}>
               Go to My Events
             </Button>
           </Card.Body>

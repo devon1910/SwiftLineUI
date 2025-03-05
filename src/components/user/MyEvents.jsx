@@ -27,13 +27,11 @@ const MyEvents = ({ events, onPageChange }) => {
                             <Button
                                 variant="secondary"
                                 className="ml-2"
-                                onClick={() => onPageChange("eventForm")}>
+                                onClick={() => onPageChange("eventForm",event)}>
                                 Edit Event
                             </Button>
                         </Col>
-                       
-                    </Row>
-                                 
+                    </Row>                             
                   </Card.Body>
                 </Card>
               </Col>

@@ -15,6 +15,8 @@ function App() {
   // Current page state to control which component to display
   const [currentPage, setCurrentPage] = useState("dashboard");
 
+  const [editingEvent, setEditingEvent] = useState(null);
+
   // Events state: this would typically come from your backend API.
   const [events, setEvents] = useState([
     {
@@ -66,6 +68,8 @@ function App() {
             onPageChange={handlePageChange}
             events={events}
             setEvents={setEvents}
+            editingEvent={editingEvent}
+            
           />
         )}
         {currentPage === "myqueue" && (
