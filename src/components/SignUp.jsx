@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, InputGroup } from "react-bootstrap";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
+import { SignUpUser } from "../services/swiftlineService";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [email, setEmail]= useState("");
@@ -9,12 +11,27 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const navigator = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log()
     validateInput();
+    const signUpRequest = { email, password };
+    
+    SignUpUser(signUpRequest)
+        .then((response) => {
+          console.log("response: ", response);
+          navigator("/LandingPage");
+        })
+        .catch((error) => {         
+          if (error.data){
+            console.log("error: ", error.message);
+           alert(error.data.message);
+          }
+          else{
+            alert("Something went wrong. Please try again later.");
+          }
+        });
   }
 
   function validateInput() {
@@ -27,7 +44,6 @@ const SignUp = () => {
     <div>
       <Form onSubmit={handleSubmit}>
       <h3>Sign Up</h3>
-
         <Form.Group className="mb-3">
           <Form.Floating>
             <Form.Control
@@ -71,7 +87,7 @@ const SignUp = () => {
         <Form.Group className="mb-3">
           <Form.Floating>
             <Form.Control
-              type={showPassword ? "text" : "password"}
+              type={showConfirmPassword ? "text" : "password"}
               placeholder=" Confirm Password"
               id="floatingConfirmPassword"
               value={confirmPassword}

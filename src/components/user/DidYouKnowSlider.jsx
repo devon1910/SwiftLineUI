@@ -7,7 +7,7 @@ const DidYouKnowSlider = () => {
     const colors = ["#3498db", "#2ecc71", "#34495e"];
     const swiftlineReasons = [
         "You can plan your day 10 times better when you use Swiftline to join queues.",
-        "Swiftline users report up to a 70% reduction in wait times.",
+        "Swiftline Event Organizers report up to a 70% reduction in wait times.",
         "By joining queues online, you can save an average of 15 minutes per visit.",
         "Swiftline improves your scheduling efficiency by 8 times compared to traditional queues.",
         "Experience up to 50% less waiting with Swiftline's smart queue management.",

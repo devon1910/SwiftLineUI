@@ -1,48 +1,86 @@
 import axios from "axios";
 
-
 const SWIFTLINE_API_AUTH_BASE_URL = "http://localhost:5267/api/v1/Auth/";
 
 export const listEmployees = () => {
-    const token = JSON.parse(localStorage.getItem("user")).token;
-    console.log("token: ", token);
-    const config = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    };
-    return axios.get(EMPLOYEE_API_BASE_URL, config);
+  const token = JSON.parse(localStorage.getItem("user")).token;
+  console.log("token: ", token);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return axios.get(EMPLOYEE_API_BASE_URL, config);
 };
 
-export const createEmployee = (employee) => axios.post(EMPLOYEE_API_BASE_URL, employee);
+export const createEmployee = (employee) =>
+  axios.post(EMPLOYEE_API_BASE_URL, employee);
 
-export const getEmployeeById = (id) => axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
+export const getEmployeeById = (id) =>
+  axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
-export const updateEmployee = (id, employee) => axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
+export const updateEmployee = (id, employee) =>
+  axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
 
-export const deleteEmployee = (id) => axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
+export const deleteEmployee = (id) =>
+  axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
 
+export const loginUser = async (loginRequest) => {
+  try {
+    const response = await axios.post(
+      SWIFTLINE_API_AUTH_BASE_URL + "Login",
+      loginRequest
+    );
+    if (response.data.token) {
+      localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+    }
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // The server responded with a status code outside the 2xx range
+      console.log("Error status:", error.response.status);
+      console.log("Error data:", error.response.data);
 
-export const loginUser = (loginRequest) => {
-    return axios
-        .post(SWIFTLINE_API_AUTH_BASE_URL + "Login", loginRequest)
-        .then((response) => {
-            if (response.data.token) {
-                localStorage.setItem("user", JSON.stringify(response.data.accessToken));
-            }
-
-            return response.data;    
-        });
+      // You can throw the server's error message instead of Axios's generic one
+      throw error.response.data;
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.log("Error request:", error.request);
+      throw new Error("No response received from server");
+    } else {
+      // Something else caused the error
+      console.log("Error message:", error.message);
+      throw error;
+    }
+  }
 };
 
-export const SignInUser = (SignInRequest) => {
-    return axios
-        .post(SWIFTLINE_API_AUTH_BASE_URL + "/SignUp", loginRequest)
-        .then((response) => {
-            if (response.data.token) {
-                localStorage.setItem("user", JSON.stringify(response.data.accessToken));
-            }
-
-            return response.data;    
-        });
+export const SignUpUser = async (SignInRequest) => {
+  try {
+    const response = await axios.post(
+      SWIFTLINE_API_AUTH_BASE_URL + "SignUp",
+      SignInRequest
+    );
+    if (response.data.token) {
+      localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+    }
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+        // The server responded with a status code outside the 2xx range
+        console.log("Error status:", error.response.status);
+        console.log("Error data:", error.response.data);
+  
+        // You can throw the server's error message instead of Axios's generic one
+        throw error.response.data;
+    } else if (error.request) {
+        // The request was made but no response was received
+        console.log("Error request:", error.request);
+        throw new Error("No response received from server");
+    } else {
+        // Something else caused the error
+        console.log("Error message:", error.message);
+        throw error;
+    }
+  }
 };

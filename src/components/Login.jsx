@@ -2,28 +2,32 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/swiftlineService";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button, InputGroup, Spinner } from "react-bootstrap";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  //const [loading, isLoading]= useState(false);
 
   const navigator = useNavigate();
   function handleLogin(e) {
+    //isLoading(true)
     e.preventDefault();
     const loginRequest = { email, password };
     loginUser(loginRequest)
       .then((response) => {
         console.log("response: ", response);
-        navigator("/dashboard");
+        navigator("/LandingPage");
       })
       .catch((error) => {
-        const errormsg = error.response.data.errors.join();
-        console.log("error: ", error);
-        alert(`${errormsg}` || error.response.data.errormsg);
+       
+        console.log("error: ", error.message);
+        alert(error.data.message);
+        
       });
+    //isLoading(false)
   }
   return (
     <div>
