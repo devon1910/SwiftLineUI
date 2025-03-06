@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { createEvent } from "../../services/swiftlineService";
+import { updateEvent } from "../../services/swiftlineService";
 
 const EventForm = ({
   onPageChange,
@@ -8,6 +9,8 @@ const EventForm = ({
   setEvents,
   editingEvent = null,
 }) => {
+  console.log(editingEvent);
+  
   const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
   const [description, setDescription] = useState(
     editingEvent ? editingEvent.description : ""
@@ -17,73 +20,73 @@ const EventForm = ({
   );
 
   const [startTime, setStartTime] = useState(
-    editingEvent ? editingEvent.startTime : ""
+    editingEvent ? editingEvent.eventStartTime.slice(0, -3) : ""
   );
   const [endTime, setEndTime] = useState(
-    editingEvent ? editingEvent.endTime : ""
+    editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
   );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (editingEvent) {
-    //   // Update the existing event
-    //   const updatedEvents = events.map((ev) =>
-    //     ev.id === editingEvent.id
-    //       ? { ...ev, title, description, averageTime }
-    //       : ev
-    //   );
-    //   setEvents(updatedEvents);
-    // } else {
-    //   // Create a new event with a new id and initial usersInQueue count
-    //   const newEvent = {
-    //     id: events.length + 1,
-    //     title,
-    //     description,
-    //     startTime,
-    //     endTime,
-    //     averageTime,
-    //   };
-    //   setEvents([...events, newEvent]);
-    // }
-    // onPageChange("myevents");
 
-    if (validateEventStartEnd())
-      {
-        const newEvent = {
-          title,
-          description,
-          startTime,
-          endTime,
-          averageTime,
-        };
+    const eventId= editingEvent ? editingEvent.id : 0
+    if (validateEventStartEnd()) {
+      const newEvent = {
+        eventId,
+        title,
+        description,
+        startTime,
+        endTime,
+        averageTime,
+      };
 
+      if (editingEvent) {
+       
+        updateEvent(newEvent)
+        .then((response) => {
+          console.log(response.data);
+          const updatedEvents = events.map((ev) =>
+                ev.id === editingEvent.id
+                  ? { ...ev, title, description, averageTime }
+                  : ev
+              );
+              setEvents(updatedEvents);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        //setEvents(updatedEvents);
+      } else {
+        
         createEvent(newEvent)
           .then((response) => {
             console.log(response.data);
-            navigator("/employees");
+            setEvents([...events, newEvent]);
+            
           })
           .catch((error) => {
             console.log(error);
           });
-        onPageChange("myevents");
       }
+      onPageChange("myevents");
+    }
   };
 
-  function validateEventStartEnd()
-  {
-
-    const startInd= startEndTime.indexOf(startTime)
-    const endInd= startEndTime.indexOf(endTime)
-    if ( startInd === endInd ){
-      alert("The Event Start and end time cant be the same. Please select a different start/endtime.")
-      return false
+  function validateEventStartEnd() {
+    const startInd = startEndTime.indexOf(startTime);
+    const endInd = startEndTime.indexOf(endTime);
+    if (startInd === endInd) {
+      alert(
+        "The Event Start and end time cant be the same. Please select a different start/endtime."
+      );
+      return false;
     }
 
-    if (startInd > endInd){
-      alert("The Event end time must be later than the event start time.")
-      return false
+    if (startInd > endInd) {
+      alert("The Event end time must be later than the event start time.");
+      return false;
     }
-    return true
+    return true;
   }
 
   // Helper arrays for hours, minutes, and meridiem.
@@ -145,14 +148,13 @@ const EventForm = ({
       <Row>
         <Col>
           <Form.Group controlId="formAverageTime" className="mb-3">
-          <Form.Label>Average Time</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter average wait time (in minutes)"
-                value={averageTime}
-                onChange={(e) => setAverageTime(e.target.value)}
-              />
-              
+            <Form.Label>Average Time</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter average wait time (in minutes)"
+              value={averageTime}
+              onChange={(e) => setAverageTime(e.target.value)}
+            />
           </Form.Group>
         </Col>
         <Col>

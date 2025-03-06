@@ -1,4 +1,5 @@
 import axios from "axios";
+import API from "./APIService";
 
 const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
 
@@ -14,13 +15,13 @@ export const eventsList = () => {
 };
 
 export const createEvent = (event) =>
-  axios.post(SWIFTLINE_API_BASE_URL+"Event/CreateEvent", event);
+   API.post(SWIFTLINE_API_BASE_URL+"Event/CreateEvent", event);
 
 // export const getEmployeeById = (id) =>
 //   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
-// export const updateEmployee = (id, employee) =>
-//   axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
+export const updateEvent = (event) =>
+  API.put(SWIFTLINE_API_BASE_URL + "Event/EditEvent", event);
 
 // export const deleteEmployee = (id) =>
 //   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);

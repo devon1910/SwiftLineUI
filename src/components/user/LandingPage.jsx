@@ -18,8 +18,6 @@ function LandingPage() {
 
   const [editingEvent, setEditingEvent] = useState(null);
 
-
-  // Events state: this would typically come from your backend API.
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
