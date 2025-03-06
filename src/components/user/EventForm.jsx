@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
+import { createEvent } from "../../services/swiftlineService";
 
 const EventForm = ({
   onPageChange,
@@ -15,29 +16,104 @@ const EventForm = ({
     editingEvent ? editingEvent.averageTime : ""
   );
 
+  const [startTime, setStartTime] = useState(
+    editingEvent ? editingEvent.startTime : ""
+  );
+  const [endTime, setEndTime] = useState(
+    editingEvent ? editingEvent.endTime : ""
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (editingEvent) {
-      // Update the existing event
-      const updatedEvents = events.map((ev) =>
-        ev.id === editingEvent.id
-          ? { ...ev, title, description, averageTime }
-          : ev
-      );
-      setEvents(updatedEvents);
-    } else {
-      // Create a new event with a new id and initial usersInQueue count
-      const newEvent = {
-        id: events.length + 1,
-        title,
-        description,
-        averageTime,
-        usersInQueue: 0,
-      };
-      setEvents([...events, newEvent]);
-    }
-    onPageChange("myevents");
+    // if (editingEvent) {
+    //   // Update the existing event
+    //   const updatedEvents = events.map((ev) =>
+    //     ev.id === editingEvent.id
+    //       ? { ...ev, title, description, averageTime }
+    //       : ev
+    //   );
+    //   setEvents(updatedEvents);
+    // } else {
+    //   // Create a new event with a new id and initial usersInQueue count
+    //   const newEvent = {
+    //     id: events.length + 1,
+    //     title,
+    //     description,
+    //     startTime,
+    //     endTime,
+    //     averageTime,
+    //   };
+    //   setEvents([...events, newEvent]);
+    // }
+    // onPageChange("myevents");
+
+    if (validateEventStartEnd())
+      {
+        const newEvent = {
+          title,
+          description,
+          startTime,
+          endTime,
+          averageTime,
+        };
+
+        createEvent(newEvent)
+          .then((response) => {
+            console.log(response.data);
+            navigator("/employees");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        onPageChange("myevents");
+      }
   };
+
+  function validateEventStartEnd()
+  {
+
+    const startInd= startEndTime.indexOf(startTime)
+    const endInd= startEndTime.indexOf(endTime)
+    if ( startInd === endInd ){
+      alert("The Event Start and end time cant be the same. Please select a different start/endtime.")
+      return false
+    }
+
+    if (startInd > endInd){
+      alert("The Event end time must be later than the event start time.")
+      return false
+    }
+    return true
+  }
+
+  // Helper arrays for hours, minutes, and meridiem.
+  const startEndTime = [
+    "00:00",
+    "01:00",
+    "02:00",
+    "03:00",
+    "04:00",
+    "05:00",
+    "06:00",
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00",
+  ];
+  //const minutes = ["00", "15", "30", "45"];
+  //const meridiemOptions = ["AM", "PM"];
 
   return (
     <Form className="mt-5" onSubmit={handleSubmit}>
@@ -56,7 +132,8 @@ const EventForm = ({
       <Form.Group controlId="formDescription" className="mb-3">
         <Form.Floating>
           <Form.Control
-            type="text"
+            as="textarea"
+            rows={6}
             placeholder="Enter event description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -64,16 +141,55 @@ const EventForm = ({
           <label htmlFor="Average time">Event Description</label>
         </Form.Floating>
       </Form.Group>
-      <Form.Group controlId="formAverageTime" className="mb-3">
-        <Form.Floating>
-          <Form.Control
-            type="number"
-            placeholder="Enter average wait time(in minutes)"
-            value={averageTime}
-            onChange={(e) => setAverageTime(e.target.value)}/>
-          <label htmlFor="Average time">Average Time (in minutes)</label>
-        </Form.Floating>
-      </Form.Group>
+      {/* Average Time as a floating input */}
+      <Row>
+        <Col>
+          <Form.Group controlId="formAverageTime" className="mb-3">
+          <Form.Label>Average Time</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter average wait time (in minutes)"
+                value={averageTime}
+                onChange={(e) => setAverageTime(e.target.value)}
+              />
+              
+          </Form.Group>
+        </Col>
+        <Col>
+          <Form.Group controlId="formStartTime" className="mb-3">
+            <Form.Label>Event Start Time</Form.Label>
+            <Form.Select
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+            >
+              {startEndTime.map((hr) => (
+                <option key={hr} value={hr}>
+                  {hr}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col>
+          <Form.Group controlId="formEndTime" className="mb-8">
+            <Form.Label>Event End Time</Form.Label>
+
+            <Form.Select
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+            >
+              {startEndTime.map((hr) => (
+                <option key={hr} value={hr}>
+                  {hr}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Start Time: Hour, Minute, Meridiem */}
+
       <Button variant="primary" type="submit">
         Save
       </Button>

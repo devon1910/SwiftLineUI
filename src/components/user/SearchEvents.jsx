@@ -11,6 +11,26 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
     const filteredEvents = events.filter(event =>
       event.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+        // Styles for the active and inactive dot.
+    const activeDotStyle = {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#2ecc71', // project green
+      borderRadius: '50%',
+      display: 'inline-block',
+      marginRight: '8px',
+      animation: 'beep 1.5s infinite'
+    };
+
+    const inactiveDotStyle = {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#bdc3c7', // a neutral gray
+      borderRadius: '50%',
+      display: 'inline-block',
+      marginRight: '8px'
+    };
   
     // Simulate joining a queue by setting the myQueue state
     const joinQueue = (event) => {
@@ -36,12 +56,22 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
           <Row>
             {filteredEvents.map(event => (
               <Col md={4} key={event.id} className="mb-3">
-                <Card>
+                <Card style={{
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        border: 'none'
+                      }}>
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                    <span style={event.isActive ? activeDotStyle : inactiveDotStyle}></span>
+                  </div>
                   <Card.Body>
                     <Card.Title>{event.title}</Card.Title>
                     <Card.Text>{event.description}</Card.Text>
                     <Card.Text>Average Wait: {event.averageTime} mins</Card.Text>
                     <Card.Text>Users in Queue: {event.usersInQueue}</Card.Text>
+                    <Card.Text>Event Duration: {event.eventStartTime} - {event.eventEndTime}</Card.Text>
+                    <Card.Text>Organizer: {event.createdBy}</Card.Text>
                     <Button variant="primary" onClick={() => joinQueue(event)}>
                       Join Queue
                     </Button>

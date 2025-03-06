@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Dashboard from './Dashboard'
 import Navigation from './Navigation';
@@ -9,6 +9,7 @@ import MyEvents from './MyEvents';
 import EventForm from './EventForm';
 import MyQueue from './MyQueue';
 import ViewQueue from './ViewQueue';
+import { eventsList } from '../../services/swiftlineService';
 
 function LandingPage() {
 
@@ -17,23 +18,23 @@ function LandingPage() {
 
   const [editingEvent, setEditingEvent] = useState(null);
 
+
   // Events state: this would typically come from your backend API.
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Coffee Shop Queue",
-      description: "Manage your coffee line",
-      averageTime: 5,
-      usersInQueue: 3
-    },
-    {
-      id: 2,
-      title: "Bank Line",
-      description: "Get your tickets online",
-      averageTime: 10,
-      usersInQueue: 5
-    }
-  ]);
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    getEventsList();
+  },[])
+  
+  function getEventsList(){
+    eventsList().then((response) => {
+        setEvents(response.data.data);
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+  
+
 
   const handlePageChange = (page, event = null) => {
     if (event) 

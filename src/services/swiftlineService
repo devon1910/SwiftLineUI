@@ -1,40 +1,41 @@
 import axios from "axios";
 
-const SWIFTLINE_API_AUTH_BASE_URL = "http://localhost:5267/api/v1/Auth/";
+const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
 
-export const listEmployees = () => {
-  const token = JSON.parse(localStorage.getItem("user")).token;
+export const eventsList = () => {
+  const token = JSON.parse(localStorage.getItem("user"));
   console.log("token: ", token);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  return axios.get(EMPLOYEE_API_BASE_URL, config);
+  return axios.get(SWIFTLINE_API_BASE_URL+"Event/GetAllEvents", config);
 };
 
-export const createEmployee = (employee) =>
-  axios.post(EMPLOYEE_API_BASE_URL, employee);
+export const createEvent = (event) =>
+  axios.post(SWIFTLINE_API_BASE_URL+"Event/CreateEvent", event);
 
-export const getEmployeeById = (id) =>
-  axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
+// export const getEmployeeById = (id) =>
+//   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
-export const updateEmployee = (id, employee) =>
-  axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
+// export const updateEmployee = (id, employee) =>
+//   axios.put(EMPLOYEE_API_BASE_URL + "/" + id, employee);
 
-export const deleteEmployee = (id) =>
-  axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
+// export const deleteEmployee = (id) =>
+//   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
 
 export const loginUser = async (loginRequest) => {
   try {
     const response = await axios.post(
-      SWIFTLINE_API_AUTH_BASE_URL + "Login",
+        SWIFTLINE_API_BASE_URL + "Auth/Login",
       loginRequest
     );
-    if (response.data.token) {
-      localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+    if (response.data.data.accessToken) {
+      const valueToken=JSON.stringify(response.data.data.accessToken)
+      localStorage.setItem("user", valueToken);
     }
-    return response;
+    return response.data;
   } catch (error) {
     if (error.response) {
       // The server responded with a status code outside the 2xx range
@@ -58,7 +59,7 @@ export const loginUser = async (loginRequest) => {
 export const SignUpUser = async (SignInRequest) => {
   try {
     const response = await axios.post(
-      SWIFTLINE_API_AUTH_BASE_URL + "SignUp",
+        SWIFTLINE_API_BASE_URL + "Auth/SignUp",
       SignInRequest
     );
     if (response.data.token) {
