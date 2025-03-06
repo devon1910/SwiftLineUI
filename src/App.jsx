@@ -9,6 +9,7 @@ import SearchEvents from './components/user/SearchEvents';
 import MyEvents from './components/user/MyEvents';
 import EventForm from './components/user/EventForm';
 import MyQueue from './components/user/MyQueue';
+import ViewQueue from './components/user/ViewQueue';
 
 function App() {
 
@@ -35,18 +36,35 @@ function App() {
     }
   ]);
 
-  function handlePageChange(e)
-  {
-      console.log(e)
-      setCurrentPage(e);
-  }
-
+  const handlePageChange = (page, event = null) => {
+    if (event) 
+    {
+      setEditingEvent(event); // Set the event to be edited
+    }
+    else
+    {
+      setEditingEvent(null);
+    }
+      setCurrentPage(page);
+  };
   // State for the queue information when a user joins an event
   const [myQueue, setMyQueue] = useState({
     eventId: null,
     position: null,
     estimatedWait: null
   });
+
+
+
+  const queue1 = [
+    { id: 101, name: "Alice", joinTime: "10:05 AM" },
+    { id: 102, name: "Bob", joinTime: "10:07 AM" }
+  ];
+
+  const handleSkip = (userId) => {
+    // Implement logic to skip the user
+    console.log(`Skipping user with ID: ${userId}`);
+  };
   
   return (
     <div>
@@ -68,12 +86,14 @@ function App() {
             onPageChange={handlePageChange}
             events={events}
             setEvents={setEvents}
-            editingEvent={editingEvent}
-            
+            editingEvent={editingEvent}         
           />
         )}
         {currentPage === "myqueue" && (
           <MyQueue myQueue={myQueue} events={events} />
+        )}
+        {currentPage === "queueManagement" && (
+          <ViewQueue  event={editingEvent} queue={queue1} onSkip={handleSkip}/>
         )}
       </Container>
     </div>

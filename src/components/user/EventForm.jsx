@@ -70,8 +70,7 @@ const EventForm = ({
             type="number"
             placeholder="Enter average wait time(in minutes)"
             value={averageTime}
-            onChange={(e) => setAverageTime(e.target.value)}
-          />
+            onChange={(e) => setAverageTime(e.target.value)}/>
           <label htmlFor="Average time">Average Time (in minutes)</label>
         </Form.Floating>
       </Form.Group>

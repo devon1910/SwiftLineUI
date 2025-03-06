@@ -19,7 +19,7 @@ const MyEvents = ({ events, onPageChange }) => {
                     {/* grid gap */}
                     <Row className='g-0'> 
                         <Col md={6}>
-                            <Button variant="info" onClick={() => onPageChange("queueManagement")}>
+                            <Button variant="info" onClick={() => onPageChange("queueManagement",event)}>
                                 View Queue
                             </Button>
                         </Col>

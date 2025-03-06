@@ -27,7 +27,7 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
             <Form.Group controlId="search">
               <Form.Control 
                 type="text" 
-                placeholder="Search for events" 
+                placeholder="Search for events by their titles" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
