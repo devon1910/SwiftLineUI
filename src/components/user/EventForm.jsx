@@ -28,7 +28,7 @@ const EventForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    
     const eventId= editingEvent ? editingEvent.id : 0
     if (validateEventStartEnd()) {
       const newEvent = {
@@ -71,6 +71,7 @@ const EventForm = ({
       onPageChange("myevents");
     }
   };
+
 
   function validateEventStartEnd() {
     const startInd = startEndTime.indexOf(startTime);
@@ -128,6 +129,7 @@ const EventForm = ({
             placeholder="Enter event title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            required
           />
           <label htmlFor="Event Title">Event Title</label>
         </Form.Floating>
@@ -140,6 +142,7 @@ const EventForm = ({
             placeholder="Enter event description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            required
           />
           <label htmlFor="Average time">Event Description</label>
         </Form.Floating>
@@ -154,6 +157,7 @@ const EventForm = ({
               placeholder="Enter average wait time (in minutes)"
               value={averageTime}
               onChange={(e) => setAverageTime(e.target.value)}
+              required
             />
           </Form.Group>
         </Col>
@@ -162,8 +166,7 @@ const EventForm = ({
             <Form.Label>Event Start Time</Form.Label>
             <Form.Select
               value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-            >
+              onChange={(e) => setStartTime(e.target.value)}>
               {startEndTime.map((hr) => (
                 <option key={hr} value={hr}>
                   {hr}

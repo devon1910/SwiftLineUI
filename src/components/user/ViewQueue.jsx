@@ -1,7 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Table, Button, Card } from 'react-bootstrap';
+import { eventQueueInfo } from '../../services/swiftlineService';
 
-const ViewQueue = ({ event, queue, onSkip }) => {
+const ViewQueue = ({ event, onSkip }) => {
+
+    const [queue, setQueues] = useState([])
+
+    useEffect(() => {
+        getEventQueues();
+      },[])
+      
+      function getEventQueues(){
+        console.log("event Id: ", event)
+        eventQueueInfo(event.id).then((response) => {
+            console.log("eventQueueInfo: ", response.data.data)
+            setQueues(response.data.data);
+        }).catch((error) => {
+          console.log(error);
+        })
+    }
+      
     return (
         <Container className="mt-4">
           <Card>
@@ -26,8 +44,8 @@ const ViewQueue = ({ event, queue, onSkip }) => {
                     {queue.map((user, index) => (
                       <tr key={user.id}>
                         <td>{index + 1}</td>
-                        <td>{user.name}</td>
-                        <td>{user.joinTime}</td>
+                        <td>{user.lineMember.swiftLineUser.email}</td>
+                        <td>{user.createdAt.split('T')[1].split('.')[0]}</td>
                         <td>
                           <Button variant="warning" onClick={() => onSkip(user.id)}>
                             Skip
@@ -45,5 +63,4 @@ const ViewQueue = ({ event, queue, onSkip }) => {
 }
 
 export default ViewQueue
-
 

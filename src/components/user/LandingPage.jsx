@@ -18,6 +18,7 @@ function LandingPage() {
 
   const [editingEvent, setEditingEvent] = useState(null);
 
+
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
