@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, Alert, ProgressBar, Button } from 'react-bootstrap';
 import Confetti from 'react-confetti';
 import DidYouKnowSlider from './DidYouKnowSlider';
+import { lineInfo } from '../../services/swiftlineService';
 
 export const MyQueue = ({ myQueue, events }) => {
     const event = events.find(ev => ev.id === myQueue.eventId);
-
+    console.log("events: ",events)
+    console.log("myQueue: ",myQueue)
     // Simulation factor: For demo, 1 minute = 5 seconds of simulation time.
     const simulationFactor = 5; 
     const totalSimTime = myQueue.estimatedWait * simulationFactor; // Total simulation time in seconds
@@ -19,9 +21,11 @@ export const MyQueue = ({ myQueue, events }) => {
       width: window.innerWidth,
       height: window.innerHeight
     });
-
+     
     // Compute progress percentage (capped at 100%).
     const progress = Math.min((elapsedTime / totalSimTime) * 100, 100);
+
+    //const [updatedQueue, setUpdatedQueue]= useState(myQueue)
 
     // Handle window resize for confetti
     useEffect(() => {
@@ -62,6 +66,24 @@ export const MyQueue = ({ myQueue, events }) => {
       return () => clearInterval(interval);
     }, [myQueue, totalSimTime]);
 
+
+    function getLineInfo(myQueue)
+    {   
+      lineInfo(myQueue)
+            .then((response) => {
+              console.log("eventQueueInfo-New: ", response.data.data);
+              // let position= response.data.data.position
+              // let estimatedWait= response.data.data.timeTillYourTurn
+              // let eventId= response.data.data.eventId
+              // let lineMemberId= response.data.data.lineMemberId
+              //setMyQueue({ eventId: eventId, position, estimatedWait, lineMemberId });
+              //onPageChange("myqueue");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+    }
+
     if (!event) {
       return <Alert variant="warning" className="mt-4">You're currently not on any Queue at the moment.</Alert>;
     }
@@ -99,7 +121,7 @@ export const MyQueue = ({ myQueue, events }) => {
               You're next in line! Thanks for using SwiftLine ⚡😁
             </Alert>
           )}
-          <Button variant="primary" onClick={() => alert('Queue refresh simulation')}>
+          <Button variant="primary" onClick={() => getLineInfo({myQueue})}>
             Refresh
           </Button>
         </Card.Body>
