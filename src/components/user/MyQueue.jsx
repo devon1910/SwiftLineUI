@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { Button,Alert, Card, ProgressBar } from 'react-bootstrap';
-
+import React, { useState, useEffect } from 'react';
+import { Card, Alert, ProgressBar, Button } from 'react-bootstrap';
+import Confetti from 'react-confetti';
 import DidYouKnowSlider from './DidYouKnowSlider';
+
 export const MyQueue = ({ myQueue, events }) => {
     const event = events.find(ev => ev.id === myQueue.eventId);
 
@@ -11,62 +12,99 @@ export const MyQueue = ({ myQueue, events }) => {
 
     // State to track elapsed simulation time in seconds.
     const [elapsedTime, setElapsedTime] = useState(0);
+    // State to control confetti display
+    const [showConfetti, setShowConfetti] = useState(false);
+    // State to manage window dimensions for confetti
+    const [windowDimension, setWindowDimension] = useState({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
 
     // Compute progress percentage (capped at 100%).
     const progress = Math.min((elapsedTime / totalSimTime) * 100, 100);
 
+    // Handle window resize for confetti
+    useEffect(() => {
+      const handleResize = () => {
+        setWindowDimension({
+          width: window.innerWidth,
+          height: window.innerHeight
+        });
+      };
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // useEffect sets up an interval to update the elapsed time every second.
     useEffect(() => {
-      // Reset timer if myQueue changes
+      // Reset timer and confetti if myQueue changes
       setElapsedTime(0);
+      setShowConfetti(false);
+      
       const interval = setInterval(() => {
         setElapsedTime(prevTime => {
           if (prevTime < totalSimTime) {
             return prevTime + 1;
           } else {
+            // When we reach 100%, trigger confetti
+            if (!showConfetti) {
+              setShowConfetti(true);
+              // Auto-hide confetti after 5 seconds
+              setTimeout(() => setShowConfetti(false), 7000);
+            }
             clearInterval(interval);
             return prevTime;
           }
         });
       }, 1000);
+      
       return () => clearInterval(interval);
     }, [myQueue, totalSimTime]);
 
     if (!event) {
       return <Alert variant="warning" className="mt-4">You're currently not on any Queue at the moment.</Alert>;
     }
+    
     return (
       <Card className="mt-4">
-      <Card.Header>
-        <h3>{event.title} Queue</h3>
-      </Card.Header>
-      <Card.Body>
-        <p>Your Position: {myQueue.position}</p>
-        <p>Estimated Wait Time: {myQueue.estimatedWait} mins</p>
-        {progress < 100 ? (
-          <>
-            <ProgressBar 
-              now={progress} 
-              label={`${Math.floor(progress)}%`} 
-              animated 
-              className="mb-3" 
-            />
-            <DidYouKnowSlider/>
-          </>       
-        ) : (
-          <Alert variant="success" className="mb-3" style={{ fontSize: '1.2rem' }}>
-            You're next in line! thanks for using SwiftLine ⚡😁
-          </Alert>
+        {/* Confetti component that shows when progress reaches 100% */}
+        {showConfetti && (
+          <Confetti
+            width={windowDimension.width}
+            height={windowDimension.height}
+            recycle={false}
+            numberOfPieces={200}
+            gravity={0.2}
+          />
         )}
-        <Button variant="primary" onClick={() => alert('Queue refresh simulation')}>
-          Refresh
-        </Button>
-      </Card.Body>
-    </Card>
-      );
-}
+        <Card.Header>
+          <h3>{event.title} Queue</h3>
+        </Card.Header>
+        <Card.Body>
+          <p>Your Position: {myQueue.position}</p>
+          <p>Estimated Wait Time: {myQueue.estimatedWait} mins</p>
+          {progress < 100 ? (
+            <>
+              <ProgressBar 
+                now={progress} 
+                label={`${Math.floor(progress)}%`} 
+                animated 
+                className="mb-3" 
+              />
+              <DidYouKnowSlider/>
+            </>       
+          ) : (
+            <Alert variant="success" className="mb-3" style={{ fontSize: '1.2rem' }}>
+              You're next in line! Thanks for using SwiftLine ⚡😁
+            </Alert>
+          )}
+          <Button variant="primary" onClick={() => alert('Queue refresh simulation')}>
+            Refresh
+          </Button>
+        </Card.Body>
+      </Card>
+    );
+};
 
 export default MyQueue
-
-
-
