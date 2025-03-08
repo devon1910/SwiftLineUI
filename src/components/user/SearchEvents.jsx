@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { joinLine } from "../../services/swiftlineService";
+import { connection } from "../../services/SignalRConn";
 
-export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
+export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter events based on the search term
@@ -32,19 +33,32 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
 
   // Simulate joining a queue by setting the myQueue state
   const joinQueue = (event) => {
-    joinLine(event.id)
-      .then((response) => {
-        console.log("eventQueueInfo: ", response.data.data);
-        let position= response.data.data.position
-        let timeTillYourTurn= response.data.data.timeTillYourTurn
-        let eventId= response.data.data.eventId
-        let lineMemberId= response.data.data.lineMemberId
-        setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
-        onPageChange("myqueue");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+    const eventId= event.id
+    connection.invoke("JoinQueueGroup", eventId,userId).catch(err => console.error(err));
+
+
+    connection.on("ReceiveLineInfo", (lineInfo) => {
+      console.log(lineInfo)
+      const {position,timeTillYourTurn,eventId,lineMemberId} = lineInfo
+      setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
+      //onPageChange("myqueue");
+  });
+
+
+    // joinLine(event.id)
+    //   .then((response) => {
+    //     console.log("eventQueueInfo: ", response.data.data);
+    //     let position= response.data.data.position
+    //     let timeTillYourTurn= response.data.data.timeTillYourTurn
+    //     let eventId= response.data.data.eventId
+    //     let lineMemberId= response.data.data.lineMemberId
+    //     setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
+    //     onPageChange("myqueue");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
     // const position = event.usersInQueue + 1; // New user joins at the end
     // const estimatedWait = event.averageTime * position;
   };

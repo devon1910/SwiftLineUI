@@ -3,7 +3,7 @@ import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider";
 import { lineInfo } from "../../services/swiftlineService";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+
 
 export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
   const event = events.find((ev) => ev.id === myQueue.eventId);
@@ -24,18 +24,7 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5267/queueHub")
-    .build();
-
-  connection
-    .start()
-    .then(() => console.log("Connected to SignalR hub"))
-    .catch((err) => console.error("Error connecting to hub:", err));
-
-  connection.on("ReceiveMessage", (message) => {
-    console.log("Received message:", message);
-  });
+ 
 
   useEffect(() => {
     const handleResize = () => {

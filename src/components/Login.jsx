@@ -19,7 +19,11 @@ const Login = () => {
     loginUser(loginRequest)
       .then((response) => {
         console.log("response: ", response);
-        navigator("/LandingPage");
+        navigator("/LandingPage", {
+            state: { 
+              userId: response.data.userId,
+            }
+        });
       })
       .catch((error) => {
        
