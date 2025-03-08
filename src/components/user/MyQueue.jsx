@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider";
-import { lineInfo } from "../../services/swiftlineService";
+import { connection } from "../../services/SignalRConn";
 
 
 export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
@@ -25,6 +25,10 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
     height: window.innerHeight,
   });
  
+   connection.on("ReceivePositionUpdate", (positionUpdate) => {
+        console.log(positionUpdate)
+        updateLineInfo(positionUpdate);
+    });
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,17 +43,17 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
   }, []);
 
   // Refresh button: fetch the latest queue data from the API and update state.
-  const getLineInfo = () => {
-    lineInfo(myQueue)
-      .then((response) => {
-        console.log("eventQueueInfo-New: ", response.data.data);
-        // updateMyQueue is assumed to update the myQueue object with the new data.
-        updateLineInfo(response.data.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  // const getLineInfo = () => {
+  //   lineInfo(myQueue)
+  //     .then((response) => {
+  //       console.log("eventQueueInfo-New: ", response.data.data);
+  //       // updateMyQueue is assumed to update the myQueue object with the new data.
+       
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
 
   if (!event) {
     return (

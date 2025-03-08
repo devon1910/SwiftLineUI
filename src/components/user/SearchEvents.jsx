@@ -36,15 +36,7 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
 
     const eventId= event.id
     connection.invoke("JoinQueueGroup", eventId,userId).catch(err => console.error(err));
-
-
-    connection.on("ReceiveLineInfo", (lineInfo) => {
-      console.log(lineInfo)
-      const {position,timeTillYourTurn,eventId,lineMemberId} = lineInfo
-      setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
-      //onPageChange("myqueue");
-  });
-
+   
 
     // joinLine(event.id)
     //   .then((response) => {
@@ -62,6 +54,14 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
     // const position = event.usersInQueue + 1; // New user joins at the end
     // const estimatedWait = event.averageTime * position;
   };
+
+  connection.on("ReceiveLineInfo", (lineInfo) => {
+    console.log(lineInfo)
+    const {position,timeTillYourTurn,eventId,lineMemberId} = lineInfo
+    setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
+    onPageChange("myqueue");
+});
+
 
   return (
     <div>
