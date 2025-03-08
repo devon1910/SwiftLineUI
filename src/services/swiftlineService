@@ -45,7 +45,9 @@ export const loginUser = async (loginRequest) => {
     );
     if (response.data.data.accessToken) {
       const valueToken=JSON.stringify(response.data.data.accessToken)
+      const refreshToken=JSON.stringify(response.data.data.refreshToken)
       localStorage.setItem("user", valueToken);
+      localStorage.setItem("refreshToken",refreshToken)
     }
     return response.data;
   } catch (error) {
@@ -76,6 +78,7 @@ export const SignUpUser = async (SignInRequest) => {
     );
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+      localStorage.setItem("refreshToken",JSON.stringify(response.data.refreshToken))
     }
     return response.data;
   } catch (error) {
