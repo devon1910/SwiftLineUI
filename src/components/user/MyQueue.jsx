@@ -25,7 +25,7 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
     height: window.innerHeight,
   });
   const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5267/chatHub")
+    .withUrl("http://localhost:5267/queueHub")
     .build();
 
   connection
