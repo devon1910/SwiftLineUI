@@ -36,10 +36,10 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
       .then((response) => {
         console.log("eventQueueInfo: ", response.data.data);
         let position= response.data.data.position
-        let estimatedWait= response.data.data.timeTillYourTurn
+        let timeTillYourTurn= response.data.data.timeTillYourTurn
         let eventId= response.data.data.eventId
         let lineMemberId= response.data.data.lineMemberId
-        setMyQueue({ eventId: eventId, position, estimatedWait, lineMemberId });
+        setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
         onPageChange("myqueue");
       })
       .catch((error) => {
@@ -72,8 +72,7 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue }) => {
                 borderRadius: "8px",
                 overflow: "hidden",
                 border: "none",
-              }}
-            >
+              }}>
               <div style={{ position: "absolute", top: "10px", right: "10px" }}>
                 <span
                   style={event.isActive ? activeDotStyle : inactiveDotStyle}

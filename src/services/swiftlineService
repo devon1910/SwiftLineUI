@@ -33,7 +33,7 @@ export const joinLine= (eventId)=>
 
 export const lineInfo = function (queue){
 
-    const lineMemberId= queue.myQueue.lineMemberId
+    const lineMemberId= queue.lineMemberId
     return API.get(SWIFTLINE_API_BASE_URL+"Line/GetLineInfo/"+lineMemberId)
 }
 

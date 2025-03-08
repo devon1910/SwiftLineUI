@@ -83,10 +83,6 @@ const EventForm = ({
       return false;
     }
 
-    if (startInd > endInd) {
-      alert("The Event end time must be later than the event start time.");
-      return false;
-    }
     return true;
   }
 

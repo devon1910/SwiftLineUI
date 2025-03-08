@@ -87,7 +87,7 @@ function LandingPage() {
           />
         )}
         {currentPage === "myqueue" && (
-          <MyQueue myQueue={myQueue} events={events} />
+          <MyQueue myQueue={myQueue} events={events} updateLineInfo={setMyQueue} />
         )}
         {currentPage === "queueManagement" && (
           <ViewQueue  event={editingEvent} queue={queue1} onSkip={handleSkip}/>
