@@ -34,8 +34,9 @@ API.interceptors.response.use(
         originalRequest._retry = true;
         try {
           // Retrieve your refresh token (ideally stored separately or in a secure HTTP-only cookie).
-          const refreshToken = localStorage.getItem('refreshToken');
-          const accessToken = localStorage.getItem('user');
+          const refreshToken =  JSON.parse(localStorage.getItem('refreshToken')) 
+          const accessToken =  JSON.parse(localStorage.getItem('user')) 
+          
           // Call your refresh token endpoint. Adjust the endpoint and payload as needed.
           const { data } = await axios.post(
             "http://localhost:5267/api/v1/Auth/RefreshToken", 
@@ -60,6 +61,7 @@ API.interceptors.response.use(
           localStorage.removeItem('user');
           localStorage.removeItem('refreshToken');
           window.location.href = '/';
+          console.log(refreshError)
           return Promise.reject(refreshError);
         }
       }

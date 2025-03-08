@@ -13,6 +13,7 @@ import { eventsList } from "../../services/swiftlineService";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { connection } from "../../services/SignalRConn";
 import { useLocation } from "react-router-dom";
+import LoadingSpinner from "../LoadingSpinner";
 
 function LandingPage() {
   const location = useLocation();
@@ -24,8 +25,11 @@ function LandingPage() {
 
   const [events, setEvents] = useState([]);
 
+  const [isLoading, setIsLoading]= useState(true);
+
   useEffect(() => {
     getEventsList();
+    setIsLoading(false)
   }, []);
 
   function getEventsList() {
@@ -53,10 +57,7 @@ function LandingPage() {
     estimatedWait: null,
   });
 
-  const queue1 = [
-    { id: 101, name: "Alice", joinTime: "10:05 AM" },
-    { id: 102, name: "Bob", joinTime: "10:07 AM" },
-  ];
+
 
   const handleSkip = (userId) => {
     // Implement logic to skip the user
@@ -65,7 +66,9 @@ function LandingPage() {
 
   console.log("connection: ", connection);
 
-
+  if (isLoading) {
+    return <LoadingSpinner message="Loading..." />;
+  }
   return (
     <div>
       <Navigation onPageChange={handlePageChange} />
@@ -100,7 +103,7 @@ function LandingPage() {
           />
         )}
         {currentPage === "queueManagement" && (
-          <ViewQueue event={editingEvent} queue={queue1} onSkip={handleSkip} />
+          <ViewQueue event={editingEvent} onSkip={handleSkip} />
         )}
       </Container>
     </div>

@@ -28,6 +28,8 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
   const [showPositionArrow, setShowPositionArrow] = useState(false);
   const [showWaitTimeArrow, setShowWaitTimeArrow] = useState(false);
 
+
+
   // useRef to store previous values.
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
@@ -101,7 +103,7 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
       </Card.Header>
       <Card.Body>
         <p>
-          Your Position: {myQueue.position}{" "}
+          Your Position: {myQueue.positionRank}{" "}
           {showPositionArrow && (
             <span style={{ color: "#2ecc71", fontSize: "1.3rem", marginLeft: "8px" }}>
               ↑
@@ -109,7 +111,7 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
           )}
         </p>
         <p>
-          Estimated Wait Time: {myQueue.timeTillYourTurn} mins{" "}
+          Estimated Wait Time: {myQueue.timeTillYourTurn} minute(s){" "}
           {showWaitTimeArrow && (
             <span style={{ color: "#2ecc71", fontSize: "1.3rem", marginLeft: "6px" }}>
               ↑

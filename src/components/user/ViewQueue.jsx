@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Table, Button, Card } from 'react-bootstrap';
 import { eventQueueInfo } from '../../services/swiftlineService';
+import LoadingSpinner from '../LoadingSpinner';
 
 const ViewQueue = ({ event, onSkip }) => {
 
     const [queue, setQueues] = useState([])
+    const [isLoading, setIsLoading]= useState(true);
 
     useEffect(() => {
         getEventQueues();
+        setIsLoading(false)
       },[])
       
       function getEventQueues(){
@@ -20,6 +23,9 @@ const ViewQueue = ({ event, onSkip }) => {
         })
     }
       
+    if (isLoading) {
+        return <LoadingSpinner message="Loading..." />;
+      }
     return (
         <Container className="mt-4">
           <Card>

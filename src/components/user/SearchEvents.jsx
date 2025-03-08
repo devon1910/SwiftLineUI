@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { joinLine } from "../../services/swiftlineService";
 import { connection } from "../../services/SignalRConn";
+import LoadingSpinner from "../LoadingSpinner";
 
 export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  //const [isLoading, setIsLoading]= useState(true);
 
   // Filter events based on the search term
   const filteredEvents = events.filter((event) =>
@@ -33,36 +35,21 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
 
   // Simulate joining a queue by setting the myQueue state
   const joinQueue = (event) => {
+    const eventId = event.id;
+    connection
+      .invoke("JoinQueueGroup", eventId, userId)
+      .catch((err) => console.error(err));
 
-    const eventId= event.id
-    connection.invoke("JoinQueueGroup", eventId,userId).catch(err => console.error(err));
-   
-
-    // joinLine(event.id)
-    //   .then((response) => {
-    //     console.log("eventQueueInfo: ", response.data.data);
-    //     let position= response.data.data.position
-    //     let timeTillYourTurn= response.data.data.timeTillYourTurn
-    //     let eventId= response.data.data.eventId
-    //     let lineMemberId= response.data.data.lineMemberId
-    //     setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
-    //     onPageChange("myqueue");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // const position = event.usersInQueue + 1; // New user joins at the end
-    // const estimatedWait = event.averageTime * position;
   };
 
   connection.on("ReceiveLineInfo", (lineInfo) => {
-    console.log(lineInfo)
-    const {position,timeTillYourTurn,eventId,lineMemberId} = lineInfo
+    console.log(lineInfo);
+    const { position, timeTillYourTurn, eventId, lineMemberId } = lineInfo;
     setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
     onPageChange("myqueue");
-});
+  });
 
-
+  
   return (
     <div>
       <h2 className="mt-4">Search Events</h2>
@@ -86,7 +73,8 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
                 borderRadius: "8px",
                 overflow: "hidden",
                 border: "none",
-              }}>
+              }}
+            >
               <div style={{ position: "absolute", top: "10px", right: "10px" }}>
                 <span
                   style={event.isActive ? activeDotStyle : inactiveDotStyle}
