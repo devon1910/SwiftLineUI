@@ -4,7 +4,7 @@ import { joinLine } from "../../services/swiftlineService";
 import { connection } from "../../services/SignalRConn";
 import LoadingSpinner from "../LoadingSpinner";
 
-export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
+export const SearchEvents = ({ events, onPageChange, setMyQueue, userId, setIsUserInQueue, isUserInQueue }) => {
   const [searchTerm, setSearchTerm] = useState("");
   //const [isLoading, setIsLoading]= useState(true);
 
@@ -44,12 +44,12 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
 
   connection.on("ReceiveLineInfo", (lineInfo) => {
     console.log(lineInfo);
-    const { position, timeTillYourTurn, eventId, lineMemberId } = lineInfo;
-    setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId });
+    const { position, timeTillYourTurn, eventId, lineMemberId,positionRank,isInLine } = lineInfo;
+    setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId, positionRank });
+    setIsUserInQueue(isInLine)
     onPageChange("myqueue");
   });
 
-  
   return (
     <div>
       <h2 className="mt-4">Search Events</h2>
@@ -89,7 +89,7 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId }) => {
                   Event Duration: {event.eventStartTime} - {event.eventEndTime}
                 </Card.Text>
                 <Card.Text>Organizer: {event.createdBy}</Card.Text>
-                <Button variant="primary" onClick={() => joinQueue(event)}>
+                <Button disabled={isUserInQueue} variant="primary" onClick={() => joinQueue(event)}>
                   Join Queue
                 </Button>
               </Card.Body>

@@ -17,7 +17,7 @@ import LoadingSpinner from "../LoadingSpinner";
 
 function LandingPage() {
   const location = useLocation();
-  const { userId } = location.state || {}; 
+  const { userId,email,isInQueue } = location.state || {}; 
   // Current page state to control which component to display
   const [currentPage, setCurrentPage] = useState("dashboard");
 
@@ -26,6 +26,11 @@ function LandingPage() {
   const [events, setEvents] = useState([]);
 
   const [isLoading, setIsLoading]= useState(true);
+
+  const [isUserInQueue, setIsUserInQueue] = useState(isInQueue);
+
+
+  const userEvents= events.filter((event) => event.createdBy === email);
 
   useEffect(() => {
     getEventsList();
@@ -82,10 +87,12 @@ function LandingPage() {
             onPageChange={handlePageChange}
             setMyQueue={setMyQueue}
             userId={userId}
+            setIsUserInQueue= {setIsUserInQueue}
+            isUserInQueue={isUserInQueue}
           />
         )}
         {currentPage === "myevents" && (
-          <MyEvents events={events} onPageChange={handlePageChange} />
+          <MyEvents events={userEvents} onPageChange={handlePageChange} />
         )}
         {currentPage === "eventForm" && (
           <EventForm

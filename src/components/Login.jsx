@@ -22,6 +22,8 @@ const Login = () => {
         navigator("/LandingPage", {
             state: { 
               userId: response.data.userId,
+              email: response.data.email,
+              isInQueue: response.data.isInQueue
             }
         });
       })

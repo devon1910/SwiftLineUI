@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap';
 
 const MyEvents = ({ events, onPageChange }) => {
+
     return (
         <div>
           <h2 className="mt-4">My Events</h2>
@@ -19,7 +20,7 @@ const MyEvents = ({ events, onPageChange }) => {
                     {/* grid gap */}
                     <Row className='g-0'> 
                         <Col md={6}>
-                            <Button variant="info" onClick={() => onPageChange("queueManagement",event)}>
+                            <Button  variant="info" onClick={() => onPageChange("queueManagement",event)}>
                                 View Queue
                             </Button>
                         </Col>
