@@ -11,7 +11,10 @@ API.interceptors.request.use(
     const token = localStorage.getItem('user') 
       ? JSON.parse(localStorage.getItem('user')) 
       : null;
-    
+      if (!token) {
+        window.location.href = '/'; 
+        return Promise.reject(new Error("No access token available"));
+      }
     // If token exists, add it to the header
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

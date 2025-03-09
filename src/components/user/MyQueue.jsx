@@ -3,10 +3,32 @@ import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider";
 import { connection } from "../../services/SignalRConn";
+import { GetUserLineInfo } from "../../services/swiftlineService";
+import LoadingSpinner from "../LoadingSpinner";
 
-export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
-  const event = events.find((ev) => ev.id === myQueue.eventId);
-  console.log("events: ", events);
+export const MyQueue = () => {
+
+  const [isLoading, setIsLoading]= useState(true);
+
+  const [myQueue, setMyQueue] = useState({});
+
+  useEffect(() => {
+      getCurrentPosition();
+      setIsLoading(false)
+    }, []);
+  
+    function getCurrentPosition() {
+      GetUserLineInfo()
+        .then((response) => {
+          setMyQueue(response.data.data);
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
+            window.location.href = '/';
+          }
+          console.log(error);
+        });
+    }
   console.log("myQueue: ", myQueue);
 
   const calculateProgress = (position) => {
@@ -15,21 +37,15 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
   };
 
   const progress = calculateProgress(myQueue.position);
-  console.log("progress: ", progress);
   const showConfetti = myQueue.timeTillYourTurn === 0;
-
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-
   // State to control the display of the up arrow indicators.
   const [showPositionArrow, setShowPositionArrow] = useState(false);
   const [showWaitTimeArrow, setShowWaitTimeArrow] = useState(false);
-
-
-
   // useRef to store previous values.
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
@@ -53,17 +69,17 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
   }, [myQueue.timeTillYourTurn]);
 
   // Listen for SignalR position updates.
-  useEffect(() => {
-    const handlePositionUpdate = (positionUpdate) => {
-      console.log(positionUpdate);
-      updateLineInfo(positionUpdate);
-    };
+  // useEffect(() => {
+  //   const handlePositionUpdate = (positionUpdate) => {
+  //     console.log(positionUpdate);
+  //     updateLineInfo(positionUpdate);
+  //   };
 
-    connection.on("ReceivePositionUpdate", handlePositionUpdate);
-    return () => {
-      connection.off("ReceivePositionUpdate", handlePositionUpdate);
-    };
-  }, [updateLineInfo]);
+  //   connection.on("ReceivePositionUpdate", handlePositionUpdate);
+  //   return () => {
+  //     connection.off("ReceivePositionUpdate", handlePositionUpdate);
+  //   };
+  // }, [updateLineInfo]);
 
   // Update window dimensions on resize.
   useEffect(() => {
@@ -74,16 +90,26 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
       });
     };
 
+    connection.on("ReceiveLineInfo", (lineInfo) => {
+      console.log(lineInfo);
+      setMyQueue(lineInfo);
+    });
+  
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (!event) {
+  if (myQueue.position === -1) {
     return (
       <Alert variant="warning" className="mt-4">
         You're currently not on any Queue at the moment.
       </Alert>
     );
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner message="Loading..." />;
   }
 
   return (
@@ -99,7 +125,7 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
         />
       )}
       <Card.Header>
-        <h3>{event.title} Queue</h3>
+        <h3>{myQueue.eventTitle} Queue</h3>
       </Card.Header>
       <Card.Body>
         <p>
@@ -141,113 +167,3 @@ export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
 
 export default MyQueue;
 
-
-// import React, { useState, useEffect } from "react";
-// import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
-// import Confetti from "react-confetti";
-// import DidYouKnowSlider from "./DidYouKnowSlider";
-// import { connection } from "../../services/SignalRConn";
-
-
-// export const MyQueue = ({ myQueue, events, updateLineInfo }) => {
-//   const event = events.find((ev) => ev.id === myQueue.eventId);
-//   console.log("events: ", events);
-//   console.log("myQueue: ", myQueue);
-
-//   const calculateProgress = (position) => {
-//     if (position <= 1) return 100;
-//     return Math.min(Math.floor(100 / position), 99);
-//   };
-
-//   const progress = calculateProgress(myQueue.position);
-//   console.log("progress: ", progress);
-//   const showConfetti = myQueue.timeTillYourTurn === 0;
-
-//   // Track window dimensions for the Confetti component.
-//   const [windowDimension, setWindowDimension] = useState({
-//     width: window.innerWidth,
-//     height: window.innerHeight,
-//   });
- 
-//    connection.on("ReceivePositionUpdate", (positionUpdate) => {
-//         console.log(positionUpdate)
-//         updateLineInfo(positionUpdate);
-//     });
-
-//   useEffect(() => {
-//     const handleResize = () => {
-//       setWindowDimension({
-//         width: window.innerWidth,
-//         height: window.innerHeight,
-//       });
-//     };
-
-//     window.addEventListener("resize", handleResize);
-//     return () => window.removeEventListener("resize", handleResize);
-//   }, []);
-
-//   // Refresh button: fetch the latest queue data from the API and update state.
-//   // const getLineInfo = () => {
-//   //   lineInfo(myQueue)
-//   //     .then((response) => {
-//   //       console.log("eventQueueInfo-New: ", response.data.data);
-//   //       // updateMyQueue is assumed to update the myQueue object with the new data.
-       
-//   //     })
-//   //     .catch((error) => {
-//   //       console.error(error);
-//   //     });
-//   // };
-
-//   if (!event) {
-//     return (
-//       <Alert variant="warning" className="mt-4">
-//         You're currently not on any Queue at the moment.
-//       </Alert>
-//     );
-//   }
-
-//   return (
-//     <Card className="mt-4">
-//       {/* Confetti component that shows when progress reaches 100% */}
-//       {showConfetti && (
-//         <Confetti
-//           width={windowDimension.width}
-//           height={windowDimension.height}
-//           recycle={false}
-//           numberOfPieces={400}
-//           gravity={0.2}
-//         />
-//       )}
-//       <Card.Header>
-//         <h3>{event.title} Queue</h3>
-//       </Card.Header>
-//       <Card.Body>
-//         <p>Your Position: {myQueue.position}</p>
-//         <p>Estimated Wait Time: {myQueue.timeTillYourTurn} mins</p>
-//         {progress < 100 ? (
-//           <>
-//             <ProgressBar
-//               now={progress}
-//               label={`${Math.floor(progress)}%`}
-//               animated
-//               className="mb-3"
-//             />
-//             <DidYouKnowSlider />
-//           </>
-//         ) : (
-//           <Alert
-//             variant="success"
-//             className="mb-3"
-//             style={{ fontSize: "1.2rem" }}
-//           >
-//             You're next in line! Thanks for using SwiftLine ⚡😁
-//           </Alert>
-//         )}
-       
-//       </Card.Body>
-//     </Card>
-//   );
-// };
-
-// export default MyQueue;

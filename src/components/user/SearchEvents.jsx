@@ -42,14 +42,7 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId, setIsUs
 
   };
 
-  connection.on("ReceiveLineInfo", (lineInfo) => {
-    console.log(lineInfo);
-    const { position, timeTillYourTurn, eventId, lineMemberId,positionRank,isInLine } = lineInfo;
-    setMyQueue({ eventId: eventId, position, timeTillYourTurn, lineMemberId, positionRank });
-    setIsUserInQueue(isInLine)
-    onPageChange("myqueue");
-  });
-
+ 
   return (
     <div>
       <h2 className="mt-4">Search Events</h2>

@@ -10,8 +10,6 @@ import EventForm from "./EventForm";
 import MyQueue from "./MyQueue";
 import ViewQueue from "./ViewQueue";
 import { eventsList } from "../../services/swiftlineService";
-import { HubConnectionBuilder } from "@microsoft/signalr";
-import { connection } from "../../services/SignalRConn";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
 
@@ -43,33 +41,22 @@ function LandingPage() {
         setEvents(response.data.data);
       })
       .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          window.location.href = '/';
+        }
         console.log(error);
       });
   }
 
   const handlePageChange = (page, event = null) => {
-    if (event) {
-      setEditingEvent(event); // Set the event to be edited
-    } else {
-      setEditingEvent(null);
-    }
+    event ? setEditingEvent(event) : setEditingEvent(null);
     setCurrentPage(page);
   };
-  // State for the queue information when a user joins an event
-  const [myQueue, setMyQueue] = useState({
-    eventId: null,
-    position: null,
-    estimatedWait: null,
-  });
-
-
 
   const handleSkip = (userId) => {
     // Implement logic to skip the user
     console.log(`Skipping user with ID: ${userId}`);
   };
-
-  console.log("connection: ", connection);
 
   if (isLoading) {
     return <LoadingSpinner message="Loading..." />;
@@ -85,7 +72,6 @@ function LandingPage() {
           <SearchEvents
             events={events}
             onPageChange={handlePageChange}
-            setMyQueue={setMyQueue}
             userId={userId}
             setIsUserInQueue= {setIsUserInQueue}
             isUserInQueue={isUserInQueue}
@@ -104,9 +90,6 @@ function LandingPage() {
         )}
         {currentPage === "myqueue" && (
           <MyQueue
-            myQueue={myQueue}
-            events={events}
-            updateLineInfo={setMyQueue}
           />
         )}
         {currentPage === "queueManagement" && (
