@@ -61,7 +61,7 @@ function LandingPage() {
   return (
     <div>
       <Navigation onPageChange={handlePageChange} />
-      <center><h3> Hello🙂, {email} and {userId}</h3></center>
+      <center><h3> Hello🙂, {email}</h3></center>
       <Container>
         {currentPage === "dashboard" && (
           <Dashboard onPageChange={handlePageChange} />

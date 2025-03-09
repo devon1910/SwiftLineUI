@@ -7,29 +7,15 @@ import { GetUserLineInfo } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
 
 export const MyQueue = () => {
-
-  const [isLoading, setIsLoading]= useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [myQueue, setMyQueue] = useState({});
 
   useEffect(() => {
-      getCurrentPosition();
-      setIsLoading(false)
-    }, []);
-  
-    function getCurrentPosition() {
-      GetUserLineInfo()
-        .then((response) => {
-          setMyQueue(response.data.data);
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 401) {
-            window.location.href = '/';
-          }
-          console.log(error);
-        });
-    }
-  console.log("myQueue: ", myQueue);
+    getCurrentPosition();
+    setIsLoading(false);
+  }, []);
+
 
   const calculateProgress = (position) => {
     if (position <= 1) return 100;
@@ -50,38 +36,26 @@ export const MyQueue = () => {
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
 
-  // Compare the new position with the previous value.
   useEffect(() => {
-    if (myQueue.position < prevPositionRef.current) {
-      setShowPositionArrow(true);
-      setTimeout(() => setShowPositionArrow(false), 25000);
+    // Make sure connection is defined/initialized before using it
+    if (connection) {
+      console.log("Setting up SignalR listener for queue updates");
+      
+      // Register for position updates
+      connection.on("ReceivePositionUpdate", (lineInfo) => {
+        console.log("SignalR update received:", lineInfo);
+        setMyQueue(lineInfo);
+      });
+      
+      // Clean up when component unmounts
+      return () => {
+        console.log("Cleaning up SignalR listener");
+        connection.off("ReceivePositionUpdate");
+      };
     }
-    prevPositionRef.current = myQueue.position;
-  }, [myQueue.position]);
+  }, []);  // Empty dependency array means it runs once on mount
 
-  // Compare the new timeTillYourTurn with the previous value.
-  useEffect(() => {
-    if (myQueue.timeTillYourTurn < prevTimeRef.current) {
-      setShowWaitTimeArrow(true);
-      setTimeout(() => setShowWaitTimeArrow(false), 25000);
-    }
-    prevTimeRef.current = myQueue.timeTillYourTurn;
-  }, [myQueue.timeTillYourTurn]);
-
-  // Listen for SignalR position updates.
-  // useEffect(() => {
-  //   const handlePositionUpdate = (positionUpdate) => {
-  //     console.log(positionUpdate);
-  //     updateLineInfo(positionUpdate);
-  //   };
-
-  //   connection.on("ReceivePositionUpdate", handlePositionUpdate);
-  //   return () => {
-  //     connection.off("ReceivePositionUpdate", handlePositionUpdate);
-  //   };
-  // }, [updateLineInfo]);
-
-  // Update window dimensions on resize.
+  // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
     const handleResize = () => {
       setWindowDimension({
@@ -90,15 +64,40 @@ export const MyQueue = () => {
       });
     };
 
-    connection.on("ReceiveLineInfo", (lineInfo) => {
-      console.log(lineInfo);
-      setMyQueue(lineInfo);
-    });
-  
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Compare position changes for arrow indicators
+  useEffect(() => {
+    if (prevPositionRef.current !== null && myQueue.position < prevPositionRef.current) {
+      setShowPositionArrow(true);
+      setTimeout(() => setShowPositionArrow(false), 25000);
+    }
+    prevPositionRef.current = myQueue.position;
+  }, [myQueue.position]);
+
+  // Compare time changes for arrow indicators
+  useEffect(() => {
+    if (prevTimeRef.current !== null && myQueue.timeTillYourTurn < prevTimeRef.current) {
+      setShowWaitTimeArrow(true);
+      setTimeout(() => setShowWaitTimeArrow(false), 25000);
+    }
+    prevTimeRef.current = myQueue.timeTillYourTurn;
+  }, [myQueue.timeTillYourTurn]);
+
+  function getCurrentPosition() {
+    GetUserLineInfo()
+      .then((response) => {
+        setMyQueue(response.data.data);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          window.location.href = "/";
+        }
+        console.log(error);
+      });
+  }
 
   if (myQueue.position === -1) {
     return (
@@ -131,7 +130,13 @@ export const MyQueue = () => {
         <p>
           Your Position: {myQueue.positionRank}{" "}
           {showPositionArrow && (
-            <span style={{ color: "#2ecc71", fontSize: "1.3rem", marginLeft: "8px" }}>
+            <span
+              style={{
+                color: "#2ecc71",
+                fontSize: "1.3rem",
+                marginLeft: "8px",
+              }}
+            >
               ↑
             </span>
           )}
@@ -139,7 +144,13 @@ export const MyQueue = () => {
         <p>
           Estimated Wait Time: {myQueue.timeTillYourTurn} minute(s){" "}
           {showWaitTimeArrow && (
-            <span style={{ color: "#2ecc71", fontSize: "1.3rem", marginLeft: "6px" }}>
+            <span
+              style={{
+                color: "#2ecc71",
+                fontSize: "1.3rem",
+                marginLeft: "6px",
+              }}
+            >
               ↑
             </span>
           )}
@@ -155,15 +166,17 @@ export const MyQueue = () => {
             <DidYouKnowSlider />
           </>
         ) : (
-          <Alert variant="success" className="mb-3" style={{ fontSize: "1.2rem" }}>
+          <Alert
+            variant="success"
+            className="mb-3"
+            style={{ fontSize: "1.2rem" }}
+          >
             You're next in line! Thanks for using SwiftLine ⚡😁
           </Alert>
         )}
-        
       </Card.Body>
     </Card>
   );
 };
 
 export default MyQueue;
-
