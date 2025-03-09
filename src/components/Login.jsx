@@ -23,7 +23,7 @@ const Login = () => {
             state: { 
               userId: response.data.userId,
               email: response.data.email,
-              isInQueue: response.data.isInQueue
+              isInLine: response.data.isInLine
             }
         });
       })

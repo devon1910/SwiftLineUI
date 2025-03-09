@@ -3,15 +3,37 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { joinLine } from "../../services/swiftlineService";
 import { connection } from "../../services/SignalRConn";
 import LoadingSpinner from "../LoadingSpinner";
+import { GetUserQueueStatus } from "../../services/swiftlineService";
 
-export const SearchEvents = ({ events, onPageChange, setMyQueue, userId, setIsUserInQueue, isUserInQueue }) => {
+export const SearchEvents = ({ events, onPageChange, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  //const [isLoading, setIsLoading]= useState(true);
+  const [isUserInQueue, setIsUserInQueue]= useState(true);
+
+  const [isLoading, setIsLoading]= useState(true);
 
   // Filter events based on the search term
   const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+   useEffect(() => {
+    getUserQueueStatus();
+        setIsLoading(false)
+      }, []);
+    
+      function getUserQueueStatus() {
+        GetUserQueueStatus()
+          .then((response) => {
+            setIsUserInQueue(response.data.data);
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 401) {
+              window.location.href = '/';
+            }
+            console.log(error);
+          });
+      }
+    
 
   // Styles for the active and inactive dot.
   const activeDotStyle = {
@@ -38,11 +60,20 @@ export const SearchEvents = ({ events, onPageChange, setMyQueue, userId, setIsUs
     const eventId = event.id;
     connection
       .invoke("JoinQueueGroup", eventId, userId)
-      .catch((err) => console.error(err));
-
+      .then(() => {
+        // Only change page after successful completion
+        onPageChange("myqueue");
+      })
+      .catch((err) => {
+        console.error(err);
+        // You might want to show an error message here
+      });
   };
 
- 
+  if (isLoading) {
+    return <LoadingSpinner message="Loading..." />;
+  }
+
   return (
     <div>
       <h2 className="mt-4">Search Events</h2>

@@ -37,9 +37,9 @@ export const lineInfo = function (queue){
     return API.get(SWIFTLINE_API_BASE_URL+"Line/GetLineInfo/"+lineMemberId)
 }
 
-export const GetUserLineInfo = function (userId){
-  return API.get(SWIFTLINE_API_BASE_URL+"Line/GetUserLineInfo/"+userId)
-}
+export const GetUserLineInfo = () => API.get(SWIFTLINE_API_BASE_URL+"Line/GetUserLineInfo");
+export const GetUserQueueStatus = () => API.get(SWIFTLINE_API_BASE_URL+"Line/GetUserQueueStatus");
+
 
 export const loginUser = async (loginRequest) => {
   try {

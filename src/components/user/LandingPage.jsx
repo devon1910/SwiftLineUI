@@ -15,7 +15,7 @@ import LoadingSpinner from "../LoadingSpinner";
 
 function LandingPage() {
   const location = useLocation();
-  const { userId,email,isInQueue } = location.state || {}; 
+  const { userId,email } = location.state || {}; 
   // Current page state to control which component to display
   const [currentPage, setCurrentPage] = useState("dashboard");
 
@@ -24,9 +24,6 @@ function LandingPage() {
   const [events, setEvents] = useState([]);
 
   const [isLoading, setIsLoading]= useState(true);
-
-  const [isUserInQueue, setIsUserInQueue] = useState(isInQueue);
-
 
   const userEvents= events.filter((event) => event.createdBy === email);
 
@@ -64,6 +61,7 @@ function LandingPage() {
   return (
     <div>
       <Navigation onPageChange={handlePageChange} />
+      <center><h3> Hello🙂, {email} and {userId}</h3></center>
       <Container>
         {currentPage === "dashboard" && (
           <Dashboard onPageChange={handlePageChange} />
@@ -73,8 +71,6 @@ function LandingPage() {
             events={events}
             onPageChange={handlePageChange}
             userId={userId}
-            setIsUserInQueue= {setIsUserInQueue}
-            isUserInQueue={isUserInQueue}
           />
         )}
         {currentPage === "myevents" && (
