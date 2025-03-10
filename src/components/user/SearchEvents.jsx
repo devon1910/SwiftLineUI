@@ -4,6 +4,7 @@ import { joinLine } from "../../services/swiftlineService";
 import { connection } from "../../services/SignalRConn";
 import LoadingSpinner from "../LoadingSpinner";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
+import { toast } from "react-toastify";
 
 export const SearchEvents = ({ events, onPageChange, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,20 +56,36 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
     marginRight: "8px",
   };
 
-  // Simulate joining a queue by setting the myQueue state
-  const joinQueue = (event) => {
+
+  const joinQueue = async (event) => {
     const eventId = event.id;
+    
+    // Check if the SignalR connection is in a connected state
+    if (connection.state !== "Connected") {
+      toast.info("Connection lost. Attempting to reconnect...");
+      try {
+        await connection.start();  // Try to reconnect
+        toast.success("Reconnected successfully.");
+      } catch (reconnectError) {
+        console.error("Reconnection failed:", reconnectError);
+        toast.error("Unable to reconnect. Please check your network.");
+        return;
+      }
+    }
+    
+    // Once connected, try to join the queue
     connection
       .invoke("JoinQueueGroup", eventId, userId)
       .then(() => {
-        // Only change page after successful completion
+        toast.success("Joined queue successfully.");
         onPageChange("myqueue");
       })
       .catch((err) => {
         console.error(err);
-        // You might want to show an error message here
+        toast.error("Error joining queue. Please try again.");
       });
   };
+
 
   if (isLoading) {
     return <LoadingSpinner message="Loading..." />;
