@@ -5,7 +5,6 @@ const SWIFTLINE_API_BASE_URL = "https://swiftline-cvbsdhauepbcambe.canadacentral
 
 export const eventsList = () => {
   const token = JSON.parse(localStorage.getItem("user"));
-  console.log("token: ", token);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,

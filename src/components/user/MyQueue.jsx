@@ -99,84 +99,89 @@ export const MyQueue = () => {
       });
   }
 
+  if (isLoading) {
+    return <LoadingSpinner message="Loading..." />;
+  }
+
   if (myQueue.position === -1) {
     return (
       <Alert variant="warning" className="mt-4">
         You're currently not on any Queue at the moment.
       </Alert>
     );
-  }
-
-  if (isLoading) {
-    return <LoadingSpinner message="Loading..." />;
-  }
-
-  return (
-    <Card className="mt-4">
-      {/* Confetti component that shows when timeTillYourTurn is 0 */}
-      {showConfetti && (
-        <Confetti
-          width={windowDimension.width}
-          height={windowDimension.height}
-          recycle={false}
-          numberOfPieces={400}
-          gravity={0.2}
-        />
-      )}
-      <Card.Header>
-        <h3>{myQueue.eventTitle} Queue</h3>
-      </Card.Header>
-      <Card.Body>
-        <p>
-          Your Position: {myQueue.positionRank}{" "}
-          {showPositionArrow && (
-            <span
-              style={{
-                color: "#2ecc71",
-                fontSize: "1.3rem",
-                marginLeft: "8px",
-              }}
-            >
-              ↑
-            </span>
-          )}
-        </p>
-        <p>
-          Estimated Wait Time: {myQueue.timeTillYourTurn} minute(s){" "}
-          {showWaitTimeArrow && (
-            <span
-              style={{
-                color: "#2ecc71",
-                fontSize: "1.3rem",
-                marginLeft: "6px",
-              }}
-            >
-              ↑
-            </span>
-          )}
-        </p>
-        {progress < 100 ? (
-          <>
-            <ProgressBar
-              now={progress}
-              label={`${Math.floor(progress)}%`}
-              animated
-              className="mb-3"
-            />
-            <DidYouKnowSlider />
-          </>
-        ) : (
-          <Alert
-            variant="success"
-            className="mb-3"
-            style={{ fontSize: "1.2rem" }}
-          >
-            You're next in line! Thanks for using SwiftLine ⚡😁
-          </Alert>
+  }else{
+    return (
+      <Card className="mt-4">
+        {/* Confetti component that shows when timeTillYourTurn is 0 */}
+        {showConfetti && (
+          <Confetti
+            width={windowDimension.width}
+            height={windowDimension.height}
+            recycle={false}
+            numberOfPieces={400}
+            gravity={0.2}
+          />
         )}
-      </Card.Body>
-    </Card>
-  );
+        <Card.Header>
+          <h3>{myQueue.eventTitle} Queue</h3>
+        </Card.Header>
+        <Card.Body>
+          <p>
+            Your Position: {myQueue.positionRank}{" "}
+            {showPositionArrow && (
+              <span
+                style={{
+                  color: "#2ecc71",
+                  fontSize: "1.3rem",
+                  marginLeft: "8px",
+                }}
+              >
+                ↑
+              </span>
+            )}
+          </p>
+          <p>
+            Estimated Wait Time: {myQueue.timeTillYourTurn} minute(s){" "}
+            {showWaitTimeArrow && (
+              <span
+                style={{
+                  color: "#2ecc71",
+                  fontSize: "1.3rem",
+                  marginLeft: "6px",
+                }}
+              >
+                ↑
+              </span>
+            )}
+          </p>
+          {progress < 100 ? (
+            <>
+              <ProgressBar
+                now={progress}
+                label={`${Math.floor(progress)}%`}
+                animated
+                className="mb-3"
+              />
+              <DidYouKnowSlider />
+            </>
+          ) : (
+            <Alert
+              variant="success"
+              className="mb-3"
+              style={{ fontSize: "1.2rem" }}
+            >
+              You're next in line! Thanks for using SwiftLine ⚡😁
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    );
+
+  }
+
+
+
+  
 };
 
 export default MyQueue;

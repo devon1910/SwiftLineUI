@@ -14,9 +14,7 @@ const ViewQueue = ({ event, onSkip }) => {
       },[])
       
       function getEventQueues(){
-        console.log("event Id: ", event)
         eventQueueInfo(event.id).then((response) => {
-            console.log("eventQueueInfo: ", response.data.data)
             setQueues(response.data.data);
         }).catch((error) => {
           console.log(error);
@@ -53,7 +51,7 @@ const ViewQueue = ({ event, onSkip }) => {
                         <td>{user.lineMember.swiftLineUser.email}</td>
                         <td>{user.createdAt.split('T')[1].split('.')[0]}</td>
                         <td>
-                          <Button variant="warning" onClick={() => onSkip(user.id)}>
+                          <Button disabled={true} variant="warning" onClick={() => onSkip(user.id)}>
                             Skip
                           </Button>
                         </td>

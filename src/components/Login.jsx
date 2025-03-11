@@ -18,7 +18,6 @@ const Login = () => {
     const loginRequest = { email, password };
     loginUser(loginRequest)
       .then((response) => {
-        console.log("response: ", response);
         navigator("/LandingPage", {
             state: { 
               userId: response.data.userId,
