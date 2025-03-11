@@ -1,7 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap';
+import { UserEvents } from '../../services/swiftlineService';
 
-const MyEvents = ({ events, onPageChange }) => {
+const MyEvents = ({onPageChange }) => {
+ 
+  const [userEvents, setUserEvents] = useState([])
+   useEffect(() => {
+          getUserEvents();
+        },[])
+        
+        function getUserEvents(){
+          UserEvents().then((response) => {
+
+            setUserEvents(response.data.data);
+          }).catch((error) => {
+            console.log(error);
+          })
+      }
   return (
     <div style={{ 
       padding: '2rem',
@@ -48,7 +63,7 @@ const MyEvents = ({ events, onPageChange }) => {
   
         {/* Events Grid */}
         <Row className="g-4">
-          {events.map(event => (
+          {userEvents.map(event => (
             <Col md={4} key={event.id}>
               <Card style={{ 
                 border: '1px solid #8A9A8B',

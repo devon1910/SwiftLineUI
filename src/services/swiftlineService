@@ -22,6 +22,7 @@ export const createEvent = (event) =>
 export const eventQueueInfo = (eventId)=>
     API.get(SWIFTLINE_API_BASE_URL+"Event/GetEventQueue/"+eventId)
 
+export const UserEvents =()=>  API.get(SWIFTLINE_API_BASE_URL+"Event/GetUserEvents")
 export const updateEvent = (event) =>
   API.put(SWIFTLINE_API_BASE_URL + "Event/EditEvent", event);
 
