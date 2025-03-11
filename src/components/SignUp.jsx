@@ -1,44 +1,112 @@
 import React, { useState } from "react";
-import { Button, InputGroup } from "react-bootstrap";
+import { Form, Button, InputGroup } from "react-bootstrap";
+import styled from "styled-components";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
-import Form from "react-bootstrap/Form";
 import { SignUpUser } from "../services/swiftlineService";
 import { useNavigate } from "react-router-dom";
 
+
+// Wrapper to center the signup card vertically and horizontally
+const SignUpWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+`;
+
+// Card styling for the signup form
+const SignUpCard = styled.div`
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  position: relative;
+`;
+
+// Title styling for the form
+const FormTitle = styled.h3`
+  font-family: "Inter", sans-serif;
+  color: black;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+// Styled floating input group for spacing and alignment
+const StyledFormFloating = styled(Form.Floating)`
+  margin-bottom: 20px;
+`;
+
+// Input styling with sage green borders and focus effects
+const StyledFormControl = styled(Form.Control)`
+  border: 2px solid #698474;
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  &:focus {
+    border-color: #698474;
+    box-shadow: 0 0 5px rgba(105, 132, 116, 0.3);
+  }
+`;
+
+// Icon styling for toggling password visibility
+const ToggleIcon = styled(InputGroup.Text)`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 5;
+  background-color: transparent;
+  border: none;
+`;
+
+// Styled submit button using SwiftLine's signature sage green
+const StyledButton = styled(Button)`
+  background-color: #698474;
+  border: none;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+  margin-top: 20px;
+  &:hover {
+    background-color: #556c60;
+  }
+`;
+
 const SignUp = () => {
-  const [email, setEmail]= useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigator = useNavigate();
+  const navigate = useNavigate();
+  
 
   function handleSubmit(e) {
     e.preventDefault();
     const signUpRequest = { email, password };
-    
+
     SignUpUser(signUpRequest)
-        .then((response) => {
-          console.log("response: ", response);
-          navigator("/LandingPage");
-        })
-        .catch((error) => {         
-          if (error.data){
-            console.log("error: ", error.message);
-           alert(error.data.message);
-          }
-          else{
-            alert("Something went wrong. Please try again later.");
-          }
-        });
+      .then((response) => {
+        console.log("response: ", response);
+        navigate("/LandingPage");
+      })
+      .catch((error) => {
+        if (error.data) {
+          console.log("error: ", error.message);
+          alert(error.data.message);
+        } else {
+          alert("Something went wrong. Please try again later.");
+        }
+      });
   }
 
-
   return (
-    <div>
-      <Form onSubmit={handleSubmit}>
-      <h3>Sign Up</h3>
-        <Form.Group className="mb-3">
-          <Form.Floating>
-            <Form.Control
+    <SignUpWrapper>
+      <SignUpCard>
+        <Form onSubmit={handleSubmit}>
+          <FormTitle>Sign Up</FormTitle>
+
+          <StyledFormFloating className="mb-3">
+            <StyledFormControl
               type="email"
               placeholder="name@example.com"
               id="floatingEmail"
@@ -46,13 +114,10 @@ const SignUp = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <label htmlFor="floatingEmail">Email address</label>
-          </Form.Floating>
-        </Form.Group>
+          </StyledFormFloating>
 
-        
-        <Form.Group className="mb-3">
-          <Form.Floating>
-            <Form.Control
+          <StyledFormFloating className="mb-3">
+            <StyledFormControl
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               id="floatingPassword"
@@ -60,31 +125,17 @@ const SignUp = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <label htmlFor="floatingPassword">Password</label>
-            <InputGroup.Text
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ 
-                position: 'absolute', 
-                right: '10px', 
-                top: '50%', 
-                transform: 'translateY(-50%)', 
-                cursor: "pointer", 
-                zIndex: 5 
-              }}
-            >
+            <ToggleIcon onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <EyeSlashFill /> : <Eye />}
-            </InputGroup.Text>
-          </Form.Floating>
-        </Form.Group>
+            </ToggleIcon>
+          </StyledFormFloating>
 
-        <Button
-          type="submit"
-          className="btn btn-primary mt-3"
-          onClick={handleSubmit}
-        >
-          Sign Up
-        </Button>
-      </Form>  
-    </div>
+          <StyledButton type="submit" variant="primary">
+            Sign Up
+          </StyledButton>
+        </Form>
+      </SignUpCard>
+    </SignUpWrapper>
   );
 };
 

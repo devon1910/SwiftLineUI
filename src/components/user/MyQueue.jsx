@@ -99,86 +99,171 @@ export const MyQueue = () => {
       });
   }
 
-  if (isLoading) {
-    return <LoadingSpinner message="Loading..." />;
-  }
-
-  if (myQueue.position === -1) {
-    return (
-      <Alert variant="warning" className="mt-4">
-        You're currently not on any Queue at the moment.
-      </Alert>
-    );
-  }else{
-    return (
-      <Card className="mt-4">
-        {/* Confetti component that shows when timeTillYourTurn is 0 */}
-        {showConfetti && (
-          <Confetti
-            width={windowDimension.width}
-            height={windowDimension.height}
-            recycle={false}
-            numberOfPieces={400}
-            gravity={0.2}
-          />
-        )}
-        <Card.Header>
-          <h3>{myQueue.eventTitle} Queue</h3>
-        </Card.Header>
-        <Card.Body>
-          <p>
-            Your Position: {myQueue.positionRank}{" "}
-            {showPositionArrow && (
-              <span
-                style={{
-                  color: "#2ecc71",
-                  fontSize: "1.3rem",
-                  marginLeft: "8px",
-                }}
-              >
-                ↑
-              </span>
-            )}
-          </p>
-          <p>
-            Estimated Wait Time: {myQueue.timeTillYourTurn} minute(s){" "}
-            {showWaitTimeArrow && (
-              <span
-                style={{
-                  color: "#2ecc71",
-                  fontSize: "1.3rem",
-                  marginLeft: "6px",
-                }}
-              >
-                ↑
-              </span>
-            )}
-          </p>
-          {progress < 100 ? (
-            <>
-              <ProgressBar
-                now={progress}
-                label={`${Math.floor(progress)}%`}
-                animated
-                className="mb-3"
-              />
-              <DidYouKnowSlider />
-            </>
-          ) : (
-            <Alert
-              variant="success"
-              className="mb-3"
-              style={{ fontSize: "1.2rem" }}
-            >
-              You're next in line! Thanks for using SwiftLine ⚡😁
-            </Alert>
+  return (
+    <div style={{
+      fontFamily: 'Inter, sans-serif',
+      maxWidth: '800px',
+      margin: '2rem auto',
+      padding: '0 1rem'
+    }}>
+      {myQueue.position === -1 ? (
+        <Alert variant="warning" style={{
+          backgroundColor: '#F5F7F5',
+          borderColor: '#8A9A8B',
+          color: '#606F60',
+          borderRadius: '8px',
+          padding: '1.5rem'
+        }}>
+          You're currently not in any queue.
+        </Alert>
+      ) : (
+        <Card style={{
+          border: '2px solid #8A9A8B',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
+        }}>
+          {showConfetti && (
+            <Confetti
+              width={windowDimension.width}
+              height={windowDimension.height}
+              recycle={false}
+              numberOfPieces={800}
+              gravity={0.2}
+              //colors={['#8A9A8B', '#C8D5C8', '#606F60']} // Sage-themed confetti
+            />
           )}
-        </Card.Body>
-      </Card>
-    );
-
-  }
-
+          
+          <Card.Header style={{
+            backgroundColor: '#8A9A8B',
+            padding: '1.5rem',
+            borderBottom: '2px solid #6B7D6B'
+          }}>
+            <h3 style={{
+              color: 'white',
+              margin: 0,
+              fontWeight: 600,
+              fontSize: '1.5rem'
+            }}>
+              {myQueue.eventTitle} Queue
+            </h3>
+          </Card.Header>
+  
+          <Card.Body style={{ padding: '2rem' }}>
+            <div style={{ marginBottom: '2rem' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '1rem'
+              }}>
+                <span style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 500,
+                  color: '#606F60',
+                  marginRight: '0.5rem'
+                }}>
+                  Your Position:
+                </span>
+                <strong style={{ fontSize: '1.4rem', color: '#000' }}>
+                  {myQueue.positionRank}
+                </strong>
+                {showPositionArrow && (
+                  <span style={{
+                    color: '#8A9A8B',
+                    fontSize: '1.5rem',
+                    marginLeft: '0.5rem',
+                    animation: 'bounce 0.5s infinite alternate'
+                  }}>
+                    ↑
+                  </span>
+                )}
+              </div>
+  
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '2rem'
+              }}>
+                <span style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 500,
+                  color: '#606F60',
+                  marginRight: '0.5rem'
+                }}>
+                  Estimated Wait:
+                </span>
+                <strong style={{ fontSize: '1.4rem', color: '#000' }}>
+                  {myQueue.timeTillYourTurn} minute(s)
+                </strong>
+                {showWaitTimeArrow && (
+                  <span style={{
+                    color: '#8A9A8B',
+                    fontSize: '1.5rem',
+                    marginLeft: '0.5rem',
+                    animation: 'bounce 0.5s infinite alternate'
+                  }}>
+                    ↑
+                  </span>
+                )}
+              </div>
+  
+              {progress < 100 ? (
+                <>
+                  <div style={{
+                    height: '20px',
+                    backgroundColor: '#E0E6DF',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    marginBottom: '2rem'
+                  }}>
+                    <div
+                      style={{
+                        width: `${progress}%`,
+                        height: '100%',
+                        backgroundColor: '#8A9A8B',
+                        transition: 'width 0.5s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        paddingRight: '8px',
+                        color: 'white',
+                        fontWeight: 500,
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {Math.floor(progress)}%
+                    </div>
+                  </div>
+                  <DidYouKnowSlider />
+                </>
+              ) : (
+                <Alert variant="success" style={{
+                  backgroundColor: '#8A9A8B',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem'
+                }}>
+                  <span style={{ fontSize: '1.4rem' }}>🎉</span>
+                  You're next in line! Thanks for using SwiftLine ⚡
+                </Alert>
+              )}
+            </div>
+          </Card.Body>
+        </Card>
+      )}
+  
+      <style>{`
+        @keyframes bounce {
+          from { transform: translateY(0); }
+          to { transform: translateY(-5px); }
+        }
+      `}</style>
+    </div>
+  );
 
 
   
