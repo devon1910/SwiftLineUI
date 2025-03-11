@@ -1,7 +1,7 @@
 import axios from "axios";
 import API from "./APIService";
 
-const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
+const SWIFTLINE_API_BASE_URL = "https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/api/v1/";
 
 export const eventsList = () => {
   const token = JSON.parse(localStorage.getItem("user"));

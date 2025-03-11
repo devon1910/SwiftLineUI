@@ -1,7 +1,7 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export const connection = new HubConnectionBuilder()
-  .withUrl("http://localhost:5267/queueHub")
+  .withUrl("https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/queueHub")
   
   .build();
 

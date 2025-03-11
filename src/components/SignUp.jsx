@@ -8,14 +8,11 @@ import { useNavigate } from "react-router-dom";
 const SignUp = () => {
   const [email, setEmail]= useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigator = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
-    validateInput();
     const signUpRequest = { email, password };
     
     SignUpUser(signUpRequest)
@@ -34,11 +31,6 @@ const SignUp = () => {
         });
   }
 
-  function validateInput() {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-    }
-  }
 
   return (
     <div>
@@ -80,32 +72,6 @@ const SignUp = () => {
               }}
             >
               {showPassword ? <EyeSlashFill /> : <Eye />}
-            </InputGroup.Text>
-          </Form.Floating>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Floating>
-            <Form.Control
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder=" Confirm Password"
-              id="floatingConfirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <label htmlFor="floatingConfirmPassword">Confirm Password</label>
-            <InputGroup.Text
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={{ 
-                position: 'absolute', 
-                right: '10px', 
-                top: '50%', 
-                transform: 'translateY(-50%)', 
-                cursor: "pointer", 
-                zIndex: 5 
-              }}
-            >
-              {showConfirmPassword ? <EyeSlashFill /> : <Eye />}
             </InputGroup.Text>
           </Form.Floating>
         </Form.Group>
