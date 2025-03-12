@@ -49,6 +49,7 @@ function LandingPage() {
         if (error.response && error.response.status === 401) {
           window.location.href = "/";
         }
+        setIsLoading(false);
         console.error("Error fetching events:", error);
       });
   }
@@ -70,9 +71,26 @@ function LandingPage() {
 
   if (isLoading) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-        <LoadingSpinner message="Loading..." />
-      </motion.div>
+      <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      transition={{ duration: 0.5 }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(255, 255, 255, 0.7)",
+        zIndex: 1000
+      }}
+    >
+      <LoadingSpinner message="Loading..." />
+    </motion.div>
     );
   }
 

@@ -1,15 +1,13 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
+const apiUrl =  import.meta.env.VITE_API_SIGNALR_URL
+
+//"https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/queueHub"
 export const connection = new HubConnectionBuilder()
-  .withUrl("https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/queueHub")
+  .withUrl(apiUrl+"queueHub")
   
   .build();
-
     connection
     .start()
     .then(() => console.log("Connected to SignalR hub"))
     .catch((err) => console.error("Error connecting to hub:", err));
-
-    connection.on("ReceiveMessage", (message) => {
-    console.log("Received message:", message);
-    });

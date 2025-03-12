@@ -7,7 +7,7 @@ import {
   Row,
 } from "react-bootstrap";
 import styled from "styled-components";
-import { connection } from "../../services/SignalRConn";
+import { connection } from "../../services/SignalRConn.js";
 import LoadingSpinner from "../LoadingSpinner";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
 import { toast } from "react-toastify";

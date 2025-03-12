@@ -3,58 +3,47 @@ import API from "./APIService";
 
 //const SWIFTLINE_API_BASE_URL = "https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/api/v1/";
 
-const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
+//const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
 
-export const eventsList = () => {
-  const token = JSON.parse(localStorage.getItem("user"));
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  return axios.get(SWIFTLINE_API_BASE_URL + "Event/GetAllEvents", config);
-};
+const apiUrl = import.meta.env.VITE_API_URL;
+
+export const eventsList = () =>
+  API.get(apiUrl + "Event/GetAllEvents");
 
 export const createEvent = (event) =>
-  API.post(SWIFTLINE_API_BASE_URL + "Event/CreateEvent", event);
+  API.post(apiUrl + "Event/CreateEvent", event);
 
 // export const getEmployeeById = (id) =>
 //   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
 export const eventQueueInfo = (eventId) =>
-  API.get(SWIFTLINE_API_BASE_URL + "Event/GetEventQueue/" + eventId);
+  API.get(apiUrl + "Event/GetEventQueue/" + eventId);
 
-export const UserEvents = () =>
-  API.get(SWIFTLINE_API_BASE_URL + "Event/GetUserEvents");
+export const UserEvents = () => API.get(apiUrl + "Event/GetUserEvents");
 export const updateEvent = (event) =>
-  API.put(SWIFTLINE_API_BASE_URL + "Event/EditEvent", event);
+  API.put(apiUrl + "Event/EditEvent", event);
 
 export const joinLine = (eventId) =>
-  API.post(SWIFTLINE_API_BASE_URL + "Event/JoinEvent?EventId=" + eventId);
+  API.post(apiUrl + "Event/JoinEvent?EventId=" + eventId);
 
-export const validateToken = (token) => axios.post(
-  SWIFTLINE_API_BASE_URL + "Auth/VerifyToken?token=" + token
-); 
+export const validateToken = (token) =>
+  axios.post(apiUrl + "Auth/VerifyToken?token=" + token);
 
 // export const deleteEmployee = (id) =>
 //   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
 
 export const lineInfo = function (queue) {
   const lineMemberId = queue.lineMemberId;
-  return API.get(SWIFTLINE_API_BASE_URL + "Line/GetLineInfo/" + lineMemberId);
+  return API.get(apiUrl + "Line/GetLineInfo/" + lineMemberId);
 };
 
-export const GetUserLineInfo = () =>
-  API.get(SWIFTLINE_API_BASE_URL + "Line/GetUserLineInfo");
+export const GetUserLineInfo = () => API.get(apiUrl + "Line/GetUserLineInfo");
 export const GetUserQueueStatus = () =>
-  API.get(SWIFTLINE_API_BASE_URL + "Line/GetUserQueueStatus");
+  API.get(apiUrl + "Line/GetUserQueueStatus");
 
 export const loginUser = async (loginRequest) => {
   try {
-    const response = await axios.post(
-      SWIFTLINE_API_BASE_URL + "Auth/Login",
-      loginRequest
-    );
+    const response = await axios.post(apiUrl + "Auth/Login", loginRequest);
     if (response.data.data.accessToken) {
       const valueToken = JSON.stringify(response.data.data.accessToken);
       const refreshToken = JSON.stringify(response.data.data.refreshToken);
@@ -84,10 +73,7 @@ export const loginUser = async (loginRequest) => {
 
 export const SignUpUser = async (SignInRequest) => {
   try {
-    const response = await axios.post(
-      SWIFTLINE_API_BASE_URL + "Auth/SignUp",
-      SignInRequest
-    );
+    const response = await axios.post(apiUrl + "Auth/SignUp", SignInRequest);
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data.accessToken));
       localStorage.setItem(
