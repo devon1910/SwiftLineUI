@@ -109,7 +109,7 @@ function LandingPage() {
             margin: '0 auto',
             lineHeight: 1.5
           }}>
-            Queue Smarter, Not Harder – Your Time, Optimized.
+            Queue Smarter, Not Harder – Your Time, Optimized. 
           </p>
         </motion.div>
 

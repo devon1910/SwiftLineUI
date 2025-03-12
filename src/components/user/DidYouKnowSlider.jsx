@@ -4,7 +4,7 @@ import { Card, Carousel } from 'react-bootstrap';
 const DidYouKnowSlider = () => {
     const [randomReasons, setRandomReasons] = useState([]);
     // List of reasons why people should use Swiftline.
-    const colors = ["#3d550c", "#81b622", "#ecf87f", "#59981a"];
+    const colors = ["#76b947", "#b1d8b7", "#2f5233", "#94c973"];
     const swiftlineReasons = [
         "You can plan your day 10 times better when you use Swiftline to join queues.",
         "Swiftline Event Organizers report up to a 70% reduction in wait times.",

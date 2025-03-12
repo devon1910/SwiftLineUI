@@ -1,7 +1,9 @@
 import axios from "axios";
 import API from "./APIService";
 
-const SWIFTLINE_API_BASE_URL = "https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/api/v1/";
+//const SWIFTLINE_API_BASE_URL = "https://swiftline-cvbsdhauepbcambe.canadacentral-01.azurewebsites.net/api/v1/";
+
+const SWIFTLINE_API_BASE_URL = "http://localhost:5267/api/v1/";
 
 export const eventsList = () => {
   const token = JSON.parse(localStorage.getItem("user"));
@@ -10,48 +12,54 @@ export const eventsList = () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return axios.get(SWIFTLINE_API_BASE_URL+"Event/GetAllEvents", config);
+  return axios.get(SWIFTLINE_API_BASE_URL + "Event/GetAllEvents", config);
 };
 
 export const createEvent = (event) =>
-   API.post(SWIFTLINE_API_BASE_URL+"Event/CreateEvent", event);
+  API.post(SWIFTLINE_API_BASE_URL + "Event/CreateEvent", event);
 
 // export const getEmployeeById = (id) =>
 //   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
-export const eventQueueInfo = (eventId)=>
-    API.get(SWIFTLINE_API_BASE_URL+"Event/GetEventQueue/"+eventId)
+export const eventQueueInfo = (eventId) =>
+  API.get(SWIFTLINE_API_BASE_URL + "Event/GetEventQueue/" + eventId);
 
-export const UserEvents =()=>  API.get(SWIFTLINE_API_BASE_URL+"Event/GetUserEvents")
+export const UserEvents = () =>
+  API.get(SWIFTLINE_API_BASE_URL + "Event/GetUserEvents");
 export const updateEvent = (event) =>
   API.put(SWIFTLINE_API_BASE_URL + "Event/EditEvent", event);
 
-export const joinLine= (eventId)=>
-    API.post(SWIFTLINE_API_BASE_URL + "Event/JoinEvent?EventId="+eventId)
+export const joinLine = (eventId) =>
+  API.post(SWIFTLINE_API_BASE_URL + "Event/JoinEvent?EventId=" + eventId);
+
+export const validateToken = (token) => axios.post(
+  SWIFTLINE_API_BASE_URL + "Auth/VerifyToken?token=" + token
+); 
+
 // export const deleteEmployee = (id) =>
 //   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
 
-export const lineInfo = function (queue){
+export const lineInfo = function (queue) {
+  const lineMemberId = queue.lineMemberId;
+  return API.get(SWIFTLINE_API_BASE_URL + "Line/GetLineInfo/" + lineMemberId);
+};
 
-    const lineMemberId= queue.lineMemberId
-    return API.get(SWIFTLINE_API_BASE_URL+"Line/GetLineInfo/"+lineMemberId)
-}
-
-export const GetUserLineInfo = () => API.get(SWIFTLINE_API_BASE_URL+"Line/GetUserLineInfo");
-export const GetUserQueueStatus = () => API.get(SWIFTLINE_API_BASE_URL+"Line/GetUserQueueStatus");
-
+export const GetUserLineInfo = () =>
+  API.get(SWIFTLINE_API_BASE_URL + "Line/GetUserLineInfo");
+export const GetUserQueueStatus = () =>
+  API.get(SWIFTLINE_API_BASE_URL + "Line/GetUserQueueStatus");
 
 export const loginUser = async (loginRequest) => {
   try {
     const response = await axios.post(
-        SWIFTLINE_API_BASE_URL + "Auth/Login",
+      SWIFTLINE_API_BASE_URL + "Auth/Login",
       loginRequest
     );
     if (response.data.data.accessToken) {
-      const valueToken=JSON.stringify(response.data.data.accessToken)
-      const refreshToken=JSON.stringify(response.data.data.refreshToken)
+      const valueToken = JSON.stringify(response.data.data.accessToken);
+      const refreshToken = JSON.stringify(response.data.data.refreshToken);
       localStorage.setItem("user", valueToken);
-      localStorage.setItem("refreshToken",refreshToken)
+      localStorage.setItem("refreshToken", refreshToken);
     }
     return response.data;
   } catch (error) {
@@ -77,30 +85,33 @@ export const loginUser = async (loginRequest) => {
 export const SignUpUser = async (SignInRequest) => {
   try {
     const response = await axios.post(
-        SWIFTLINE_API_BASE_URL + "Auth/SignUp",
+      SWIFTLINE_API_BASE_URL + "Auth/SignUp",
       SignInRequest
     );
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data.accessToken));
-      localStorage.setItem("refreshToken",JSON.stringify(response.data.refreshToken))
+      localStorage.setItem(
+        "refreshToken",
+        JSON.stringify(response.data.refreshToken)
+      );
     }
     return response.data;
   } catch (error) {
     if (error.response) {
-        // The server responded with a status code outside the 2xx range
-        console.log("Error status:", error.response.status);
-        console.log("Error data:", error.response.data);
-  
-        // You can throw the server's error message instead of Axios's generic one
-        throw error.response.data;
+      // The server responded with a status code outside the 2xx range
+      console.log("Error status:", error.response.status);
+      console.log("Error data:", error.response.data);
+
+      // You can throw the server's error message instead of Axios's generic one
+      throw error.response.data;
     } else if (error.request) {
-        // The request was made but no response was received
-        console.log("Error request:", error.request);
-        throw new Error("No response received from server");
+      // The request was made but no response was received
+      console.log("Error request:", error.request);
+      throw new Error("No response received from server");
     } else {
-        // Something else caused the error
-        console.log("Error message:", error.message);
-        throw error;
+      // Something else caused the error
+      console.log("Error message:", error.message);
+      throw error;
     }
   }
 };

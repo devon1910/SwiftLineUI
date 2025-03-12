@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { loginUser } from "../services/swiftlineService";
-import { Button, InputGroup, Spinner } from "react-bootstrap";
+import { Alert, Button, InputGroup, Spinner } from "react-bootstrap";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 // Container that centers the login card vertically and horizontally
@@ -93,11 +94,9 @@ const Login = () => {
             }
         });
       })
-      .catch((error) => {
-       
-        console.log("error: ", error.message);
-        alert(error.data.message);
-        
+      .catch((error) => {      
+       console.log("error: ", error.message);
+       toast.error(error.data.message);
       });
   };
 

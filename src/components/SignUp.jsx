@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form, Button, InputGroup } from "react-bootstrap";
+import { Form, Button, InputGroup, Alert } from "react-bootstrap";
 import styled from "styled-components";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { SignUpUser } from "../services/swiftlineService";
-import { useNavigate } from "react-router-dom";
-
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import LoadingSpinner from "./LoadingSpinner";
 
 // Wrapper to center the signup card vertically and horizontally
 const SignUpWrapper = styled.div`
@@ -76,35 +77,76 @@ const StyledButton = styled(Button)`
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  
+  const [isLoading, setIsLoading] = useState(false)
 
   function handleSubmit(e) {
     e.preventDefault();
+    setIsLoading(true)
     const signUpRequest = { email, password };
-
     SignUpUser(signUpRequest)
       .then((response) => {
         console.log("response: ", response);
-        navigate("/LandingPage");
+        setIsFormSubmitted(true);
+        setIsLoading(false)
+        console.log("isFormSubmitted", isFormSubmitted)
       })
       .catch((error) => {
         if (error.data) {
           console.log("error: ", error.message);
-          alert(error.data.message);
+          toast.error(error.data.message);
         } else {
-          alert("Something went wrong. Please try again later.");
+          toast.error("Something went wrong. Please try again later.");
         }
+        setIsLoading(false)
       });
   }
 
-  return (
-    <SignUpWrapper>
-      <SignUpCard>
+  return(<SignUpWrapper>
+    {isLoading && (
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }} 
+        transition={{ duration: 0.5 }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
+          zIndex: 1000
+        }}
+      >
+        <LoadingSpinner message="Loading..." />
+      </motion.div>
+    )}
+    
+    <SignUpCard>
+      {isFormSubmitted ? (
+        <Alert
+          variant="success"
+          style={{
+            backgroundColor: "#8A9A8B",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: 500,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.8rem",
+          }}
+        >
+          Almost done! a welcome mail has been sent to your email address, kindly follow the instructions. Didn't get it in your inbox? please check your spam folder or contact the support team. Thanks!🙂
+        </Alert>
+      ) : (
         <Form onSubmit={handleSubmit}>
           <FormTitle>Sign Up</FormTitle>
-
           <StyledFormFloating className="mb-3">
             <StyledFormControl
               type="email"
@@ -134,9 +176,11 @@ const SignUp = () => {
             Sign Up
           </StyledButton>
         </Form>
-      </SignUpCard>
-    </SignUpWrapper>
-  );
+      )}
+    </SignUpCard>
+  </SignUpWrapper>
+ )
+  
 };
 
 export default SignUp;

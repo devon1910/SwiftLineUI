@@ -7,6 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
+import VerifyToken from "./components/VerifyToken";
+import VerifyTokenPage from "./components/VerifyToken";
 
 function App() {
   return (
@@ -26,6 +28,9 @@ function App() {
         <Route path="/" element={<AuthForm />}></Route>
         <Route element= {<ProtectedRoute/>}>
           <Route path="/LandingPage" element={<LandingPage />}></Route>
+        </Route>
+        <Route element= {<ProtectedRoute/>}>
+          <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>
