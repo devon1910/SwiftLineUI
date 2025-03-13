@@ -28,7 +28,7 @@ const ViewQueue = ({ event, onSkip }) => {
         <Container className="mt-4">
           <Card>
             <Card.Header>
-              <h3>{event.title} - Queue Management</h3>
+              <h3>{event.title}</h3>
             </Card.Header>
             <Card.Body>
               <Card.Text>{event.description}</Card.Text>

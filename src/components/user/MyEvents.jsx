@@ -5,13 +5,12 @@ import { UserEvents } from '../../services/swiftlineService';
 const MyEvents = ({onPageChange }) => {
  
   const [userEvents, setUserEvents] = useState([])
+
    useEffect(() => {
           getUserEvents();
-        },[])
-        
+        },[])     
         function getUserEvents(){
           UserEvents().then((response) => {
-
             setUserEvents(response.data.data);
           }).catch((error) => {
             console.log(error);

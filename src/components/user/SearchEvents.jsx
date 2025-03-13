@@ -63,6 +63,8 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log("filteredEvents: ", filteredEvents);
+
   useEffect(() => {
     getUserQueueStatus();
     setIsLoading(false);

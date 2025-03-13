@@ -50,6 +50,7 @@ const EventForm = ({
                   : ev
               );
               setEvents(updatedEvents);
+              onPageChange("myevents");
         })
         .catch((error) => {
           console.log(error);
@@ -61,13 +62,13 @@ const EventForm = ({
           .then((response) => {
             console.log(response.data);
             setEvents([...events, newEvent]);
-            
+            onPageChange("myevents");
           })
           .catch((error) => {
             console.log(error);
           });
       }
-      onPageChange("myevents");
+      
     }
   };
 

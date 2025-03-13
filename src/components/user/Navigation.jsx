@@ -1,7 +1,10 @@
 import React from 'react'
 import { Nav, Navbar } from 'react-bootstrap';
+import styled from "styled-components";
+
 
 const Navigation = ({onPageChange} ) => {
+
     return (
         <Navbar bg="light" expand="lg">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
