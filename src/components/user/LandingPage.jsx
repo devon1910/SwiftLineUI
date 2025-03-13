@@ -106,6 +106,17 @@ function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
+        <img 
+          src="src\assets\swifline_logo.webp" 
+          alt="SwiftLine Logo" 
+          style={{
+            width: '80px', 
+            marginBottom: '1rem',
+            display: 'block',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}
+        />
           <h1 style={{
             fontSize: '2.5rem',
             fontWeight: 700,
