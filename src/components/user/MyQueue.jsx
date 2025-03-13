@@ -112,7 +112,8 @@ export const MyQueue = () => {
           borderColor: '#8A9A8B',
           color: '#606F60',
           borderRadius: '8px',
-          padding: '1.5rem'
+          padding: '1.5rem',
+          marginTop: '2rem'
         }}>
           You're currently not in any queue.
         </Alert>

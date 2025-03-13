@@ -56,18 +56,17 @@ const StyledButton = styled(BootstrapButton)`
 export const SearchEvents = ({ events, onPageChange, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+ // const [isLoading, setIsLoading] = useState(true);
 
   // Filter events based on the search term
   const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log("filteredEvents: ", filteredEvents);
 
   useEffect(() => {
     getUserQueueStatus();
-    setIsLoading(false);
+    //setIsLoading(false);
   }, []);
 
   function getUserQueueStatus() {
@@ -132,9 +131,9 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
       });
   };
 
-  if (isLoading) {
-    return <LoadingSpinner message="Loading..." />;
-  }
+  // if (isLoading) {
+  //   return <LoadingSpinner message="Loading..." />;
+  // }
   const StatItem = ({ label, value }) => (
     <div style={{ 
       display: "flex", 

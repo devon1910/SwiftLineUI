@@ -11,22 +11,25 @@ import MyQueue from "./MyQueue";
 import ViewQueue from "./ViewQueue";
 import { eventsList } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
-import {    Container, 
-     WelcomeMessage, 
-     ContentWrapper, 
-     HeroSection, 
-     ToggleButton, 
-     FloatingActionButton  } from "../../services/StyledComponents";
+import {
+  Container,
+  WelcomeMessage,
+  ContentWrapper,
+  HeroSection,
+  ToggleButton,
+  FloatingActionButton,
+} from "../../services/StyledComponents";
 import { CustomCursor } from "../CustomCursor";
 import ParticlesBackground from "../ParticlesComponent";
+import { Header } from "../Header";
+import { Footer } from "../Footer";
 
 function LandingPage() {
   const location = useLocation();
-  const {userId, email } = location.state || {};
+  const { userId, email } = location.state || {};
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [editingEvent, setEditingEvent] = useState(null);
   const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
@@ -43,13 +46,11 @@ function LandingPage() {
     eventsList()
       .then((response) => {
         setEvents(response.data.data);
-        setIsLoading(false);
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
           window.location.href = "/";
         }
-        setIsLoading(false);
         console.error("Error fetching events:", error);
       });
   }
@@ -69,120 +70,109 @@ function LandingPage() {
     localStorage.setItem("darkMode", !darkMode);
   };
 
-  if (isLoading) {
-    return (
-      <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }} 
-      transition={{ duration: 0.5 }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
-        zIndex: 1000
-      }}
-    >
-      <LoadingSpinner message="Loading..." />
-    </motion.div>
-    );
-  }
-
   return (
-    <Container darkMode={darkMode}>
-      {/* <CustomCursor /> 
-      <ParticlesBackground darkMode={darkMode} />*/}
-      <Navigation onPageChange={handlePageChange} darkMode={darkMode} />
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
+      }`}
+    >
+      {/* Navigation */}
+      <Navigation
+        onPageChange={handlePageChange}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode} // Add this prop
+      />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <section className="text-center py-12 md:py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <img
+              src="src/assets/swifline_logo.webp"
+              alt="SwiftLine Logo"
+              className="w-28 mx-auto mb-6"
+            />
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              Welcome to SwiftLine
+              <span className="text-sage-500 ml-2">⚡</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
+              Queue Smarter, Not Harder – Your Time, Optimized.
+            </p>
+          </motion.div>
+        </section>
 
-      <HeroSection darkMode={darkMode}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-        <img 
-          src="src\assets\swifline_logo.webp" 
-          alt="SwiftLine Logo" 
-          style={{
-            width: '110px', 
-            marginBottom: '1rem',
-            display: 'block',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}
-        />
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: 700,
-            marginBottom: '1rem',
-            color: darkMode ? 'white' : '#2D3748',
-            letterSpacing: '-0.02em'
-          }}>
-            Welcome to SwiftLine
-            <span style={{ 
-              color: '#8A9A8B',
-              marginLeft: '0.5rem',
-              display: 'inline-block'
-            }}>⚡</span>
-          </h1>
-          <p style={{
-            fontSize: '1.2rem',
-            color: darkMode ? '#CBD5E0' : '#606F60',
-            maxWidth: '600px',
-            margin: '0 auto',
-            lineHeight: 1.5
-          }}>
-            Queue Smarter, Not Harder – Your Time, Optimized. 
+        {/* Welcome Message */}
+        <div className="mb-12 text-center md:text-left">
+          <p className="text-lg md:text-xl">
+            👋 Hello, <strong className="text-sage-500">{email}</strong>
           </p>
-        </motion.div>
+        </div>
 
-        <ToggleButton 
-          onClick={toggleDarkMode}
-          darkMode={darkMode}
-          aria-label="Toggle dark mode"
-        >
-          {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
-        </ToggleButton>
-      </HeroSection>
+        {/* Content Area */}
+        <div className="pb-16">
+          {currentPage === "dashboard" && (
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
+            >
+              <Dashboard onPageChange={handlePageChange} />
+            </motion.div>
+          )}
 
-      <WelcomeMessage darkMode={darkMode}>
-        👋 Hello, <strong style={{ color: '#8A9A8B' }}>{email}</strong>
-      </WelcomeMessage>
+          {currentPage === "search" && (
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <SearchEvents
+                events={events}
+                onPageChange={handlePageChange}
+                userId={userId}
+              />
+            </motion.div>
+          )}
+          {currentPage === "myevents" && (
+            <motion.div
+              initial={{ x: 25, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <MyEvents
+                events={events.filter((event) => event.createdBy === email)}
+                onPageChange={handlePageChange}
+              />
+            </motion.div>
+          )}
+          {currentPage === "eventForm" && (
+            <EventForm
+              onPageChange={handlePageChange}
+              events={events}
+              setEvents={setEvents}
+              editingEvent={editingEvent}
+            />
+          )}
+          {currentPage === "myqueue" && <MyQueue />}
+          {currentPage === "queueManagement" && (
+            <ViewQueue event={editingEvent} onSkip={handleSkip} />
+          )}
+        </div>
+      </main>
 
-      <ContentWrapper style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 1.5rem 4rem'
-      }}>
-        {currentPage === "dashboard" && (
-          <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.4 }}>
-            <Dashboard onPageChange={handlePageChange} />
-          </motion.div>
-        )}
-        {currentPage === "search" && (
-          <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.4 }}>
-            <SearchEvents events={events} onPageChange={handlePageChange} userId={userId} />
-          </motion.div>
-        )}
-        {currentPage === "myevents" && <MyEvents events={events.filter((event) => event.createdBy === email)} onPageChange={handlePageChange} />}
-        {currentPage === "eventForm" && <EventForm onPageChange={handlePageChange} events={events} setEvents={setEvents} editingEvent={editingEvent} />}
-        {currentPage === "myqueue" && <MyQueue />}
-        {currentPage === "queueManagement" && <ViewQueue event={editingEvent} onSkip={handleSkip} />}
-      </ContentWrapper>
-
-      <FloatingActionButton 
+      {/* Floating Action Button */}
+      <button
         onClick={() => handlePageChange("eventForm")}
-        aria-label="Create new event"
+        className="fixed bottom-8 right-8 bg-sage-500 text-white p-4 rounded-full shadow-lg hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
       >
-        <FiPlus size={24} />
-      </FloatingActionButton>
-    </Container>
+        <FiPlus size={28} />
+      </button>
+    </div>
   );
 }
 

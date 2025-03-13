@@ -13,30 +13,32 @@ import { LoadingProvider } from "./components/LoadingContextProvider";
 
 function App() {
   return (
-    <BrowserRouter>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <LoadingProvider>
-        <Routes>
-          <Route path="/" element={<AuthForm />}></Route>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/LandingPage" element={<LandingPage />}></Route>
-          </Route>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
-          </Route>
-        </Routes>
-      </LoadingProvider>
-    </BrowserRouter>
+    <> <BrowserRouter>
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
+    <LoadingProvider>
+      <Routes>
+        <Route path="/" element={<AuthForm />}></Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/LandingPage" element={<LandingPage />}></Route>
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
+        </Route>
+      </Routes>
+    </LoadingProvider>
+  </BrowserRouter>
+  <Footer/></>
+   
   );
 }
 

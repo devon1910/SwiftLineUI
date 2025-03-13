@@ -6,6 +6,7 @@ import { SignUpUser } from "../services/swiftlineService";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import LoadingSpinner from "./LoadingSpinner";
+import { CheckCircle } from "lucide-react";
 
 // Wrapper to center the signup card vertically and horizontally
 const SignUpWrapper = styled.div`
@@ -103,86 +104,78 @@ const SignUp = () => {
       });
   }
 
-  return(<SignUpWrapper>
-    {isLoading && (
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        exit={{ opacity: 0 }} 
-        transition={{ duration: 0.5 }}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
-          zIndex: 1000
-        }}
-      >
-        <LoadingSpinner message="Loading..." />
-      </motion.div>
-    )}
-    
-    <SignUpCard>
-      {isFormSubmitted ? (
-        <Alert
-          variant="success"
-          style={{
-            backgroundColor: "#8A9A8B",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            fontWeight: 500,
-            display: "flex",
-            alignItems: "center",
-            gap: "0.8rem",
-          }}
+  return (
+    <div className="space-y-6">
+      {isLoading && (
+        <motion.div
+          // ... existing motion props
+          className="fixed inset-0 bg-white/70 flex items-center justify-center z-50"
         >
-          Almost done! A welcome mail has been sent to your email address, kindly follow the instructions. 
-
-Didn't get it in your inbox? Please check your spam folder or contact the support team. 
-
-Thanks 🙂</Alert>
-      ) : (
-        <Form onSubmit={handleSubmit}>
-          <FormTitle>Sign Up</FormTitle>
-          <StyledFormFloating className="mb-3">
-            <StyledFormControl
-              type="email"
-              placeholder="name@example.com"
-              id="floatingEmail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <label htmlFor="floatingEmail">Email address</label>
-          </StyledFormFloating>
-
-          <StyledFormFloating className="mb-3">
-            <StyledFormControl
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              id="floatingPassword"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <label htmlFor="floatingPassword">Password</label>
-            <ToggleIcon onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <EyeSlashFill /> : <Eye />}
-            </ToggleIcon>
-          </StyledFormFloating>
-
-          <StyledButton type="submit" variant="primary">
-            Sign Up
-          </StyledButton>
-        </Form>
+          <LoadingSpinner message="Creating your account..." />
+        </motion.div>
       )}
-    </SignUpCard>
-  </SignUpWrapper>
- )
+
+      {isFormSubmitted ? (
+        <div className="bg-sage-100 text-sage-800 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
+          <CheckCircle className="flex-shrink-0 text-sage-600" />
+          <div>
+            <p className="text-sm">
+              Almost done! Check your email (including spam folder) for the welcome message.
+              Contact support if you need help.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-bold text-center text-gray-900">Get Started</h2>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+                placeholder="name@example.com"
+              />
+            </div>
+
+            <div className="relative">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 pr-10 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+                placeholder="******"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-0 top-7 text-sage-500 hover:text-sage-600"
+              >
+                {showPassword ? <EyeSlashFill /> : <Eye />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-sage-600 text-white py-2 px-4 rounded-lg hover:bg-sage-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+          >
+            Create Account
+          </button>
+        </form>
+      )}
+    </div>
+  );
   
 };
 
