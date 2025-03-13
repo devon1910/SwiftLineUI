@@ -31,7 +31,7 @@ const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
               <div className="flex-shrink-0 flex items-center">
                 <img 
                   className="h-8 w-auto" 
-                  src="src/assets/swifline_logo.webp" 
+                  src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp" 
                   alt="Swiftline" 
                 />
                 <span className={`ml-2 text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} hidden sm:block`}>

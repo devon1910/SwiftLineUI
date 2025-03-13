@@ -144,7 +144,7 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
                     : 'bg-sage-500 text-white hover:bg-sage-600 hover:shadow-md'
                 }`}
               >
-                {isUserInQueue ? "Already in Queue" : "Join Queue"}
+                {isUserInQueue ? "Already in a Queue" : "Join Queue"}
               </button>
             </div>
           </div>

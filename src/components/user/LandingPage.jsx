@@ -93,7 +93,7 @@ function LandingPage() {
             className="space-y-6"
           >
             <img
-              src="src/assets/swifline_logo.webp"
+              src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp"
               alt="SwiftLine Logo"
               className="w-28 mx-auto mb-6"
             />
