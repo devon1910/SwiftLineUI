@@ -110,7 +110,7 @@ function LandingPage() {
           src="src\assets\swifline_logo.webp" 
           alt="SwiftLine Logo" 
           style={{
-            width: '80px', 
+            width: '110px', 
             marginBottom: '1rem',
             display: 'block',
             marginLeft: 'auto',
