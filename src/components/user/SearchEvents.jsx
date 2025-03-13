@@ -12,56 +12,24 @@ import LoadingSpinner from "../LoadingSpinner";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 
-// Styled heading with SwiftLine typography
-const StyledHeading = styled.h2`
-  margin-top: 2rem;
-  text-align: center;
-  font-family: "Inter", sans-serif;
-  color: black;
-`;
 
-// Styled form control with a sage green border and focus effect
-const StyledFormControl = styled(Form.Control)`
-  border: 2px solid #698474;
-  border-radius: 6px;
-  font-family: "Inter", sans-serif;
-  &:focus {
-    border-color: #698474;
-    box-shadow: 0 0 5px rgba(105, 132, 116, 0.3);
-  }
-`;
-
-// Styled card with smooth hover lift and flat design
-const StyledCard = styled(BootstrapCard)`
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  border: none;
-  transition: transform 0.2s ease-in-out;
-  &:hover {
-    transform: translateY(-5px);
-  }
-`;
-
-// Styled button using SwiftLine sage green and flat style
-const StyledButton = styled(BootstrapButton)`
-  background-color: #698474;
-  border: none;
-  font-family: "Inter", sans-serif;
-  &:hover {
-    background-color: #556c60;
-  }
-`;
 
 export const SearchEvents = ({ events, onPageChange, userId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
  // const [isLoading, setIsLoading] = useState(true);
 
-  // Filter events based on the search term
-  const filteredEvents = events.filter((event) =>
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 6;
+
+  // Pagination logic
+  const filteredEvents = events.filter(event => 
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
 
   useEffect(() => {
@@ -81,26 +49,6 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
         console.log(error);
       });
   }
-
-  // Styles for active/inactive status dot
-  const activeDotStyle = {
-    width: "10px",
-    height: "10px",
-    backgroundColor: "#698474", // SwiftLine sage green
-    borderRadius: "50%",
-    display: "inline-block",
-    marginRight: "8px",
-    animation: "beep 1.5s infinite",
-  };
-
-  const inactiveDotStyle = {
-    width: "10px",
-    height: "10px",
-    backgroundColor: "#bdc3c7", // Neutral gray
-    borderRadius: "50%",
-    display: "inline-block",
-    marginRight: "8px",
-  };
 
   const joinQueue = async (event) => {
     const eventId = event.id;
@@ -135,167 +83,92 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
   //   return <LoadingSpinner message="Loading..." />;
   // }
   const StatItem = ({ label, value }) => (
-    <div style={{ 
-      display: "flex", 
-      flexDirection: "column",
-      padding: '0.5rem',
-      borderRadius: '4px',
-      backgroundColor: '#F5F7F5' // Very light sage background
-    }}>
-      <span style={{ 
-        fontSize: "0.75rem",
-        color: "#606F60", // Dark sage
-        textTransform: "uppercase",
-        letterSpacing: "0.05em"
-      }}>
-        {label}
-      </span>
-      <span style={{
-        fontSize: "1.1rem",
-        fontWeight: 500,
-        color: "#000000" // Black
-      }}>
-        {value}
-      </span>
+    <div className="flex flex-col">
+      <span className="text-xs text-sage-500 dark:text-sage-400 font-medium">{label}</span>
+      <span className="text-gray-600 dark:text-gray-600 font-medium">{value}</span>
     </div>
   );
   return (
-    <div>
-      <StyledHeading>Search Events</StyledHeading>
-      <Form>
-        <Form.Group controlId="search">
-          <StyledFormControl
-            type="text"
-            placeholder="Search for events by their titles"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Form.Group>
-      </Form>
-      <br />
-      <Row>
-        {filteredEvents.map((event) => (
-          <Col md={4} key={event.id} className="mb-3">
-            <StyledCard
-              style={{
-                border: "1px solid #8A9A8B", // Sage green border
-                borderRadius: "8px",
-                backgroundColor: "white",
-              }}
-            >
-              {/* Status dot */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
-                  zIndex: 1,
-                }}
-              >
-                <span
-                  style={
-                    event.isActive
-                      ? {
-                          ...activeDotStyle,
-                          backgroundColor: "#8A9A8B", // Sage green
-                        }
-                      : {
-                          ...inactiveDotStyle,
-                          backgroundColor: "#C8D5C8", // Muted sage
-                        }
-                  }
-                />
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">Search Events</h2>
+      
+      {/* Search Input */}
+      <div className="mb-8">
+        <input
+          type="text"
+          placeholder="Search events by title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-3 rounded-lg border border-sage-600 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-green-500 dark:bg-white-800 dark:border-gray-600"
+        />
+      </div>
+
+      {/* Events Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentEvents.map((event) => (
+          <div key={event.id} className="relative bg-white dark:bg-gray-800 rounded-xl shadow-md border border-sage-200 dark:border-gray-700">
+            {/* Status Dot */}
+            <div className={`absolute top-4 right-4 w-3 h-3 rounded-full ${event.isActive ? 'bg-sage-500' : 'bg-sage-200'}`} />
+
+            <div className="p-6 flex flex-col gap-4">
+              {/* Title */}
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                {event.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-gray-600 dark:text-gray-500 text-sm leading-relaxed">
+                {event.description}
+              </p>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <StatItem label="Average Wait" value={`${event.averageTime} mins`} />
+                <StatItem label="Users in Queue" value={event.usersInQueue} />
+                <StatItem label="Start Time" value={event.eventStartTime} />
+                <StatItem label="End Time" value={event.eventEndTime} />
               </div>
 
-              <BootstrapCard.Body
-                style={{
-                  padding: "1.5rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.8rem",
-                }}
+              {/* Organizer */}
+              <p className="text-sm text-sage-500 dark:text-sage-400 italic">
+                Organized by: {event.createdBy}
+              </p>
+
+              {/* Join Button */}
+              <button
+                disabled={isUserInQueue}
+                onClick={() => joinQueue(event)}
+                className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
+                  isUserInQueue 
+                    ? 'bg-sage-200 text-sage-600 cursor-not-allowed' 
+                    : 'bg-sage-500 text-white hover:bg-sage-600 hover:shadow-md'
+                }`}
               >
-                {/* Title Section */}
-                <BootstrapCard.Title
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 600,
-                    marginBottom: "0.5rem",
-                    color: "#000000", // Black
-                  }}
-                >
-                  {event.title}
-                </BootstrapCard.Title>
-
-                {/* Description */}
-                <BootstrapCard.Text
-                  style={{
-                    color: "#606F60", // Dark sage
-                    fontSize: "0.9rem",
-                    lineHeight: 1.4,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  {event.description}
-                </BootstrapCard.Text>
-
-                {/* Stats Grid */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(2, 1fr)",
-                    gap: "0.75rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <StatItem
-                    label="Average Wait"
-                    value={`${event.averageTime} mins`}
-                  />
-                  <StatItem label="Users in Queue" value={event.usersInQueue} />
-                  <StatItem label="Start Time" value={event.eventStartTime} />
-                  <StatItem label="End Time" value={event.eventEndTime} />
-                </div>
-
-                {/* Organizer */}
-                <BootstrapCard.Text
-                  style={{
-                    fontSize: "0.85rem",
-                    color: "#8A9A8B", // Sage green
-                    opacity: 0.9,
-                    fontStyle: "italic",
-                  }}
-                >
-                  Organized by: {event.createdBy}
-                </BootstrapCard.Text>
-
-                {/* Join Button */}
-                <StyledButton
-                  disabled={isUserInQueue}
-                  onClick={() => joinQueue(event)}
-                  style={{
-                    marginTop: "1rem",
-                    width: "100%",
-                    padding: "0.75rem",
-                    fontSize: "1rem",
-                    fontWeight: 500,
-                    backgroundColor: isUserInQueue ? "#E0E6DF" : "#8A9A8B", // Sage green
-                    color: isUserInQueue ? "#606F60" : "white",
-                    border: "none",
-                    transition: "all 0.2s ease",
-                    "&:hover:not(:disabled)": {
-                      backgroundColor: "#6B7D6B", // Darker sage
-                      transform: "translateY(-1px)",
-                    },
-                  }}
-                >
-                  {isUserInQueue ? "Already in Queue" : "Join Queue"}
-                </StyledButton>
-              </BootstrapCard.Body>
-            </StyledCard>
-          </Col>
+                {isUserInQueue ? "Already in Queue" : "Join Queue"}
+              </button>
+            </div>
+          </div>
         ))}
-      </Row>
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === i + 1
+                  ? 'bg-sage-500 text-white'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-sage-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -77,11 +77,12 @@ function LandingPage() {
       }`}
     >
       {/* Navigation */}
-      <Navigation
-        onPageChange={handlePageChange}
-        darkMode={darkMode}
-        toggleDarkMode={toggleDarkMode} // Add this prop
-      />
+      <Navigation 
+      onPageChange={handlePageChange} 
+      darkMode={darkMode}
+      toggleDarkMode={toggleDarkMode} // Add this prop
+    />
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <section className="text-center py-12 md:py-20">

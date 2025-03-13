@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { createEvent } from "../../services/swiftlineService";
 import { updateEvent } from "../../services/swiftlineService";
+import { toast } from "react-toastify";
 
 const EventForm = ({
   onPageChange,
@@ -18,10 +19,10 @@ const EventForm = ({
     editingEvent ? editingEvent.averageTime : ""
   );
 
-  const [startTime, setStartTime] = useState(
+  const [eventStartTime, setStartTime] = useState(
     editingEvent ? editingEvent.eventStartTime.slice(0, -3) : ""
   );
-  const [endTime, setEndTime] = useState(
+  const [eventEndTime, setEndTime] = useState(
     editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
   );
 
@@ -34,8 +35,8 @@ const EventForm = ({
         eventId,
         title,
         description,
-        startTime,
-        endTime,
+        eventStartTime,
+        eventEndTime,
         averageTime,
       };
 
@@ -54,28 +55,31 @@ const EventForm = ({
         })
         .catch((error) => {
           console.log(error);
+          toast.error("There was an error in editing events. Please try again later.");
+          onPageChange("myevents");
         });
         //setEvents(updatedEvents);
       } else {
         
         createEvent(newEvent)
-          .then((response) => {
-            console.log(response.data);
+          .then((response) => {   
+            newEvent["usersInQueue"]= 0
             setEvents([...events, newEvent]);
+            console.log("new Events List: ", [...events, newEvent]);
             onPageChange("myevents");
           })
           .catch((error) => {
             console.log(error);
+            toast.error("There was an error in creating event. Please try again later.");
           });
-      }
-      
+      }   
     }
   };
 
 
   function validateEventStartEnd() {
-    const startInd = startEndTime.indexOf(startTime);
-    const endInd = startEndTime.indexOf(endTime);
+    const startInd = startEndTime.indexOf(eventStartTime);
+    const endInd = startEndTime.indexOf(eventEndTime);
     if (startInd === endInd) {
       alert(
         "The Event Start and end time cant be the same. Please select a different start/endtime."
@@ -116,162 +120,120 @@ const EventForm = ({
   //const meridiemOptions = ["AM", "PM"];
 
   return (
-    <Form 
-      className="mt-5" 
+    <form 
+      className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow-md dark:bg-white"
       onSubmit={handleSubmit}
-      style={{
-        fontFamily: 'Inter, sans-serif',
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '2rem',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-      }}
     >
-      <h3 style={{
-        color: '#000',
-        fontWeight: 600,
-        marginBottom: '2rem',
-        borderBottom: '2px solid #8A9A8B',
-        paddingBottom: '0.5rem'
-      }}>
+      <h3 className="text-xl text-dark sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 text-gray-800 dark:text-gray-800">
         {editingEvent ? "Edit Event" : "Create New Event"}
       </h3>
-
+  
       {/* Title Input */}
-      <Form.Group controlId="formTitle" className="mb-4">
-        <Form.Floating>
-          <Form.Control
-            type="text"
-            placeholder="Enter event title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{
-              borderColor: '#8A9A8B',
-              borderRadius: '6px',
-              fontFamily: 'Inter'
-            }}
-          />
-          <label 
-            htmlFor="Event Title" 
-            style={{ color: '#606F60', fontFamily: 'Inter' }}
-          >
-            Event Title
-          </label>
-        </Form.Floating>
-      </Form.Group>
-
+      <div className="mb-6">
+        <label 
+          htmlFor="eventTitle" 
+          className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
+        >
+          Event Title
+        </label>
+        <input
+          id="eventTitle"
+          type="text"
+          placeholder="Enter event title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+        />
+      </div>
+  
       {/* Description Input */}
-      <Form.Group controlId="formDescription" className="mb-4">
-        <Form.Floating>
-          <Form.Control
-            as="textarea"
-            rows={6}
-            placeholder="Enter event description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            style={{
-              borderColor: '#8A9A8B',
-              borderRadius: '6px',
-              fontFamily: 'Inter'
-            }}
-          />
-          <label 
-            htmlFor="Average time" 
-            style={{ color: '#606F60', fontFamily: 'Inter' }}
-          >
-            Event Description
-          </label>
-        </Form.Floating>
-      </Form.Group>
-
+      <div className="mb-6">
+        <label 
+          htmlFor="eventDescription" 
+          className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
+        >
+          Event Description
+        </label>
+        <textarea
+          id="eventDescription"
+          rows={5}
+          placeholder="Enter event description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition resize-y bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+        />
+      </div>
+  
       {/* Input Row */}
-      <Row className="g-4">
-        <Col md={4}>
-          <Form.Group controlId="formAverageTime" className="mb-3">
-            <Form.Label style={{ color: '#000', fontWeight: 500 }}>Average Wait Time (mins)</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter minutes"
-              value={averageTime}
-              onChange={(e) => setAverageTime(e.target.value)}
-              required
-              style={{
-                borderColor: '#8A9A8B',
-                borderRadius: '6px',
-                fontFamily: 'Inter'
-              }}
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group controlId="formStartTime" className="mb-3">
-            <Form.Label style={{ color: '#000', fontWeight: 500 }}>Start Time</Form.Label>
-            <Form.Select
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              style={{
-                borderColor: '#8A9A8B',
-                borderRadius: '6px',
-                fontFamily: 'Inter',
-                color: '#000'
-              }}
-            >
-              {startEndTime.map((hr) => (
-                <option key={hr} value={hr}>{hr}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group controlId="formEndTime" className="mb-3">
-            <Form.Label style={{ color: '#000', fontWeight: 500 }}>End Time</Form.Label>
-            <Form.Select
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              style={{
-                borderColor: '#8A9A8B',
-                borderRadius: '6px',
-                fontFamily: 'Inter',
-                color: '#000'
-              }}
-            >
-              {startEndTime.map((hr) => (
-                <option key={hr} value={hr}>{hr}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-      </Row>
-
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div>
+          <label 
+            htmlFor="averageTime" 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
+          >
+            Average Wait Time (mins)
+          </label>
+          <input
+            id="averageTime"
+            type="number"
+            placeholder="Enter minutes"
+            min="0"
+            value={averageTime}
+            onChange={(e) => setAverageTime(e.target.value)}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+          />
+        </div>
+  
+        <div>
+          <label 
+            htmlFor="startTime" 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
+          >
+            Start Time
+          </label>
+          <select
+            id="startTime"
+            value={eventStartTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+          >
+            {startEndTime.map((hr) => (
+              <option key={hr} value={hr}>{hr}</option>
+            ))}
+          </select>
+        </div>
+  
+        <div>
+          <label 
+            htmlFor="endTime" 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1"
+          >
+            End Time
+          </label>
+          <select
+            id="endTime"
+            value={eventEndTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+          >
+            {startEndTime.map((hr) => (
+              <option key={hr} value={hr}>{hr}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+  
       {/* Submit Button */}
-      <Button 
-        variant="primary" 
+      <button 
         type="submit"
-        style={{
-          backgroundColor: '#8A9A8B',
-          border: 'none',
-          borderRadius: '6px',
-          padding: '0.75rem 2rem',
-          fontWeight: 600,
-          fontFamily: 'Inter',
-          marginTop: '1.5rem',
-          width: '100%',
-          transition: 'all 0.2s ease',
-          ':hover': {
-            backgroundColor: '#6B7D6B',
-            transform: 'translateY(-1px)'
-          }
-        }}
+        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white"
       >
         {editingEvent ? "Save Changes" : "Create Event"}
-      </Button>
-    </Form>
+      </button>
+    </form>
   );
 };
 

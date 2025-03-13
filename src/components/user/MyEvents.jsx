@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { UserEvents } from '../../services/swiftlineService';
+import { FiTrash2 } from 'react-icons/fi';
 
 const MyEvents = ({onPageChange }) => {
  
   const [userEvents, setUserEvents] = useState([])
+  
+  function handleDeleteEvent(eventId) {
+    // Implement delete event logic here
+    console.log(`Deleting event with ID: ${eventId}`);
+  }
 
    useEffect(() => {
           getUserEvents();
@@ -16,129 +22,76 @@ const MyEvents = ({onPageChange }) => {
             console.log(error);
           })
       }
-  return (
-    <div style={{ 
-      padding: '2rem',
-      backgroundColor: '#F5F7F5', // Light sage background
-      minHeight: '100vh',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto' 
-      }}>
-        {/* Header Section */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '2rem'
-        }}>
-          <h2 style={{ 
-            color: '#2D3748', 
-            fontWeight: 600,
-            margin: 0
-          }}>
-            My Events
-          </h2>
-          <Button 
-            onClick={() => onPageChange("eventForm")}
-            style={{
-              backgroundColor: '#8A9A8B',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '0.75rem 1.5rem',
-              fontWeight: 500,
-              transition: 'all 0.2s ease',
-              ':hover': {
-                backgroundColor: '#6B7D6B',
-                transform: 'translateY(-1px)'
-              }
-            }}
-          >
-            Create New Event
-          </Button>
-        </div>
-  
-        {/* Events Grid */}
-        <Row className="g-4">
-          {userEvents.map(event => (
-            <Col md={4} key={event.id}>
-              <Card style={{ 
-                border: '1px solid #8A9A8B',
-                borderRadius: '8px',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-              }}>
-                <Card.Body style={{ padding: '1.5rem' }}>
-                  <Card.Title style={{ 
-                    color: '#000',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    marginBottom: '1rem'
-                  }}>
-                    {event.title}
-                  </Card.Title>
-                  <Card.Text style={{ 
-                    color: '#606F60',
-                    fontSize: '0.9rem',
-                    lineHeight: 1.4,
-                    minHeight: '60px',
-                    marginBottom: '1.5rem'
-                  }}>
-                    {event.description}
-                  </Card.Text>
-  
-                  {/* Buttons Container */}
-                  <div style={{ 
-                    display: 'flex',
-                    gap: '1rem',
-                    justifyContent: 'space-between'
-                  }}>
-                    <Button
-                      variant="outline" 
-                      onClick={() => onPageChange("queueManagement", event)}
-                      style={{
-                        flex: 1,
-                        borderColor: '#8A9A8B',
-                        color: '#8A9A8B',
-                        borderRadius: '6px',
-                        fontWeight: 500,
-                        transition: 'all 0.2s ease',
-                        ':hover': {
-                          backgroundColor: '#8A9A8B',
-                          color: 'white'
-                        }
-                      }}
+      return (
+        <div className="min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                My Events
+              </h2>
+              <button
+                onClick={() => onPageChange("eventForm")}
+                className="bg-sage-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+              >
+                Create New Event
+              </button>
+            </div>
+    
+            {/* Events Grid */}
+            {userEvents.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  No events created yet. Start by creating your first event!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {userEvents.map((event) => (
+                  <div key={event.id} className="relative bg-white dark:bg-gray-800 rounded-xl shadow-md border border-sage-200 dark:border-gray-700">
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDeleteEvent(event.id)}
+                      className="absolute top-4 right-4 p-2 text-red-500 hover:text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      aria-label="Delete event"
                     >
-                      View Queue
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => onPageChange("eventForm", event)}
-                      style={{
-                        flex: 1,
-                        borderColor: '#C8D5C8',
-                        color: '#606F60',
-                        borderRadius: '6px',
-                        fontWeight: 500,
-                        transition: 'all 0.2s ease',
-                        ':hover': {
-                          backgroundColor: '#E0E6DF',
-                          borderColor: '#8A9A8B'
-                        }
-                      }}
-                    >
-                      Edit Event
-                    </Button>
+                      <FiTrash2 className="w-5 h-5" />
+                    </button>
+    
+                    <div className="p-6 flex flex-col gap-4">
+                      {/* Title */}
+                      <h3 className="text-xl text-dark  font-semibold text-gray-900 dark:text-gray-100 pr-6">
+                        {event.title}
+                      </h3>
+    
+                      {/* Description */}
+                      <p className="text-gray-600 text-dark dark:text-gray-300 text-sm leading-relaxed">
+                        {event.description}
+                      </p>
+    
+                      {/* Buttons */}
+                      <div className="flex flex-col gap-2 mt-2">
+                        <button
+                          onClick={() => onPageChange("queueManagement", event)}
+                          className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
+                        >
+                          View Queue
+                        </button>
+                        <button
+                          onClick={() => onPageChange("eventForm", event)}
+                          className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
+                        >
+                          Edit Event
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-    </div>
-  );
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
 };
 export default MyEvents
 

@@ -1,0 +1,37 @@
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        sage: {
+          50: '#F5F7F5',   // Light background
+          100: '#F0F2F0',
+          200: '#C8D5C8',  // Muted sage
+          300: '#A8B9A8',
+          400: '#8A9A8B',  // Primary sage
+          500: '#7A8A7B',
+          600: '#6B7D6B',  // Dark sage
+          700: '#5A6A5B',
+          900: '#3A4A3B'   // Very dark sage
+        },
+        gray: {
+          700: '#4A5568',  // Dark mode secondary text
+          800: '#2D3748',  // Dark mode background
+          900: '#1A202C'   // Dark mode surface
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'] // Your preferred font
+      }
+    },
+  },
+  plugins: [
+    // Add any plugins you need (e.g., forms, typography)
+    require('@tailwindcss/forms'),
+  ],
+  darkMode: 'class', // Enables class-based dark mode
+}
