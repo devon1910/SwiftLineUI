@@ -142,8 +142,11 @@ const SignUp = () => {
             gap: "0.8rem",
           }}
         >
-          Almost done! a welcome mail has been sent to your email address, kindly follow the instructions. Didn't get it in your inbox? please check your spam folder or contact the support team. Thanks!🙂
-        </Alert>
+          Almost done! A welcome mail has been sent to your email address, kindly follow the instructions. 
+
+Didn't get it in your inbox? Please check your spam folder or contact the support team. 
+
+Thanks 🙂</Alert>
       ) : (
         <Form onSubmit={handleSubmit}>
           <FormTitle>Sign Up</FormTitle>
