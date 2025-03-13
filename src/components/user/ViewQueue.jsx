@@ -10,14 +10,17 @@ const ViewQueue = ({ event, onSkip }) => {
 
     useEffect(() => {
         getEventQueues();
-        setIsLoading(false)
+        
       },[])
       
       function getEventQueues(){
         eventQueueInfo(event.id).then((response) => {
             setQueues(response.data.data);
+            console.log(response.data.data);
+            setIsLoading(false)
         }).catch((error) => {
           console.log(error);
+          setIsLoading(false)
         })
     }
       
