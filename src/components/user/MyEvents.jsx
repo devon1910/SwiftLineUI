@@ -32,8 +32,6 @@ const MyEvents = ({ onPageChange }) => {
     UserEvents()
       .then((response) => {
         setUserEvents(response.data.data);
-        console.log("response: ", response.data.data);
-        console.log("userEvents: ",userEvents);
       })
       .catch((error) => {
         console.log(error);

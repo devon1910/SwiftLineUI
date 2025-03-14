@@ -5,18 +5,21 @@ import DidYouKnowSlider from "./DidYouKnowSlider";
 import { connection } from "../../services/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
-import { FiArrowUp } from "react-icons/fi";
+import { FiArrowUp, FiX } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { FiLogOut } from "react-icons/fi";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [myQueue, setMyQueue] = useState({});
 
+  const [lineMemberId, setLineMemberId] = useState(0);
+
   useEffect(() => {
     getCurrentPosition();
     setIsLoading(false);
   }, []);
-
 
   const showConfetti = myQueue.timeTillYourTurn === 0;
   // Track window dimensions for the Confetti component.
@@ -35,20 +38,24 @@ export const MyQueue = () => {
     // Make sure connection is defined/initialized before using it
     if (connection) {
       console.log("Setting up SignalR listener for queue updates");
-      
+
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         console.log("SignalR update received:", lineInfo);
         setMyQueue(lineInfo);
       });
-      
       // Clean up when component unmounts
       return () => {
         console.log("Cleaning up SignalR listener");
         connection.off("ReceivePositionUpdate");
       };
     }
-  }, []);  // Empty dependency array means it runs once on mount
+  }, []); // Empty dependency array means it runs once on mount
+
+  connection.on("ReceiveLineMemberId", (lineMemberId) => {
+    console.log("SignalR update received--lineMember:", lineMemberId);
+    setLineMemberId(lineMemberId);
+  });
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
@@ -65,7 +72,10 @@ export const MyQueue = () => {
 
   // Compare position changes for arrow indicators
   useEffect(() => {
-    if (prevPositionRef.current !== null && myQueue.position < prevPositionRef.current) {
+    if (
+      prevPositionRef.current !== null &&
+      myQueue.position < prevPositionRef.current
+    ) {
       setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 25000);
     }
@@ -74,7 +84,10 @@ export const MyQueue = () => {
 
   // Compare time changes for arrow indicators
   useEffect(() => {
-    if (prevTimeRef.current !== null && myQueue.timeTillYourTurn < prevTimeRef.current) {
+    if (
+      prevTimeRef.current !== null &&
+      myQueue.timeTillYourTurn < prevTimeRef.current
+    ) {
       setShowWaitTimeArrow(true);
       setTimeout(() => setShowWaitTimeArrow(false), 25000);
     }
@@ -94,6 +107,36 @@ export const MyQueue = () => {
       });
   }
 
+  const handleLeaveQueue = async () => {
+    if (window.confirm("Are you sure you want to leave the queue?")) {
+      // Your leave queue logic
+      // Reconnect if SignalR connection is lost
+      if (connection.state !== "Connected") {
+        toast.info("Connection lost. Attempting to reconnect...");
+        try {
+          await connection.start();
+          toast.success("Reconnected successfully.");
+        } catch (reconnectError) {
+          console.error("Reconnection failed:", reconnectError);
+          toast.error("Unable to reconnect. Please check your network.");
+          return;
+        }
+      }
+
+      // Invoke SignalR method to join the queue
+      connection
+        .invoke("ExitQueue", "", lineMemberId, "")
+        .then(() => {
+          toast.success("Exited Queue.");
+          getCurrentPosition();
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("Error in exiting queue. Please try again.");
+        });
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-4 font-sans">
       {myQueue.position === -1 ? (
@@ -101,7 +144,18 @@ export const MyQueue = () => {
           <p className="font-medium">You're currently not in any queue.</p>
         </div>
       ) : (
-        <div className="border-2 border-sage-400 rounded-xl shadow-lg overflow-hidden">
+        <div className="border-2 border-sage-400 rounded-xl shadow-lg overflow-hidden relative">
+          <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600 flex justify-between items-center">
+            <h3 className="text-xl font-semibold ">{myQueue.eventTitle}</h3>
+            <button
+              onClick={handleLeaveQueue}
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors"
+            >
+              <FiLogOut className="w-4 h-4 text-white" />
+              <span className="text-sm font-medium text-white">Leave</span>
+            </button>
+          </div>
+
           {showConfetti && (
             <Confetti
               width={windowDimension.width}
@@ -111,20 +165,15 @@ export const MyQueue = () => {
               gravity={0.2}
             />
           )}
-          
-          {/* Header */}
-          <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600">
-            <h3 className="text-xl font-semibold">
-              {myQueue.eventTitle} Queue
-            </h3>
-          </div>
-  
+
           {/* Body */}
           <div className="p-6 md:p-8">
             <div className="space-y-6 mb-6">
               {/* Position Section */}
               <div className="flex items-center gap-2">
-                <span className="text-sage-700 font-medium">Your Position:</span>
+                <span className="text-sage-700 font-medium">
+                  Your Position:
+                </span>
                 <span className="text-2xl md:text-3xl font-bold">
                   {myQueue.positionRank}
                 </span>
@@ -132,10 +181,12 @@ export const MyQueue = () => {
                   <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
                 )}
               </div>
-  
+
               {/* Wait Time Section */}
               <div className="flex items-center gap-2">
-                <span className="text-sage-700 font-medium">Estimated Wait:</span>
+                <span className="text-sage-700 font-medium">
+                  Estimated Wait:
+                </span>
                 <span className="text-2xl md:text-3xl font-bold">
                   {myQueue.timeTillYourTurn} minute(s)
                 </span>
@@ -143,15 +194,13 @@ export const MyQueue = () => {
                   <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
                 )}
               </div>
-  
+
               {myQueue.position !== 1 ? (
                 <DidYouKnowSlider />
               ) : (
-                <div className="bg-sage-500  p-4 rounded-lg flex items-center gap-3">
+                <div className="bg-sage-500 p-4 rounded-lg flex items-center gap-3">
                   <span className="text-2xl">🎉</span>
-                  <p>
-                    You're next in line! Thanks for using SwiftLine ⚡
-                  </p>
+                  <p>You're next in line! Thanks for using SwiftLine ⚡</p>
                 </div>
               )}
             </div>
@@ -160,9 +209,6 @@ export const MyQueue = () => {
       )}
     </div>
   );
-
-
-  
 };
 
 export default MyQueue;

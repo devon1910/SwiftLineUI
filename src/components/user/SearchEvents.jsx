@@ -1,11 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button as BootstrapButton,
-  Card as BootstrapCard,
-  Col,
-  Form,
-  Row,
-} from "react-bootstrap";
 import styled from "styled-components";
 import { connection } from "../../services/SignalRConn.js";
 import LoadingSpinner from "../LoadingSpinner";
