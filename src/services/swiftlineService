@@ -27,7 +27,9 @@ export const joinLine = (eventId) =>
   API.post(apiUrl + "Event/JoinEvent?EventId=" + eventId);
 
 export const validateToken = (token) =>
-  axios.post(apiUrl + "Auth/VerifyToken?token=" + token);
+  API.post(apiUrl + "Auth/VerifyToken?token=" + token);
+export const deleteEvent = (id) =>
+  API.delete(apiUrl + "Event/DeleteEvent/"+id);
 
 // export const deleteEmployee = (id) =>
 //   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);

@@ -94,6 +94,7 @@ const SignUp = () => {
         console.log("isFormSubmitted", isFormSubmitted)
       })
       .catch((error) => {
+        
         if (error.data) {
           console.log("error: ", error.message);
           toast.error(error.data.message);
@@ -120,7 +121,7 @@ const SignUp = () => {
           <CheckCircle className="flex-shrink-0 text-sage-600" />
           <div>
             <p className="text-sm">
-              Almost done! Check your email (including spam folder) for the welcome message.
+              Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.
               Contact support if you need help.
             </p>
           </div>
