@@ -18,12 +18,6 @@ export const MyQueue = () => {
   }, []);
 
 
-  const calculateProgress = (position) => {
-    if (position <= 1) return 100;
-    return Math.min(Math.floor(100 / position), 99);
-  };
-
-  const progress = calculateProgress(myQueue.position);
   const showConfetti = myQueue.timeTillYourTurn === 0;
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
@@ -150,24 +144,10 @@ export const MyQueue = () => {
                 )}
               </div>
   
-              {progress < 100 ? (
-                <>
-                  {/* Progress Bar */}
-                  <div className="relative h-4 bg-sage-100 rounded-full overflow-hidden">
-                    <div
-                      className="absolute h-full bg-sage-500 transition-all duration-500 ease-out"
-                      style={{ width: `${progress}%` }}
-                    >
-                      <span className="absolute right-2 text-xs text-white font-medium">
-                        {Math.floor(progress)}%
-                      </span>
-                    </div>
-                  </div>
-  
-                  <DidYouKnowSlider />
-                </>
+              {myQueue.position !== 1 ? (
+                <DidYouKnowSlider />
               ) : (
-                <div className="bg-sage-500 text-white p-4 rounded-lg flex items-center gap-3">
+                <div className="bg-sage-500  p-4 rounded-lg flex items-center gap-3">
                   <span className="text-2xl">🎉</span>
                   <p>
                     You're next in line! Thanks for using SwiftLine ⚡

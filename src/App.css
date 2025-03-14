@@ -171,6 +171,19 @@ html {
   100% { transform: rotate(360deg); }
 }
 
+
+/* for did you know */
+:root {
+  --sage-500: #8A9A8B;
+  --sage-600: #7A8A7B;
+  --sage-700: #6B7D6B;
+  --sage-800: #5A6A5B;
+}
+
+.transition-opacity {
+  transition: opacity 1s ease-in-out;
+}
+
 /*.logo {
   height: 6em;
   padding: 1.5em;
