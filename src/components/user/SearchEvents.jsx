@@ -84,8 +84,8 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
   // }
   const StatItem = ({ label, value }) => (
     <div className="flex flex-col">
-      <span className="text-xs text-sage-500 dark:text-sage-400 font-medium">{label}</span>
-      <span className="text-gray-600 dark:text-gray-600 font-medium">{value}</span>
+      <span className="text-xs text-black text-sage-500 dark:text-sage-400 font-medium">{label}</span>
+      <span className="text-gray-600 text-black dark:text-gray-600 font-medium">{value}</span>
     </div>
   );
   return (
@@ -112,7 +112,7 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
 
             <div className="p-6 flex flex-col gap-4">
               {/* Title */}
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-xl text-black font-semibold text-gray-900 dark:text-gray-100">
                 {event.title}
               </h3>
 
@@ -130,7 +130,7 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
               </div>
 
               {/* Organizer */}
-              <p className="text-sm text-sage-500 dark:text-sage-400 italic">
+              <p className="text-sm text-black text-sage-500 dark:text-sage-400 italic">
                 Organized by: {event.createdBy}
               </p>
 

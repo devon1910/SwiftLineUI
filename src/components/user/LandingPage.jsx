@@ -171,7 +171,7 @@ function LandingPage() {
         onClick={() => handlePageChange("eventForm")}
         className="fixed bottom-8 right-8 bg-sage-500 text-white p-4 rounded-full shadow-lg hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
       >
-        <FiPlus size={28} />
+        <FiPlus size={22} />
       </button>
     </div>
   );

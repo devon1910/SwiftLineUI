@@ -5,6 +5,7 @@ import DidYouKnowSlider from "./DidYouKnowSlider";
 import { connection } from "../../services/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
+import { FiArrowUp } from "react-icons/fi";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -100,30 +101,13 @@ export const MyQueue = () => {
   }
 
   return (
-    <div style={{
-      fontFamily: 'Inter, sans-serif',
-      maxWidth: '800px',
-      margin: '2rem auto',
-      padding: '0 1rem'
-    }}>
+    <div className="max-w-2xl mx-auto p-4 font-sans">
       {myQueue.position === -1 ? (
-        <Alert variant="warning" style={{
-          backgroundColor: '#F5F7F5',
-          borderColor: '#8A9A8B',
-          color: '#606F60',
-          borderRadius: '8px',
-          padding: '1.5rem',
-          marginTop: '2rem'
-        }}>
-          You're currently not in any queue.
-        </Alert>
+        <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
+          <p className="font-medium">You're currently not in any queue.</p>
+        </div>
       ) : (
-        <Card style={{
-          border: '2px solid #8A9A8B',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
-        }}>
+        <div className="border-2 border-sage-400 rounded-xl shadow-lg overflow-hidden">
           {showConfetti && (
             <Confetti
               width={windowDimension.width}
@@ -131,138 +115,69 @@ export const MyQueue = () => {
               recycle={false}
               numberOfPieces={800}
               gravity={0.2}
-              //colors={['#8A9A8B', '#C8D5C8', '#606F60']} // Sage-themed confetti
             />
           )}
           
-          <Card.Header style={{
-            backgroundColor: '#8A9A8B',
-            padding: '1.5rem',
-            borderBottom: '2px solid #6B7D6B'
-          }}>
-            <h3 style={{
-              color: 'white',
-              margin: 0,
-              fontWeight: 600,
-              fontSize: '1.5rem'
-            }}>
+          {/* Header */}
+          <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600">
+            <h3 className="text-xl font-semibold">
               {myQueue.eventTitle} Queue
             </h3>
-          </Card.Header>
+          </div>
   
-          <Card.Body style={{ padding: '2rem' }}>
-            <div style={{ marginBottom: '2rem' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <span style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 500,
-                  color: '#606F60',
-                  marginRight: '0.5rem'
-                }}>
-                  Your Position:
-                </span>
-                <strong style={{ fontSize: '1.4rem', color: '#000' }}>
+          {/* Body */}
+          <div className="p-6 md:p-8">
+            <div className="space-y-6 mb-6">
+              {/* Position Section */}
+              <div className="flex items-center gap-2">
+                <span className="text-sage-700 font-medium">Your Position:</span>
+                <span className="text-2xl md:text-3xl font-bold">
                   {myQueue.positionRank}
-                </strong>
+                </span>
                 {showPositionArrow && (
-                  <span style={{
-                    color: '#8A9A8B',
-                    fontSize: '1.5rem',
-                    marginLeft: '0.5rem',
-                    animation: 'bounce 0.5s infinite alternate'
-                  }}>
-                    ↑
-                  </span>
+                  <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
                 )}
               </div>
   
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '2rem'
-              }}>
-                <span style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 500,
-                  color: '#606F60',
-                  marginRight: '0.5rem'
-                }}>
-                  Estimated Wait:
-                </span>
-                <strong style={{ fontSize: '1.4rem', color: '#000' }}>
+              {/* Wait Time Section */}
+              <div className="flex items-center gap-2">
+                <span className="text-sage-700 font-medium">Estimated Wait:</span>
+                <span className="text-2xl md:text-3xl font-bold">
                   {myQueue.timeTillYourTurn} minute(s)
-                </strong>
+                </span>
                 {showWaitTimeArrow && (
-                  <span style={{
-                    color: '#8A9A8B',
-                    fontSize: '1.5rem',
-                    marginLeft: '0.5rem',
-                    animation: 'bounce 0.5s infinite alternate'
-                  }}>
-                    ↑
-                  </span>
+                  <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
                 )}
               </div>
   
               {progress < 100 ? (
                 <>
-                  <div style={{
-                    height: '20px',
-                    backgroundColor: '#E0E6DF',
-                    borderRadius: '10px',
-                    overflow: 'hidden',
-                    marginBottom: '2rem'
-                  }}>
+                  {/* Progress Bar */}
+                  <div className="relative h-4 bg-sage-100 rounded-full overflow-hidden">
                     <div
-                      style={{
-                        width: `${progress}%`,
-                        height: '100%',
-                        backgroundColor: '#8A9A8B',
-                        transition: 'width 0.5s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        paddingRight: '8px',
-                        color: 'white',
-                        fontWeight: 500,
-                        fontSize: '0.9rem'
-                      }}
+                      className="absolute h-full bg-sage-500 transition-all duration-500 ease-out"
+                      style={{ width: `${progress}%` }}
                     >
-                      {Math.floor(progress)}%
+                      <span className="absolute right-2 text-xs text-white font-medium">
+                        {Math.floor(progress)}%
+                      </span>
                     </div>
                   </div>
+  
                   <DidYouKnowSlider />
                 </>
               ) : (
-                <Alert variant="success" style={{
-                  backgroundColor: '#8A9A8B',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 500,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.8rem'
-                }}>
-                  <span style={{ fontSize: '1.4rem' }}>🎉</span>
-                  You're next in line! Thanks for using SwiftLine ⚡
-                </Alert>
+                <div className="bg-sage-500 text-white p-4 rounded-lg flex items-center gap-3">
+                  <span className="text-2xl">🎉</span>
+                  <p>
+                    You're next in line! Thanks for using SwiftLine ⚡
+                  </p>
+                </div>
               )}
             </div>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
       )}
-  
-      <style>{`
-        @keyframes bounce {
-          from { transform: translateY(0); }
-          to { transform: translateY(-5px); }
-        }
-      `}</style>
     </div>
   );
 
