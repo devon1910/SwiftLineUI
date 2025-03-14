@@ -14,7 +14,6 @@ export const MyQueue = () => {
 
   const [myQueue, setMyQueue] = useState({});
 
-  const [lineMemberId, setLineMemberId] = useState(0);
 
   useEffect(() => {
     getCurrentPosition();
@@ -52,10 +51,7 @@ export const MyQueue = () => {
     }
   }, []); // Empty dependency array means it runs once on mount
 
-  connection.on("ReceiveLineMemberId", (lineMemberId) => {
-    console.log("SignalR update received--lineMember:", lineMemberId);
-    setLineMemberId(lineMemberId);
-  });
+ 
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
@@ -122,7 +118,7 @@ export const MyQueue = () => {
           return;
         }
       }
-
+      const lineMemberId= myQueue.lineMemberId
       // Invoke SignalR method to join the queue
       connection
         .invoke("ExitQueue", "", lineMemberId, "")
