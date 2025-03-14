@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Carousel } from 'react-bootstrap';
 
 const DidYouKnowSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,8 +30,8 @@ const DidYouKnowSlider = () => {
   }, [randomReasons]);
 
   return (
-    <div className="mt-4 bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="bg-sage-100 p-3 border-b border-sage-200">
+    <div className="mt-4  rounded-lg shadow-md overflow-hidden">
+      <div className="p-3 border-b border-sage-200">
         <h5 className="font-semibold">Did you know?</h5>
       </div>
       
