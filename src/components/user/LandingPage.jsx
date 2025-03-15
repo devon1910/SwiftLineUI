@@ -120,7 +120,7 @@ function LandingPage() {
             <motion.div
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
+              className="rounded-2xl shadow-lg p-6"
             >
               <Dashboard onPageChange={handlePageChange} />
             </motion.div>

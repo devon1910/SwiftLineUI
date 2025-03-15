@@ -66,7 +66,7 @@ const MyEvents = ({ onPageChange }) => {
             {userEvents.map((event) => (
               <div
                 key={event.id}
-                className="relative bg-white dark:bg-gray-800 rounded-xl shadow-md border border-sage-200 dark:border-gray-700"
+                className="relative  rounded-xl shadow-md border border-sage-200 dark:border-gray-700"
               >
                 {/* Delete Button */}
                 <button
@@ -79,12 +79,12 @@ const MyEvents = ({ onPageChange }) => {
 
                 <div className="p-6 flex flex-col gap-4">
                   {/* Title */}
-                  <h3 className="text-xl text-dark  font-semibold text-gray-900 dark:text-gray-100 pr-6">
+                  <h3 className="text-xl  font-semibold text-gray-900 dark:text-gray-100 pr-6">
                     {event.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-600 text-dark dark:text-gray-300 text-sm leading-relaxed">
+                  <p className="dark:text-gray-500 text-sm leading-relaxed">
                     {event.description}
                   </p>
 
