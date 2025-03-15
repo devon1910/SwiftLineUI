@@ -28,11 +28,9 @@ function App() {
     <LoadingProvider>
       <Routes>
         <Route path="/" element={<AuthForm />}></Route>
+        <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/LandingPage" element={<LandingPage />}></Route>
-        </Route>
-        <Route element={<ProtectedRoute />}>
-          <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
         </Route>
       </Routes>
     </LoadingProvider>

@@ -3,4 +3,4 @@
       { "source": "/VerifyToken", "destination": "/VerifyToken" },
       { "source": "/(.*)", "destination": "/index.html" }
     ]
-  }
+}
