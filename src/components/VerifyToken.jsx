@@ -4,24 +4,26 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-
 const VerifyTokenPage = () => {
   const navigator = useNavigate();
   const [isLoading, setLoading] = useState(true);
+  const alreadyCalledRef = useRef(false);
+
   function getTokenFromUrl() {
-    // Get the current URL's query parameters
     const urlParams = new URLSearchParams(window.location.search);
-    // Extract the token parameter
-    const token = urlParams.get("token");
-    return token;
+    return urlParams.get("token");
   }
 
   useEffect(() => {
+    // Prevent duplicate calls by checking the ref
+    if (alreadyCalledRef.current) return;
+    alreadyCalledRef.current = true;
+
     const token = getTokenFromUrl();
     if (token) {
       validateToken(token)
         .then((response) => {
-          setLoading(false);
+          // Optionally store token or response details as needed
           localStorage.setItem("user", JSON.stringify(token));
           navigator("/LandingPage", {
             state: {
@@ -32,14 +34,25 @@ const VerifyTokenPage = () => {
           });
         })
         .catch((error) => {
+          console.error("Verification error:", error);
+          // Check for error response structure and fallback to error.message
+          const errMsg =
+            error.response && error.response.data && error.response.data.message
+              ? error.response.data.message
+              : error.message;
+          toast.error(errMsg);
+          // Optionally redirect to login on failure
+          navigator("/login");
+        })
+        .finally(() => {
           setLoading(false);
-          console.log("error: ", error.message);
-          toast.error(error.data.message);
         });
     } else {
       alert("Couldn't extract token.");
+      setLoading(false);
     }
-  }, []);
+  }, [navigator]);
+
   if (isLoading) {
     return (
       <motion.div
@@ -52,6 +65,9 @@ const VerifyTokenPage = () => {
       </motion.div>
     );
   }
+
+  // Optionally render something else if not loading; otherwise, null is fine.
+  return null;
 };
 
 export default VerifyTokenPage;
