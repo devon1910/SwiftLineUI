@@ -8,35 +8,49 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
 import VerifyToken from "./components/VerifyToken";
-import VerifyTokenPage from "./components/VerifyToken";
 import { LoadingProvider } from "./components/LoadingContextProvider";
+import MyEvents from "./components/user/MyEvents";
+import SearchEvents from "./components/user/SearchEvents";
+import MyQueue from "./components/user/MyQueue";
+import ViewQueue from "./components/user/ViewQueue";
+import Dashboard from "./components/user/Dashboard";
 
 function App() {
   return (
-    <> <BrowserRouter>
-    <ToastContainer
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-    />
-    <LoadingProvider>
-      <Routes>
-        <Route path="/" element={<AuthForm />}></Route>
-        <Route path="/VerifyToken" element={<VerifyTokenPage />}></Route>
-        <Route element={<ProtectedRoute />}>
-          <Route path="/LandingPage" element={<LandingPage />}></Route>
-        </Route>
-      </Routes>
-    </LoadingProvider>
-  </BrowserRouter>
-  <Footer/></>
-   
+    <>
+      <BrowserRouter>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <LoadingProvider>
+          <Routes>
+            <Route path="/" element={<AuthForm />} />
+            <Route path="/VerifyToken" element={<VerifyToken />} />
+            <Route element={<ProtectedRoute />}>
+              {/* Make LandingPage a layout with nested routes */}
+              <Route path="/LandingPage/*" element={<LandingPage />}>
+                <Route index element={<Dashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="search" element={<SearchEvents />} />
+                <Route path="myevents" element={<MyEvents />} />
+                <Route path="eventForm" element={<EventForm />} />
+                <Route path="myqueue" element={<MyQueue />} />
+                <Route path="queueManagement" element={<ViewQueue />} />
+              </Route>
+            </Route>
+          </Routes>
+        </LoadingProvider>
+      </BrowserRouter>
+      <Footer />
+    </>
   );
 }
 
