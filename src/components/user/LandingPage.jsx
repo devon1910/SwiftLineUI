@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiSun, FiMoon, FiPlus } from "react-icons/fi";
 import Navigation from "./Navigation";
@@ -25,12 +25,15 @@ import { Header } from "../Header";
 import { Footer } from "../Footer";
 
 function LandingPage() {
+
+
   const location = useLocation();
+  const navigate = useNavigate();
   const { userId, email } = location.state || {};
-  const [currentPage, setCurrentPage] = useState("dashboard");
-  const [editingEvent, setEditingEvent] = useState(null);
   const [events, setEvents] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     getEventsList();
@@ -39,30 +42,36 @@ function LandingPage() {
     if (savedTheme === "true") {
       setDarkMode(true);
       document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
     }
   }, []);
 
   function getEventsList() {
+    setLoading(true);
     eventsList()
       .then((response) => {
         setEvents(response.data.data);
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          window.location.href = "/";
+          navigate("/");
         }
         console.error("Error fetching events:", error);
-      });
+      })
+      .finally(() => setLoading(false));
+    // setLoading(true);
+    // eventsList()
+    //   .then((response) => {
+    //     setEvents(response.data.data);
+    //   })
+    //   .catch((error) => {
+    //     if (error.response && error.response.status === 401) {
+    //       window.location.href = "/";
+    //     }
+    //     console.error("Error fetching events:", error);
+    //   });
   }
-
-  const handlePageChange = (page, event = null) => {
-    event ? setEditingEvent(event) : setEditingEvent(null);
-    setCurrentPage(page);
-  };
-
-  const handleSkip = (userId) => {
-    console.log(`Skipping user with ID: ${userId}`);
-  };
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -77,11 +86,7 @@ function LandingPage() {
       }`}
     >
       {/* Navigation */}
-      <Navigation 
-      onPageChange={handlePageChange} 
-      darkMode={darkMode}
-      toggleDarkMode={toggleDarkMode} // Add this prop
-    />
+      <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
@@ -98,8 +103,7 @@ function LandingPage() {
               className="w-28 mx-auto mb-6"
             />
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Welcome to SwiftLine
-              <span className="text-sage-500 ml-2">⚡</span>
+              Welcome to SwiftLine <span className="text-sage-500 ml-2">⚡</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
               Queue Smarter, Not Harder – Your Time, Optimized.
@@ -114,65 +118,21 @@ function LandingPage() {
           </p>
         </div>
 
-        {/* Content Area */}
-        <div className="pb-16">
-          {currentPage === "dashboard" && (
-            <motion.div
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              className="rounded-2xl shadow-lg p-6"
-            >
-              <Dashboard onPageChange={handlePageChange} />
-            </motion.div>
-          )}
-
-          {currentPage === "search" && (
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <SearchEvents
-                events={events}
-                onPageChange={handlePageChange}
-                userId={userId}
-              />
-            </motion.div>
-          )}
-          {currentPage === "myevents" && (
-            <motion.div
-              initial={{ x: 25, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <MyEvents
-                events={events.filter((event) => event.createdBy === email)}
-                onPageChange={handlePageChange}
-              />
-            </motion.div>
-          )}
-          {currentPage === "eventForm" && (
-            <EventForm
-              onPageChange={handlePageChange}
-              events={events}
-              setEvents={setEvents}
-              editingEvent={editingEvent}
-            />
-          )}
-          {currentPage === "myqueue" && <MyQueue />}
-          {currentPage === "queueManagement" && (
-            <ViewQueue event={editingEvent} onSkip={handleSkip} />
-          )}
-        </div>
+        {loading ? (
+          <LoadingSpinner message="Loading events..." />
+        ) : (
+          // Render nested routes here
+          <Outlet context={{ events, setEvents, email, userId }} />
+        )}
       </main>
 
       {/* Floating Action Button */}
-      <button
+      {/* <button
         onClick={() => handlePageChange("eventForm")}
         className="fixed bottom-8 right-8 bg-sage-500 text-white p-4 rounded-full shadow-lg hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
       >
         <FiPlus size={22} />
-      </button>
+      </button> */}
     </div>
   );
 }

@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
+  const navigate = useNavigate();
 
-  const handlePageChange = (page) => {
-    onPageChange(page);
-    setActivePage(page);
+  const navItems = [
+    { label: "Dashboard", path: "dashboard" },
+    { label: "Search Events", path: "search" },
+    { label: "My Events", path: "myevents" },
+    { label: "My Queue", path: "myqueue" },
+  ];
+
+  const handleNavigation = (path) => {
+    navigate(`/LandingPage/${path}`);
     setIsOpen(false);
   };
 
@@ -21,6 +29,9 @@ const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
             darkMode ? 'hover:bg-opacity-10' : ''
           }`
     }`;
+
+      // Derive active page from the URL (assuming /LandingPage/{page})
+  const currentPath = location.pathname.split("/")[2] || "dashboard";
 
     return (
       <nav className={`sticky top-0 z-50 ${darkMode ? 'bg-gray-900' : 'bg-white'} shadow-sm border-b border-opacity-10 backdrop-blur-sm bg-opacity-90`}>
@@ -44,76 +55,67 @@ const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
             <div className="flex items-center gap-4">
               {/* Desktop Navigation */}
               <div className="hidden md:flex items-center gap-2">
-                {['dashboard', 'search', 'myevents', 'myqueue'].map((page) => (
+                {navItems.map((page) => (
                   <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={menuButtonStyles(activePage === page)}
+                    key={page.path}
+                    onClick={() => handleNavigation(page.path)}
+                    className={menuButtonStyles(currentPath === page.path)}
                   >
-                    {page === 'dashboard' && 'Dashboard'}
-                    {page === 'search' && 'Search Events'}
-                    {page === 'myevents' && 'My Events'}
-                    {page === 'myqueue' && 'My Queue'}
+                    {page.label}
                   </button>
                 ))}
               </div>
     
-              {/* Dark Mode Toggle */}
               <button
-                onClick={toggleDarkMode}
-                className="p-2 rounded-lg hover:bg-opacity-10 hover:bg-gray-500 transition-colors"
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg hover:bg-opacity-10 hover:bg-gray-500 transition-colors"
+            >
+              {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
+            </button>
+
+            {/* Mobile Menu Button */}
+            <div className="flex items-center md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`p-2 rounded-md ${
+                  darkMode
+                    ? "text-gray-300 hover:bg-gray-700"
+                    : "text-gray-700 hover:bg-sage-100"
+                } focus:outline-none focus:ring-2 focus:ring-sage-500`}
               >
-                {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
+                <span className="sr-only">Open main menu</span>
+                {isOpen ? (
+                  <X className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="h-6 w-6" aria-hidden="true" />
+                )}
               </button>
-    
-              {/* Mobile Menu Button */}
-              <div className="flex items-center md:hidden">
-                <button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className={`p-2 rounded-md ${
-                    darkMode 
-                      ? 'text-gray-300 hover:bg-gray-700' 
-                      : 'text-gray-700 hover:bg-sage-100'
-                  } focus:outline-none focus:ring-2 focus:ring-sage-500`}
-                >
-                  <span className="sr-only">Open main menu</span>
-                  {isOpen ? (
-                    <X className="h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <Menu className="h-6 w-6" aria-hidden="true" />
-                  )}
-                </button>
-              </div>
             </div>
           </div>
-    
-          {/* Mobile Menu */}
-          {isOpen && (
-            <div className={`md:hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {['dashboard', 'search', 'myevents', 'myqueue'].map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                      activePage === page
-                        ? 'bg-sage-600 text-white dark:bg-sage-700'
-                        : `${
-                            darkMode 
-                              ? 'text-gray-300 hover:bg-gray-700' 
-                              : 'text-gray-700 hover:bg-sage-50'
-                          }`
-                    }`}
-                  >
-                    {page === 'dashboard' && 'Dashboard'}
-                    {page === 'search' && 'Search Events'}
-                    {page === 'myevents' && 'My Events'}
-                    {page === 'myqueue' && 'My Queue'}
-                  </button>
-                ))}
-              </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className={`md:hidden ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleNavigation(item.path)}
+                  className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+                    currentPath === item.path
+                      ? "bg-sage-600 text-white dark:bg-sage-700"
+                      : darkMode
+                      ? "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-700 hover:bg-sage-50"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
+        )}
         </div>
       </nav>
     );

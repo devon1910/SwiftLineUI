@@ -14,6 +14,7 @@ import SearchEvents from "./components/user/SearchEvents";
 import MyQueue from "./components/user/MyQueue";
 import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
+import EventForm from "./components/user/EventForm";
 
 function App() {
   return (

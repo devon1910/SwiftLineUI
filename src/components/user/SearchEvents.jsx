@@ -5,8 +5,11 @@ import LoadingSpinner from "../LoadingSpinner";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { FiCalendar, FiClock, FiUser, FiUsers } from "react-icons/fi";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
-export const SearchEvents = ({ events, onPageChange, userId }) => {
+export const SearchEvents = () => {
+  const { events, userId } = useOutletContext();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
   // const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +17,7 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
 
+  console.log("events", events);
   // Pagination logic
   const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -65,7 +69,7 @@ export const SearchEvents = ({ events, onPageChange, userId }) => {
       .invoke("JoinQueueGroup", eventId, userId)
       .then(() => {
         toast.success("Joined queue successfully.");
-        onPageChange("myqueue");
+        navigate("search");
       })
       .catch((err) => {
         console.error(err);
