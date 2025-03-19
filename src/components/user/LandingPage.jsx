@@ -68,9 +68,6 @@ function LandingPage() {
         setEvents(response.data.data);
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-        }
         console.error("Error fetching events:", error);
       })
       .finally(() => setLoading(false));

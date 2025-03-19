@@ -1,5 +1,12 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 const Dashboard = ({ onPageChange }) => {
+
+  const navigate = useNavigate(); 
+  const handleNavigation = (path) => {
+    navigate(`/${path}`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
       <div className=" rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -14,7 +21,7 @@ const Dashboard = ({ onPageChange }) => {
             Manage and monitor your own event queues. Create custom events and track attendees.
           </p>
           <button 
-            onClick={() => onPageChange("myevents")}
+            onClick={() => handleNavigation("myevents")}
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all flex items-center justify-center"
           >
             <span>Go to My Events</span>
@@ -37,7 +44,7 @@ const Dashboard = ({ onPageChange }) => {
             Search for active events and join the queue. Get real-time updates on wait times.
           </p>
           <button 
-            onClick={() => onPageChange("search")}
+            onClick={() => handleNavigation("search")}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all flex items-center justify-center"
           >
             <span>Search Events</span>

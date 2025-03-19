@@ -22,7 +22,7 @@ const Login = () => {
     const loginRequest = { email, password };
     loginUser(loginRequest)
       .then((response) => {
-        navigator("/LandingPage", {
+        navigator("/dashboard", {
             state: { 
               email: response.data.email,
               isInLine: response.data.isInLine

@@ -16,7 +16,7 @@ const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
   ];
 
   const handleNavigation = (path) => {
-    navigate(`/LandingPage/${path}`);
+    navigate(`/${path}`);
     setIsOpen(false);
   };
 
@@ -31,7 +31,7 @@ const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
     }`;
 
       // Derive active page from the URL (assuming /LandingPage/{page})
-  const currentPath = location.pathname.split("/")[2] || "dashboard";
+  const currentPath = location.pathname.split("/")[1] || "dashboard";
 
     return (
       <nav className={`sticky top-0 z-50 ${darkMode ? 'bg-gray-900' : 'bg-white'} shadow-sm border-b border-opacity-10 backdrop-blur-sm bg-opacity-90`}>

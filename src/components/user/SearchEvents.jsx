@@ -42,7 +42,7 @@ export const SearchEvents = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          window.location.href = "/";
+          window.location.href = "/login";
         }
         console.log(error);
       });

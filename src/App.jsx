@@ -32,21 +32,20 @@ function App() {
           pauseOnHover
         />
         <LoadingProvider>
-          <Routes>
-            <Route path="/" element={<AuthForm />} />
-            <Route path="/VerifyToken" element={<VerifyToken />} />
-            <Route element={<ProtectedRoute />}>
-              {/* Make LandingPage a layout with nested routes */}
-              <Route path="/LandingPage/*" element={<LandingPage />}>
-                <Route index element={<Dashboard />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="search" element={<SearchEvents />} />
-                <Route path="myevents" element={<MyEvents />} />
+          <Routes>         
+            <Route path="/*" element={<LandingPage />}>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="search" element={<SearchEvents />} />
+              <Route path="myevents" element={<MyEvents />} />
+              <Route element={<ProtectedRoute />}>
                 <Route path="eventForm" element={<EventForm />} />
-                <Route path="myqueue" element={<MyQueue />} />
-                <Route path="queueManagement" element={<ViewQueue />} />
               </Route>
+              <Route path="myqueue" element={<MyQueue />} />
+              <Route path="queueManagement" element={<ViewQueue />} />         
             </Route>
+            <Route path="/login" element={<AuthForm />} />
+            <Route path="/VerifyToken" element={<VerifyToken />} />
           </Routes>
         </LoadingProvider>
       </BrowserRouter>
