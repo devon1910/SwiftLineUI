@@ -27,13 +27,27 @@ import { Footer } from "../Footer";
 function LandingPage() {
 
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { userId, email } = location.state || {};
   const [events, setEvents] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Get email from location.state if available, otherwise from localStorage
+  const emailFromState = location.state?.email;
+  const [email, setEmail] = useState(emailFromState || localStorage.getItem("userEmail") || "");
+  const [userId, setUserId] = useState(location.state?.userId || localStorage.getItem("userId") || "");
+  
+  // Save email to localStorage if it comes from state
+  useEffect(() => {
+    if (emailFromState) {
+      localStorage.setItem("userEmail", emailFromState);
+    }
+    if (location.state?.userId) {
+      localStorage.setItem("userId", location.state.userId);
+    }
+  }, [emailFromState, location.state]);
 
   useEffect(() => {
     getEventsList();
@@ -60,17 +74,6 @@ function LandingPage() {
         console.error("Error fetching events:", error);
       })
       .finally(() => setLoading(false));
-    // setLoading(true);
-    // eventsList()
-    //   .then((response) => {
-    //     setEvents(response.data.data);
-    //   })
-    //   .catch((error) => {
-    //     if (error.response && error.response.status === 401) {
-    //       window.location.href = "/";
-    //     }
-    //     console.error("Error fetching events:", error);
-    //   });
   }
 
   const toggleDarkMode = () => {

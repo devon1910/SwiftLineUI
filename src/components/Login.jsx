@@ -24,7 +24,6 @@ const Login = () => {
       .then((response) => {
         navigator("/LandingPage", {
             state: { 
-              userId: response.data.userId,
               email: response.data.email,
               isInLine: response.data.isInLine
             }
