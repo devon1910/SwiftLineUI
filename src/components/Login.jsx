@@ -25,7 +25,8 @@ const Login = () => {
         navigator("/dashboard", {
             state: { 
               email: response.data.email,
-              isInLine: response.data.isInLine
+              isInLine: response.data.isInLine,
+              userId: response.data.userId
             }
         });
       })

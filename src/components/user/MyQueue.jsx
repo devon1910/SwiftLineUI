@@ -105,8 +105,6 @@ export const MyQueue = () => {
 
   const handleLeaveQueue = async () => {
     if (window.confirm("Are you sure you want to leave the queue?")) {
-      // Your leave queue logic
-      // Reconnect if SignalR connection is lost
       if (connection.state !== "Connected") {
         toast.info("Connection lost. Attempting to reconnect...");
         try {

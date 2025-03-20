@@ -42,7 +42,7 @@ export const SearchEvents = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          window.location.href = "/login";
+          navigate("/login");
         }
         console.log(error);
       });
@@ -50,8 +50,13 @@ export const SearchEvents = () => {
 
   const joinQueue = async (event) => {
     const eventId = event.id;
+    //check if user is logged In
 
-    // Reconnect if SignalR connection is lost
+    if (!userId) {
+      toast.error("Please login to join this queue.");
+      navigate("/login");
+      return;
+    }
     if (connection.state !== "Connected") {
       toast.info("Connection lost. Attempting to reconnect...");
       try {
@@ -69,7 +74,7 @@ export const SearchEvents = () => {
       .invoke("JoinQueueGroup", eventId, userId)
       .then(() => {
         toast.success("Joined queue successfully.");
-        navigate("search");
+        navigate("/myqueue");
       })
       .catch((err) => {
         console.error(err);
@@ -123,9 +128,7 @@ export const SearchEvents = () => {
             {label}
           </span>
         </div>
-        <span className=" font-medium">
-          {value}
-        </span>
+        <span className=" font-medium">{value}</span>
       </div>
     );
   };
@@ -168,9 +171,7 @@ export const SearchEvents = () => {
               </h3>
 
               {/* Description */}
-              <p className=" text-sm leading-relaxed">
-                {event.description}
-              </p>
+              <p className=" text-sm leading-relaxed">{event.description}</p>
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-3">

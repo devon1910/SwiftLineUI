@@ -4,13 +4,19 @@ import { UserEvents } from "../../services/swiftlineService";
 import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const MyEvents = ({ onPageChange }) => {
+const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
-
+  const navigator = useNavigate();
   useEffect(() => {
     getUserEvents();
   }, []);
+
+  function handleNavigation()
+  {
+      navigator("/newEvent")
+  }
 
   function handleDeleteEvent(eventId) {
     // Implement delete event logic here
@@ -47,7 +53,7 @@ const MyEvents = ({ onPageChange }) => {
             My Events
           </h2>
           <button
-            onClick={() => onPageChange("eventForm")}
+            onClick={() => handleNavigation()}
             className="bg-sage-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
           >
             Create New Event

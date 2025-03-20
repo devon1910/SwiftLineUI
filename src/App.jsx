@@ -39,7 +39,7 @@ function App() {
               <Route path="search" element={<SearchEvents />} />
               <Route path="myevents" element={<MyEvents />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="eventForm" element={<EventForm />} />
+                <Route path="newEvent" element={<EventForm />} />
               </Route>
               <Route path="myqueue" element={<MyQueue />} />
               <Route path="queueManagement" element={<ViewQueue />} />         
