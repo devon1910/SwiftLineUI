@@ -103,7 +103,7 @@ function LandingPage() {
               className="w-28 mx-auto mb-6"
             />
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Welcome to SwiftLine <span className="text-sage-500 ml-2">⚡</span>
+              Welcome to SwiftLine<span className="text-sage-500 ml-2 waving-hand">⚡</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
               Queue Smarter, Not Harder – Your Time, Optimized.
@@ -114,7 +114,15 @@ function LandingPage() {
         {/* Welcome Message */}
         <div className="mb-12 text-center md:text-left">
           <p className="text-lg md:text-xl">
-            👋 Hello, <strong className="text-sage-500">{email}</strong>
+            {email ? (
+              <span>
+              <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">{email}</strong>
+              </span>
+            ) : (
+              <span>
+                <span className="waving-hand">👋🏽</span> Hello <strong className="text-sage-500">There!</strong>
+              </span>
+            )}
           </p>
         </div>
 
