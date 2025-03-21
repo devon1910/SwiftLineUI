@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
+  const isAuthenticated = !!localStorage.getItem('user');
 
   const navItems = [
     { label: "Dashboard", path: "" },
@@ -31,7 +33,23 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
 
       // Derive active page from the URL (assuming /LandingPage/{page})
   const currentPath = location.pathname.split("/")[1] || "dashboard";
+  const handleAuthAction = () => {
 
+    if(isAuthenticated)
+      {
+        localStorage.removeItem('user');
+        localStorage.removeItem('refreshToken');
+        // Navigate to login
+        window.history.replaceState({}, document.title);
+        navigate('/login');
+        setIsOpen(false);
+      }
+      else{
+        navigate('/login');
+      }
+    // Clear local storage
+   
+  };
     return (
       <nav className={`sticky top-0 z-50 ${darkMode ? 'bg-gray-900' : 'bg-white'} shadow-sm border-b border-opacity-10 backdrop-blur-sm bg-opacity-90`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,6 +82,46 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
                   </button>
                 ))}
               </div>
+
+              <div className="relative ml-4">
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-1 focus:outline-none"
+              >
+                <img
+                  className="h-5 w-5 rounded-full"
+                  src="https://res.cloudinary.com/dddabj5ub/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1742577198/user_2_sbozqv.png"
+                  alt="Profile"
+                />
+                <ChevronDown 
+                  className={`h-5 w-5 transition-transform${
+                    isProfileOpen ? 'rotate-180' : ''
+                  } ${darkMode ? 'text-white' : 'text-gray-700'}`}
+                />
+              </button>
+             
+              {/* Dropdown Menu */}
+              {isProfileOpen && (
+                <div 
+                  className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
+                    darkMode 
+                      ? 'bg-gray-800 border border-gray-700' 
+                      : 'bg-white border border-gray-200'
+                  }`}
+                >
+                  <button
+                    onClick={handleAuthAction}
+                    className={`block w-full px-4 py-2 text-sm text-left ${
+                      darkMode
+                        ? 'text-gray-300 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {isAuthenticated ? 'Log Out' : 'Log In'}
+                  </button>
+                </div>
+              )}
+            </div>
     
               <button
               onClick={toggleDarkMode}

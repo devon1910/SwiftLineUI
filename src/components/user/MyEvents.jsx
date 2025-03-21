@@ -4,7 +4,7 @@ import { UserEvents } from "../../services/swiftlineService";
 import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
@@ -12,10 +12,14 @@ const MyEvents = () => {
   useEffect(() => {
     getUserEvents();
   }, []);
-
+  const {  userId } = useOutletContext();
   function handleNavigation()
   {
-      toast.error("Please login or sign up to create an Event.")
+     if (!userId) {
+          toast.error("Please login or signup to join a queue.");
+          navigator("/login");
+          return;
+        }
       navigator("/newEvent")
   }
 
