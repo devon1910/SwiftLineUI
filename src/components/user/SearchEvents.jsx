@@ -53,7 +53,7 @@ export const SearchEvents = () => {
     //check if user is logged In
 
     if (!userId) {
-      toast.error("Please login to join this queue.");
+      toast.error("Please login or signup to join a queue.");
       navigate("/login");
       return;
     }

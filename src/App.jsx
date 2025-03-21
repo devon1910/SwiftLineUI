@@ -35,7 +35,6 @@ function App() {
           <Routes>         
             <Route path="/*" element={<LandingPage />}>
               <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
               <Route path="search" element={<SearchEvents />} />
               <Route path="myevents" element={<MyEvents />} />
               <Route element={<ProtectedRoute />}>

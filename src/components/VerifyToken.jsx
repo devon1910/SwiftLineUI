@@ -27,7 +27,7 @@ const VerifyTokenPage = () => {
           localStorage.setItem("user", JSON.stringify(token));
           localStorage.setItem("userEmail", response.data.data.email);
           localStorage.setItem("userId", response.data.data.userId);
-          navigator("/LandingPage", {
+          navigator("/", {
             state: {
               userId: response.data.data.userId,
               email: response.data.data.email,

@@ -15,6 +15,7 @@ const MyEvents = () => {
 
   function handleNavigation()
   {
+      toast.error("Please login or sign up to create an Event.")
       navigator("/newEvent")
   }
 

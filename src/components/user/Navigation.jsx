@@ -3,13 +3,12 @@ import { Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-const Navigation = ({ onPageChange, darkMode,toggleDarkMode  }) => {
+const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activePage, setActivePage] = useState("dashboard");
   const navigate = useNavigate();
 
   const navItems = [
-    { label: "Dashboard", path: "dashboard" },
+    { label: "Dashboard", path: "" },
     { label: "Search Events", path: "search" },
     { label: "My Events", path: "myevents" },
     { label: "My Queue", path: "myqueue" },

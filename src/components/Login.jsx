@@ -22,7 +22,7 @@ const Login = () => {
     const loginRequest = { email, password };
     loginUser(loginRequest)
       .then((response) => {
-        navigator("/dashboard", {
+        navigator("/", {
             state: { 
               email: response.data.email,
               isInLine: response.data.isInLine,
@@ -49,7 +49,7 @@ const Login = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+            className="w-full px-3 py-2 text-black border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
             placeholder="name@example.com"
           />
         </div>
@@ -63,7 +63,7 @@ const Login = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 pr-10 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+            className="w-full px-3 py-2 text-black pr-10 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
             placeholder="******"
           />
           <button

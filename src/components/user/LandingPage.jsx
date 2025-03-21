@@ -120,7 +120,7 @@ function LandingPage() {
               </span>
             ) : (
               <span>
-                <span className="waving-hand">👋🏽</span> Hello <strong className="text-sage-500">There!</strong>
+                <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">Guest</strong>
               </span>
             )}
           </p>
