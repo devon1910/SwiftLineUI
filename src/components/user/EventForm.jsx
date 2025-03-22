@@ -7,9 +7,12 @@ import { toast } from "react-toastify";
 const EventForm = ({
   onPageChange,
   events,
-  setEvents,
-  editingEvent = null,
+  setEvents
 }) => {
+  
+  const location = useLocation();
+
+  const editingEvent = location.state?.editingEvent;
   
   const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
   const [description, setDescription] = useState(

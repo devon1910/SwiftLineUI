@@ -48,7 +48,6 @@ const MyEvents = () => {
         console.log(error);
       });
   }
-
   return (
     <div className="min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -102,13 +101,13 @@ const MyEvents = () => {
                   {/* Buttons */}
                   <div className="flex flex-col gap-2 mt-2">
                     <button
-                      onClick={() => onPageChange("queueManagement", event)}
+                      onClick={() => navigator("/queueManagement", { state: { event: event } })}
                       className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
                     >
                       View Queue
                     </button>
                     <button
-                      onClick={() => onPageChange("eventForm", event)}
+                      onClick={() => navigator("/eventForm", { state: { editingEvent: event } })}
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
                       Edit Event

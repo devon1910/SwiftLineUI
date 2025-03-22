@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Container, Table, Button, Card } from 'react-bootstrap';
 import { eventQueueInfo } from '../../services/swiftlineService';
 import LoadingSpinner from '../LoadingSpinner';
+import { useLocation } from 'react-router-dom';
 
-const ViewQueue = ({ event, onSkip }) => {
+const ViewQueue = ({ onSkip }) => {
 
     const [queue, setQueues] = useState([])
     const [isLoading, setIsLoading]= useState(true);
+
+    const location = useLocation();
+
+    const event = location.state?.event;
 
     useEffect(() => {
         getEventQueues();

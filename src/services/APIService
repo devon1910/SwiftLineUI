@@ -10,20 +10,22 @@ const PUBLIC_ROUTES = ['/login', '/signup', '/search','/','/myqueue']; // Add yo
 // Helper function to check if current path is public
 const isPublicRoute = () => {
   const currentPath = window.location.pathname;
-  return PUBLIC_ROUTES.some(route => currentPath.startsWith(route));
+  return PUBLIC_ROUTES.filter(route => currentPath == route);
 };
 
 API.interceptors.request.use(
 
   config => {
-
-    if (isPublicRoute()) {
-      return config;
-    }
+  
+   
     // Get token from localStorage
     const token = localStorage.getItem('user') 
       ? JSON.parse(localStorage.getItem('user')) 
       : null;
+
+      if (isPublicRoute().length > 0 && !token) {
+        return config;
+      }
       if (!token) {
         window.location.href = '/login'; 
         return Promise.reject(new Error("No access token available"));
@@ -45,7 +47,7 @@ API.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
 
-      if (isPublicRoute()) {
+      if (isPublicRoute().length > 0 && !token) {
         return Promise.reject(error);
       }
       // If we receive a 401 and haven't retried yet, attempt to refresh the token.

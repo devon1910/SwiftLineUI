@@ -39,6 +39,7 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
       {
         localStorage.removeItem('user');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userEmail')
         // Navigate to login
         window.history.replaceState({}, document.title);
         navigate('/login');
