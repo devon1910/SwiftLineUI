@@ -107,7 +107,7 @@ const MyEvents = () => {
                       View Queue
                     </button>
                     <button
-                      onClick={() => navigator("/eventForm", { state: { editingEvent: event } })}
+                      onClick={() => navigator("/newEvent", { state: { editingEvent: event } })}
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
                       Edit Event

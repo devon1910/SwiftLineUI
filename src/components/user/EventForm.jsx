@@ -3,6 +3,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { createEvent } from "../../services/swiftlineService";
 import { updateEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const EventForm = ({
   onPageChange,
@@ -11,8 +12,11 @@ const EventForm = ({
 }) => {
   
   const location = useLocation();
+  const navigator = useNavigate();
 
   const editingEvent = location.state?.editingEvent;
+
+  console.log("editingEvent: ", editingEvent);  
   
   const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
   const [description, setDescription] = useState(
@@ -54,12 +58,12 @@ const EventForm = ({
                   : ev
               );
               setEvents(updatedEvents);
-              onPageChange("myevents");
+              navigator("/myevents");
         })
         .catch((error) => {
           console.log(error);
           toast.error("There was an error in editing events. Please try again later.");
-          onPageChange("myevents");
+          navigator("/myevents");
         });
         //setEvents(updatedEvents);
       } else {
@@ -69,7 +73,7 @@ const EventForm = ({
             newEvent["usersInQueue"]= 0
             setEvents([...events, newEvent]);
             console.log("new Events List: ", [...events, newEvent]);
-            onPageChange("myevents");
+            navigator("/myevents");
           })
           .catch((error) => {
             console.log(error);
