@@ -13,6 +13,8 @@ export const eventsList = () =>
 export const createEvent = (event) =>
   API.post(apiUrl + "Event/CreateEvent", event);
 
+
+
 // export const getEmployeeById = (id) =>
 //   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
 
@@ -42,6 +44,9 @@ export const lineInfo = function (queue) {
 export const GetUserLineInfo = () => API.get(apiUrl + "Line/GetUserLineInfo");
 export const GetUserQueueStatus = () =>
   API.get(apiUrl + "Line/GetUserQueueStatus");
+
+export const fetchEventById = (eventId) =>
+  API.get(apiUrl + "Event/GetEvent/" + eventId);
 
 export const loginUser = async (loginRequest) => {
   try {

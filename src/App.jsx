@@ -15,6 +15,7 @@ import MyQueue from "./components/user/MyQueue";
 import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
+import ViewEvent from "./components/user/ViewEvent";
 
 function App() {
   return (
@@ -41,7 +42,8 @@ function App() {
                 <Route path="newEvent" element={<EventForm />} />
               </Route>
               <Route path="myqueue" element={<MyQueue />} />
-              <Route path="queueManagement" element={<ViewQueue />} />         
+              <Route path="queueManagement" element={<ViewQueue />} />   
+              <Route path="events/:eventId" element={<ViewEvent />} />      
             </Route>
             <Route path="/login" element={<AuthForm />} />
             <Route path="/VerifyToken" element={<VerifyToken />} />

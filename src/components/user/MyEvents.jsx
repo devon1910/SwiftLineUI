@@ -8,19 +8,18 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
-  const navigator = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     getUserEvents();
   }, []);
-  const {  userId } = useOutletContext();
-  function handleNavigation()
-  {
-     if (!userId) {
-          toast.error("Please login or signup to join a queue.");
-          navigator("/login");
-          return;
-        }
-      navigator("/newEvent")
+  const { userId } = useOutletContext();
+  function handleNavigation() {
+    if (!userId) {
+      toast.error("Please login or signup to join a queue.");
+      navigate("/login");
+      return;
+    }
+    navigate("/newEvent");
   }
 
   function handleDeleteEvent(eventId) {
@@ -38,6 +37,17 @@ const MyEvents = () => {
         });
     }
   }
+
+  const handleShare = (eventId, eventTitle) => {
+    const searchUrl = `${
+      window.location.origin
+    }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
+    
+    navigator.clipboard
+      .writeText(searchUrl)
+      .then(() => toast.success("Event link copied!"))
+      .catch(() => toast.error("Failed to copy link"));
+  };
 
   function getUserEvents() {
     UserEvents()
@@ -101,13 +111,29 @@ const MyEvents = () => {
                   {/* Buttons */}
                   <div className="flex flex-col gap-2 mt-2">
                     <button
-                      onClick={() => navigator("/queueManagement", { state: { event: event } })}
+                      onClick={() =>
+                        navigate("/queueManagement", {
+                          state: { event: event },
+                        })
+                      }
                       className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
                     >
                       View Queue
                     </button>
+
                     <button
-                      onClick={() => navigator("/newEvent", { state: { editingEvent: event } })}
+                      onClick={() => handleShare(event.id, event.title)}
+                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
+                    >
+                      Share Event
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        navigate("/newEvent", {
+                          state: { editingEvent: event },
+                        })
+                      }
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
                       Edit Event

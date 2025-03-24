@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import { connection } from "../../services/SignalRConn.js";
 import LoadingSpinner from "../LoadingSpinner";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
-import { FiCalendar, FiClock, FiUser, FiUsers } from "react-icons/fi";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { FiCalendar, FiClock, FiShare2, FiUser, FiUsers } from "react-icons/fi";
+import {
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
 
 export const SearchEvents = () => {
   const { events, userId } = useOutletContext();
@@ -17,19 +20,87 @@ export const SearchEvents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
 
-  console.log("events", events);
+  const [searchParams] = useSearchParams();
+  const [initialSearch, setInitialSearch] = useState("");
+  const [selectedEventId, setSelectedEventId] = useState(null);
+
+  useEffect(() => {
+    // Check URL for event ID and search term
+    const urlEventId = searchParams.get("eventId");
+    const urlSearchTerm = searchParams.get("search");
+
+    if (urlEventId && urlSearchTerm) {
+      setSelectedEventId(urlEventId);
+      setSearchTerm(urlSearchTerm);
+      setInitialSearch(urlSearchTerm);
+    }
+  }, [searchParams]);
+
+  // Modify filteredEvents to prioritize the shared event
+  const filteredEvents = events
+    .filter((event) =>
+      event.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Bring the shared event to the top if it exists
+      if (selectedEventId) {
+        return a.id === selectedEventId ? -1 : 1;
+      }
+      return 0;
+    });
+
   // Pagination logic
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents.slice(
-    indexOfFirstEvent,
-    indexOfLastEvent
-  );
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
+  // Add highlight effect for shared event
+  const currentEvents = filteredEvents
+    .slice(indexOfFirstEvent, indexOfLastEvent)
+    .map((event) => ({
+      ...event,
+      isShared: event.id === selectedEventId,
+    }));
+  // const handleShare = (eventId) => {
+  //   const url = `${window.location.origin}/events/${eventId}`;
+
+  //   if (navigator.clipboard) {
+  //     navigator.clipboard
+  //       .writeText(url)
+  //       .then(() => toast.success("Link copied!"))
+  //       .catch(() => fallbackCopy(url));
+  //   } else {
+  //     fallbackCopy(url);
+  //   }
+  // };
+  const handleShare = (eventId, eventTitle) => {
+    const searchUrl = `${
+      window.location.origin
+    }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
+
+    navigator.clipboard
+      .writeText(searchUrl)
+      .then(() => toast.success("Event link copied!"))
+      .catch(() => toast.error("Failed to copy link"));
+  };
+
+  const handleViewEvent = (eventId) => {
+    navigate(`/events/${eventId}`);
+  };
+
+  const fallbackCopy = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      toast.success("Link copied!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+    }
+    document.body.removeChild(textArea);
+  };
   useEffect(() => {
     getUserQueueStatus();
     //setIsLoading(false);
@@ -128,7 +199,9 @@ export const SearchEvents = () => {
             {label}
           </span>
         </div>
-        <span className=" font-medium">{value}</span>
+        <span className="text-gray-600 dark:text-gray-400 font-medium">
+          {value}
+        </span>
       </div>
     );
   };
@@ -155,18 +228,41 @@ export const SearchEvents = () => {
         {currentEvents.map((event) => (
           <div
             key={event.id}
-            className="relative rounded-xl shadow-md border border-sage-200 dark:border-gray-700"
+            className={`relative rounded-xl shadow-md border ${
+              event.isShared ? "border-2 border-sage-500" : "border-sage-200"
+            } dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer`}
           >
+            {/* Add a shared indicator badge */}
+            {event.isShared && (
+              <div className="absolute top-4 left-4 bg-sage-500 text-white px-2 py-1 rounded-full text-xs">
+                Shared Event
+              </div>
+            )}
+
             {/* Status Dot */}
-            <div
-              className={`absolute top-4 right-4 w-3 h-3 rounded-full ${
-                event.isActive ? "bg-sage-500" : "bg-sage-200"
-              }`}
-            />
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  event.isActive ? "bg-sage-500" : "bg-sage-200"
+                }`}
+              />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare(event.id, event.title);
+                }}
+                className="text-sage-500 hover:text-sage-600 p-1"
+              >
+                <FiShare2 className="w-4 h-4" />
+              </button>
+            </div>
 
             <div className="p-6 flex flex-col gap-4">
-              {/* Title */}
-              <h3 className="text-xl  font-semibold text-gray-900 dark:text-gray-100">
+              {/* Title with click handler */}
+              <h3
+                className="text-xl font-semibold text-gray-900 dark:text-gray-100  "//cursor-pointer hover:underline
+                // onClick={() => handleViewEvent(event.id)}
+              >
                 {event.title}
               </h3>
 
@@ -190,18 +286,33 @@ export const SearchEvents = () => {
                 Organized by: {event.createdBy}
               </p>
 
-              {/* Join Button */}
-              <button
-                disabled={isUserInQueue}
-                onClick={() => joinQueue(event)}
-                className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
-                  isUserInQueue
-                    ? "bg-sage-200 text-sage-600 cursor-not-allowed"
-                    : "bg-sage-500 text-white hover:bg-sage-600 hover:shadow-md"
-                }`}
-              >
-                {isUserInQueue ? "Already in a Queue" : "Join Queue"}
-              </button>
+              {/* Updated Button Group */}
+              <div className="flex flex-col gap-2">
+                <button
+                  disabled={isUserInQueue}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    joinQueue(event);
+                  }}
+                  className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
+                    isUserInQueue
+                      ? "bg-sage-200 text-sage-600 cursor-not-allowed"
+                      : "bg-sage-500 text-white hover:bg-sage-600 hover:shadow-md"
+                  }`}
+                >
+                  {isUserInQueue ? "Already in a Queue" : "Join Queue"}
+                </button>
+
+                {/* <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewEvent(event.id);
+                  }}
+                  className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
+                >
+                  View Event Details
+                </button> */}
+              </div>
             </div>
           </div>
         ))}
