@@ -1,4 +1,3 @@
-import LoadingSpinner from "./LoadingSpinner";
 
 export const GlobalSpinner = () => {
     return (

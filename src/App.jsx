@@ -16,6 +16,8 @@ import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
+import { CustomCursor } from "./components/CustomCursor";
+import ParticlesBackground from "./components/ParticlesComponent";
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
           draggable
           pauseOnHover
         />
+        <CustomCursor/>
         <LoadingProvider>
           <Routes>         
             <Route path="/*" element={<LandingPage />}>

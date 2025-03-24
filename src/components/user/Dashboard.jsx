@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-const Dashboard = ({ onPageChange }) => {
+const Dashboard = () => {
 
   const navigate = useNavigate(); 
   const handleNavigation = (path) => {

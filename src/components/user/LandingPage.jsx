@@ -1,31 +1,11 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiSun, FiMoon, FiPlus } from "react-icons/fi";
 import Navigation from "./Navigation";
-import Dashboard from "./Dashboard";
-import SearchEvents from "./SearchEvents";
-import MyEvents from "./MyEvents";
-import EventForm from "./EventForm";
-import MyQueue from "./MyQueue";
-import ViewQueue from "./ViewQueue";
 import { eventsList } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
-import {
-  Container,
-  WelcomeMessage,
-  ContentWrapper,
-  HeroSection,
-  ToggleButton,
-  FloatingActionButton,
-} from "../../services/StyledComponents";
-import { CustomCursor } from "../CustomCursor";
-import ParticlesBackground from "../ParticlesComponent";
-import { Header } from "../Header";
-import { Footer } from "../Footer";
 
 function LandingPage() {
-
 
   const [events, setEvents] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
