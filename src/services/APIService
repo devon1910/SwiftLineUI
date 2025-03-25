@@ -5,7 +5,7 @@ const API = axios.create({
   baseURL:  apiUrl
 });
 
-const PUBLIC_ROUTES = ['/login', '/signup', '/search','/','/myqueue']; // Add your public paths here
+const PUBLIC_ROUTES = ['/login', '/signup', '/search','/','/myQueue']; // Add your public paths here
 
 // Helper function to check if current path is public
 const isPublicRoute = () => {

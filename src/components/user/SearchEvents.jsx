@@ -99,7 +99,7 @@ export const SearchEvents = () => {
     try {
       await connection.invoke("JoinQueueGroup", event.id, userId);
       toast.success("Joined queue successfully");
-      navigate("/myqueue");
+      navigate("/myQueue");
     } catch (error) {
       toast.error("Error joining queue");
     }

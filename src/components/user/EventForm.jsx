@@ -57,12 +57,12 @@ const EventForm = ({
                   : ev
               );
               setEvents(updatedEvents);
-              navigator("/myevents");
+              navigator("/myEvents");
         })
         .catch((error) => {
           console.log(error);
           toast.error("There was an error in editing events. Please try again later.");
-          navigator("/myevents");
+          navigator("/myEvents");
         });
         //setEvents(updatedEvents);
       } else {
@@ -70,7 +70,7 @@ const EventForm = ({
         createEvent(newEvent)
           .then((response) => {   
             newEvent["usersInQueue"]= 0
-            navigator("/myevents");
+            navigator("/myEvents");
           })
           .catch((error) => {
             console.log(error);

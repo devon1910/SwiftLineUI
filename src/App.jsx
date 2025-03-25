@@ -16,8 +16,6 @@ import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
-import { CustomCursor } from "./components/CustomCursor";
-import ParticlesBackground from "./components/ParticlesComponent";
 
 function App() {
   return (
@@ -39,11 +37,11 @@ function App() {
             <Route path="/*" element={<LandingPage />}>
               <Route index element={<Dashboard />} />
               <Route path="search" element={<SearchEvents />} />
-              <Route path="myevents" element={<MyEvents />} />
+              <Route path="myEvents" element={<MyEvents />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="newEvent" element={<EventForm />} />
               </Route>
-              <Route path="myqueue" element={<MyQueue />} />
+              <Route path="myQueue" element={<MyQueue />} />
               <Route path="queueManagement" element={<ViewQueue />} />   
               <Route path="events/:eventId" element={<ViewEvent />} />      
             </Route>
