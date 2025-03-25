@@ -5,7 +5,7 @@ import DidYouKnowSlider from "./DidYouKnowSlider";
 import { connection } from "../../services/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
-import { FiArrowUp, FiX } from "react-icons/fi";
+import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 
@@ -14,6 +14,7 @@ export const MyQueue = () => {
 
   const [myQueue, setMyQueue] = useState({});
 
+  const [queueActivity, setQueueActivity] = useState(true);
 
   useEffect(() => {
     getCurrentPosition();
@@ -51,7 +52,23 @@ export const MyQueue = () => {
     }
   }, []); // Empty dependency array means it runs once on mount
 
- 
+  useEffect(() => {
+    // Make sure connection is defined/initialized before using it
+    if (connection) {
+      console.log("Setting up SignalR listener for queue updates");
+
+      // Register for position updates
+      connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
+        console.log("SignalR update received:", isQueueActive);
+        setQueueActivity(isQueueActive);
+      });
+      // Clean up when component unmounts
+      return () => {
+        console.log("Cleaning up SignalR listener");
+        connection.off("ReceiveQueueStatusUpdate");
+      };
+    }
+  }, []);
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
@@ -89,11 +106,15 @@ export const MyQueue = () => {
     }
     prevTimeRef.current = myQueue.timeTillYourTurn;
   }, [myQueue.timeTillYourTurn]);
-
+  console.log("queueActivity ", queueActivity)
   function getCurrentPosition() {
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
+
+        if (myQueue.position === -1) {
+          setQueueActivity(true);
+        }
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
@@ -116,7 +137,7 @@ export const MyQueue = () => {
           return;
         }
       }
-      const lineMemberId= myQueue.lineMemberId
+      const lineMemberId = myQueue.lineMemberId;
       // Invoke SignalR method to join the queue
       connection
         .invoke("ExitQueue", "", lineMemberId, "")
@@ -150,6 +171,21 @@ export const MyQueue = () => {
             </button>
           </div>
 
+          {!queueActivity && (
+            <div className="animate-slide-in bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-200 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md">
+              <div className="animate-pulse">
+                <FiPause className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-1">Queue Paused</h4>
+                <p className="text-sm">
+                  This queue is currently paused by the organizer. Your position
+                  will be maintained when the queue resumes. Check back later!
+                </p>
+              </div>
+            </div>
+          )}
+
           {showConfetti && (
             <Confetti
               width={windowDimension.width}
@@ -159,7 +195,7 @@ export const MyQueue = () => {
               gravity={0.2}
             />
           )}
-
+          
           {/* Body */}
           <div className="p-6 md:p-8">
             <div className="space-y-6 mb-6">

@@ -56,6 +56,7 @@ export const loginUser = async (loginRequest) => {
       const refreshToken = JSON.stringify(response.data.data.refreshToken);
       localStorage.setItem("user", valueToken);
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("userId", JSON.stringify(response.data.data.userId));
     }
     return response.data;
   } catch (error) {
@@ -87,6 +88,7 @@ export const SignUpUser = async (SignInRequest) => {
         "refreshToken",
         JSON.stringify(response.data.refreshToken)
       );
+      localStorage.setItem("userId", JSON.stringify(response.data.data.userId));
     }
     return response.data;
   } catch (error) {
