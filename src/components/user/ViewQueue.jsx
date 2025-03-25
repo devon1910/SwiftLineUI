@@ -4,11 +4,10 @@ import LoadingSpinner from "../LoadingSpinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
-import { Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { connection } from "../../services/SignalRConn";
 
-const ViewQueue = ({ onSkip }) => {
+const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
@@ -36,7 +35,6 @@ const ViewQueue = ({ onSkip }) => {
     //check if user is logged In
     const userId=localStorage.getItem('userId')
 
-    
     if (!userId) {
       toast.error("Please login or signup to join a queue.");
       navigate("/login");
@@ -91,7 +89,32 @@ const ViewQueue = ({ onSkip }) => {
       />
     );
   }
-
+  const onSkip = async (lineMemberId) => {
+      if (window.confirm("Are you sure you want to serve this line member before the end of their estimated wait time?")) {
+        if (connection.state !== "Connected") {
+          toast.info("Connection lost. Attempting to reconnect...");
+          try {
+            await connection.start();
+            toast.success("Reconnected successfully.");
+          } catch (reconnectError) {
+            console.error("Reconnection failed:", reconnectError);
+            toast.error("Unable to reconnect. Please check your network.");
+            return;
+          }
+        }
+        // Invoke SignalR method to join the queue
+        connection
+          .invoke("ExitQueue", "", lineMemberId, "")
+          .then(() => {
+            toast.success("Served Line Member.");
+            getEventQueues();
+          })
+          .catch((err) => {
+            console.error(err);
+            toast.error("Error in exiting queue. Please try again.");
+          });
+      }
+    };
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="rounded-xl shadow-lg border border-sage-100  overflow-hidden">
@@ -184,7 +207,7 @@ const ViewQueue = ({ onSkip }) => {
                       <td className="px-4 py-3">
                         <button
                           size="sm"
-                          onClick={() => onSkip(user.id)}
+                          onClick={() => onSkip(user.lineMember.id)}
                           disabled={isPaused}
                           className={`gap-2 ${
                             isPaused

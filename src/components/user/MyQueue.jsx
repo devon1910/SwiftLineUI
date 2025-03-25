@@ -106,7 +106,6 @@ export const MyQueue = () => {
     }
     prevTimeRef.current = myQueue.timeTillYourTurn;
   }, [myQueue.timeTillYourTurn]);
-  console.log("queueActivity ", queueActivity)
   function getCurrentPosition() {
     GetUserLineInfo()
       .then((response) => {
