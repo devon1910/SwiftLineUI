@@ -187,6 +187,7 @@ const EventForm = ({
             type="number"
             placeholder="Enter minutes"
             min="0"
+            max="60"
             value={averageTime}
             onChange={(e) => setAverageTime(e.target.value)}
             required
