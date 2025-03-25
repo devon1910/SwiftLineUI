@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { format } from 'date-fns';
 import { createEvent } from "../../services/swiftlineService";
 import { updateEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FiType, FiAlignLeft, FiClock, FiPlus, FiCheck } from 'react-icons/fi';
 
-const EventForm = ({
-  events,
-  setEvents
-}) => {
+const EventForm = () => {
   
   const location = useLocation();
   const navigator = useNavigate();
 
   const editingEvent = location.state?.editingEvent;
-
-  console.log("editingEvent: ", editingEvent);  
   
   const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
   const [description, setDescription] = useState(
@@ -50,26 +46,17 @@ const EventForm = ({
        
         updateEvent(newEvent)
         .then((response) => {
-          console.log(response.data);
-          const updatedEvents = events.map((ev) =>
-                ev.id === editingEvent.id
-                  ? { ...ev, title, description, averageTime }
-                  : ev
-              );
-              setEvents(updatedEvents);
-              navigator("/myEvents");
         })
         .catch((error) => {
           console.log(error);
           toast.error("There was an error in editing events. Please try again later.");
-          navigator("/myEvents");
         });
+        navigator("/myEvents");
         //setEvents(updatedEvents);
       } else {
         
         createEvent(newEvent)
           .then((response) => {   
-            newEvent["usersInQueue"]= 0
             navigator("/myEvents");
           })
           .catch((error) => {
@@ -80,163 +67,173 @@ const EventForm = ({
     }
   };
 
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hours = 0; hours < 24; hours++) {
+      for (let minutes = 0; minutes < 60; minutes += 60) {
+        const time = new Date(1970, 0, 1, hours, minutes);
+        const label = format(time, 'h:mm a');
+        const value = format(time, 'HH:mm');
+        options.push({ label, value });
+      }
+    }
+    return options;
+  };
 
-  function validateEventStartEnd() {
-    const startInd = startEndTime.indexOf(eventStartTime);
-    const endInd = startEndTime.indexOf(eventEndTime);
-    if (startInd === endInd) {
-      alert(
-        "The Event Start and end time cant be the same. Please select a different start/endtime."
-      );
+  const timeOptions = generateTimeOptions();
+
+  // Improved validation
+  const validateEventStartEnd = () => {
+    if (!eventStartTime || !eventEndTime) {
+      toast.error('Please select both start and end times');
       return false;
     }
 
-    return true;
-  }
+    const start = new Date(`1970-01-01T${eventStartTime}`);
+    const end = new Date(`1970-01-01T${eventEndTime}`);
 
-  // Helper arrays for hours, minutes, and meridiem.
-  const startEndTime = [
-    "00:00",
-    "01:00",
-    "02:00",
-    "03:00",
-    "04:00",
-    "05:00",
-    "06:00",
-    "07:00",
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",
-    "23:00",
-  ];
-  //const minutes = ["00", "15", "30", "45"];
-  //const meridiemOptions = ["AM", "PM"];
+    if (start >= end) {
+      toast.error('End time must be after start time');
+      return false;
+    }
+    return true;
+  };
 
   return (
-    <form 
-      className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8  rounded-lg shadow-md"
-      onSubmit={handleSubmit}
-    >
-      <h3 className="text-xl  sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 text-gray-800 dark:text-gray-800">
-        {editingEvent ? "Edit Event" : "Create New Event"}
+    <form className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md" onSubmit={handleSubmit}>
+      <h3 className="text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
+        {editingEvent ? (
+          <>
+            <FiCheck className="w-6 h-6" />
+            Edit Event
+          </>
+        ) : (
+          <>
+            <FiPlus className="w-6 h-6" />
+            Create New Event
+          </>
+        )}
       </h3>
-  
+
       {/* Title Input */}
-      <div className="mb-6">
-        <label 
-          htmlFor="eventTitle" 
-          className="block text-sm font-medium mb-1"
-        >
+      <div className="mb-6 relative">
+        <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
           Event Title
         </label>
-        <input
-          id="eventTitle"
-          type="text"
-          placeholder="Enter event title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-        />
-      </div>
-  
-      {/* Description Input */}
-      <div className="mb-6">
-        <label 
-          htmlFor="eventDescription" 
-          className="block text-sm font-medium mb-1"
-        >
-          Event Description
-        </label>
-        <textarea
-          id="eventDescription"
-          rows={5}
-          placeholder="Enter event description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition resize-y"
-        />
-      </div>
-  
-      {/* Input Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label 
-            htmlFor="averageTime" 
-            className="block text-sm font-medium mb-1"
-          >
-            Average Wait Time (mins)
-          </label>
+        <div className="relative">
           <input
-            id="averageTime"
-            type="number"
-            placeholder="Enter minutes"
-            min="0"
-            max="60"
-            value={averageTime}
-            onChange={(e) => setAverageTime(e.target.value)}
+            id="eventTitle"
+            type="text"
+            placeholder="Tech Conference 2024"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition  "
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
           />
         </div>
-  
-        <div>
-          <label 
-            htmlFor="startTime" 
-            className="block text-sm font-medium mb-1"
-          >
-            Start Time
-          </label>
-          <select
-            id="startTime"
-            value={eventStartTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition  dark:bg-white text-gray-900 dark:text-gray-900"
-          >
-            {startEndTime.map((hr) => (
-              <option key={hr} value={hr}>{hr}</option>
-            ))}
-          </select>
-        </div>
-  
-        <div>
-          <label 
-            htmlFor="endTime" 
-            className="block text-sm font-medium mb-1"
-          >
-            End Time
-          </label>
-          <select
-            id="endTime"
-            value={eventEndTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition dark:bg-white text-gray-900 dark:text-gray-900"
-          >
-            {startEndTime.map((hr) => (
-              <option key={hr} value={hr}>{hr}</option>
-            ))}
-          </select>
+      </div>
+
+      {/* Description Input */}
+      <div className="mb-6 relative">
+        <label htmlFor="eventDescription" className="block text-sm font-medium mb-1">
+          Event Description
+        </label>
+        <div className="relative">
+          <textarea
+            id="eventDescription"
+            rows={5}
+            placeholder="Describe your event details..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition resize-y"
+          />
         </div>
       </div>
-  
+
+      {/* Input Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        {/* Average Wait Time */}
+        <div className="relative">
+          <label htmlFor="averageTime" className="block text-sm font-medium mb-1">
+            Average Wait Time (mins)
+          </label>
+          <div className="relative">
+            <input
+              id="averageTime"
+              type="number"
+              placeholder="15"
+              min="0"
+              max="60"
+              value={averageTime}
+              onChange={(e) => setAverageTime(e.target.value)}
+              required
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+            />
+          </div>
+        </div>
+
+        {/* Start Time */}
+        <div className="relative">
+          <label htmlFor="startTime" className="block text-sm font-medium mb-1">
+            Start Time
+          </label>
+          <div className="relative">
+            <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <select
+              id="startTime"
+              value={eventStartTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+            >
+              {timeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* End Time */}
+        <div className="relative">
+          <label htmlFor="endTime" className="block text-sm font-medium mb-1">
+            End Time
+          </label>
+          <div className="relative">
+            <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <select
+              id="endTime"
+              value={eventEndTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+            >
+              {timeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
       {/* Submit Button */}
       <button 
         type="submit"
-        className="w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white"
+        className="w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
       >
-        {editingEvent ? "Save Changes" : "Create Event"}
+        {editingEvent ? (
+          <>
+            <FiCheck className="w-5 h-5" />
+            Save Changes
+          </>
+        ) : (
+          <>
+            <FiPlus className="w-5 h-5" />
+            Create Event
+          </>
+        )}
       </button>
     </form>
   );

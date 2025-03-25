@@ -12,8 +12,8 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const navItems = [
     { label: "Dashboard", path: "" },
     { label: "Search Events", path: "search" },
-    { label: "My Events", path: "myevents" },
-    { label: "My Queue", path: "myqueue" },
+    { label: "My Events", path: "myEvents" },
+    { label: "My Queue", path: "myQueue" },
   ];
 
   const handleNavigation = (path) => {

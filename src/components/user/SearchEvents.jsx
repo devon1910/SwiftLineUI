@@ -67,7 +67,7 @@ export const SearchEvents = () => {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      //window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

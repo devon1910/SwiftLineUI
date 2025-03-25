@@ -1,5 +1,6 @@
 import { FiShare2 } from "react-icons/fi";
 import StatItem from "./user/StatItem";
+import { format } from 'date-fns';
 
 const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
     <div className={`relative rounded-xl shadow-md border ${
@@ -32,8 +33,8 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
         <div className="grid grid-cols-2 gap-3">
           <StatItem label="Average Wait" value={`${event.averageTime} mins`} />
           <StatItem label="In Queue" value={event.usersInQueue} />
-          <StatItem label="Starts" value={event.eventStartTime} />
-          <StatItem label="Ends" value={event.eventEndTime} />
+          <StatItem label="Starts"  value={format(new Date(`1970-01-01T${event.eventStartTime}`), 'h:mm a')}/>
+          <StatItem label="Ends" value={format(new Date(`1970-01-01T${event.eventEndTime}`), 'h:mm a')}/> 
         </div>
   
         <button
