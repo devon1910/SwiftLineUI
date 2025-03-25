@@ -7,13 +7,11 @@ import API from "./APIService";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const eventsList = () =>
-  API.get(apiUrl + "Event/GetAllEvents");
+export const eventsList = (page, eventsPerPage, search="") =>
+  API.get(apiUrl + "Event/SearchEvents?page="+page+"&size="+eventsPerPage+"&query="+search);
 
 export const createEvent = (event) =>
   API.post(apiUrl + "Event/CreateEvent", event);
-
-
 
 // export const getEmployeeById = (id) =>
 //   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);

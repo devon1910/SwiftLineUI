@@ -34,7 +34,6 @@ function App() {
           draggable
           pauseOnHover
         />
-        <CustomCursor/>
         <LoadingProvider>
           <Routes>         
             <Route path="/*" element={<LandingPage />}>

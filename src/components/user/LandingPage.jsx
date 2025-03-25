@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "./Navigation";
-import { eventsList } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
 
 function LandingPage() {
@@ -12,7 +11,6 @@ function LandingPage() {
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
-  const navigate = useNavigate();
   
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
@@ -32,7 +30,6 @@ function LandingPage() {
   }, [emailFromState, location.state]);
 
   useEffect(() => {
-    getEventsList();
     // Load theme preference from local storage
     const savedTheme = localStorage.getItem("darkMode");
     if (savedTheme === "true") {
@@ -42,18 +39,6 @@ function LandingPage() {
       document.body.classList.remove("dark-mode");
     }
   }, []);
-
-  function getEventsList() {
-    setLoading(true);
-    eventsList()
-      .then((response) => {
-        setEvents(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching events:", error);
-      })
-      .finally(() => setLoading(false));
-  }
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -115,14 +100,6 @@ function LandingPage() {
           <Outlet context={{ events, setEvents, email, userId }} />
         )}
       </main>
-
-      {/* Floating Action Button */}
-      {/* <button
-        onClick={() => handlePageChange("eventForm")}
-        className="fixed bottom-8 right-8 bg-sage-500 text-white p-4 rounded-full shadow-lg hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
-      >
-        <FiPlus size={22} />
-      </button> */}
     </div>
   );
 }

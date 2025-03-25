@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const EventForm = ({
-  onPageChange,
   events,
   setEvents
 }) => {
@@ -71,8 +70,6 @@ const EventForm = ({
         createEvent(newEvent)
           .then((response) => {   
             newEvent["usersInQueue"]= 0
-            setEvents([...events, newEvent]);
-            console.log("new Events List: ", [...events, newEvent]);
             navigator("/myevents");
           })
           .catch((error) => {
