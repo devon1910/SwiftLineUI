@@ -97,11 +97,16 @@ export const SearchEvents = () => {
     }
 
     try {
-      await connection.invoke("JoinQueueGroup", event.id, userId);
+      const res= await connection.invoke("JoinQueueGroup", event.id, userId);
+
+      if(res===-1){
+        toast.error("Can't queue for an inactive event. Please check back later.");
+        return
+      }
       toast.success("Joined queue successfully");
       navigate("/myQueue");
     } catch (error) {
-      toast.error("Error joining queue");
+      toast.error("Error joining queue, kindly refresh this page. If this error persists, please try again later.");
     }
   };
 

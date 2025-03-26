@@ -9,17 +9,17 @@ const StatItem = ({ label, value }) => {
           <FiClock className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
         break;
-      case "Users in Queue":
+      case "Users In Queue":
         icon = (
           <FiUsers className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
         break;
-      case "Start Time":
+      case "Starts":
         icon = (
           <FiCalendar className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
         break;
-      case "End Time":
+      case "Ends":
         icon = (
           <FiCalendar className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
