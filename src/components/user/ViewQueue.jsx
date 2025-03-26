@@ -5,7 +5,7 @@ import { format} from "date-fns-tz"
 
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
 import { toast } from "react-toastify";
-import { connection } from "../../services/SignalRConn";
+import { connection, useSignalRWithLoading } from "../../services/SignalRConn";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
@@ -13,6 +13,7 @@ const ViewQueue = () => {
   const location = useLocation();
   const event = location.state?.event;
   const navigate = useNavigate();
+  const { invokeWithLoading } = useSignalRWithLoading();
 
   useEffect(() => {
     getEventQueues();
@@ -50,8 +51,7 @@ const ViewQueue = () => {
     }
 
     // Invoke SignalR method to join the queue
-    connection
-      .invoke("ToggleQueueActivity", isPaused, userId, event.id) 
+    invokeWithLoading(connection,"ToggleQueueActivity", isPaused, userId, event.id) 
       .then(() => {
         toast.success("Queue Activity updated.");
       })
@@ -92,8 +92,7 @@ const ViewQueue = () => {
           }
         }
         // Invoke SignalR method to join the queue
-        connection
-          .invoke("ExitQueue", "", lineMemberId, "")
+        await invokeWithLoading(connection,"ExitQueue", "", lineMemberId, "")
           .then(() => {
             toast.success("Served Line Member.");
             getEventQueues();

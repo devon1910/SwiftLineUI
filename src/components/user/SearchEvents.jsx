@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { connection } from "../../services/SignalRConn.js";
+import React, { useContext, useEffect, useState } from "react";
+import { connection, useSignalRWithLoading } from "../../services/SignalRConn.js";
 import { toast } from "react-toastify";
 import {
   useNavigate,
@@ -30,9 +30,10 @@ export const SearchEvents = () => {
   const [searchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const { invokeWithLoading } = useSignalRWithLoading();
+
   const fetchEvents = async (page = 1, search = "") => {
-    
-    
+  
     try {
 
       eventsList(page,eventsPerPage,search)
@@ -50,7 +51,6 @@ export const SearchEvents = () => {
       console.log("isLoading 2: ",isLoading)
     }
   };
-
 
   useEffect(() => {
     const urlEventId = searchParams.get("eventId");
@@ -104,7 +104,8 @@ export const SearchEvents = () => {
     }
 
     try {
-      const res= await connection.invoke("JoinQueueGroup", event.id, userId);
+
+      const res= await invokeWithLoading(connection,"JoinQueueGroup", event.id, userId);
 
       if(res===-1){
         toast.error("Can't queue for an inactive event. Please check back later.");
@@ -113,6 +114,7 @@ export const SearchEvents = () => {
       toast.success("Joined queue successfully");
       navigate("/myQueue");
     } catch (error) {
+      console.log(error)
       toast.error("Error joining queue, kindly refresh this page. If this error persists, please try again later.");
     }
   };

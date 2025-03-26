@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider";
-import { connection } from "../../services/SignalRConn.js";
+import { connection, useSignalRWithLoading } from "../../services/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/swiftlineService";
 import LoadingSpinner from "../LoadingSpinner";
 import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
@@ -15,6 +15,8 @@ export const MyQueue = () => {
   const [myQueue, setMyQueue] = useState({});
 
   const [queueActivity, setQueueActivity] = useState(true);
+
+  const { invokeWithLoading } = useSignalRWithLoading();
 
   useEffect(() => {
     getCurrentPosition();
@@ -138,8 +140,7 @@ export const MyQueue = () => {
       }
       const lineMemberId = myQueue.lineMemberId;
       // Invoke SignalR method to join the queue
-      connection
-        .invoke("ExitQueue", "", lineMemberId, "")
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
         .then(() => {
           toast.success("Exited Queue.");
           getCurrentPosition();
