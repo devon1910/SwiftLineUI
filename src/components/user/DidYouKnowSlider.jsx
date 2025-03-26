@@ -44,7 +44,7 @@ const DidYouKnowSlider = () => {
         {randomReasons.map((reason, index) => (
           <div
             key={index}
-            className={`absolute inset-0 flex items-center justify-center p-4 md:p-6 transition-opacity duration-1000 ${
+            className={`absolute inset-0 flex items-center justify-center p-4 md:p-6 transition-opacity duration-2000 ${
               index === currentIndex ? 'opacity-100' : 'opacity-0'
             }`}
             style={{
