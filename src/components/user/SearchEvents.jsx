@@ -11,6 +11,8 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { eventsList } from "../../services/swiftlineService";
 import { GetUserQueueStatus } from "../../services/swiftlineService";
 import PaginationControls from "../PaginationControl.jsx";
+import { GlobalSpinner } from "../GlobalSpinner.jsx";
+import LoadingSpinner from "../LoadingSpinner.jsx";
 
 export const SearchEvents = () => {
 
@@ -62,7 +64,7 @@ export const SearchEvents = () => {
 
   useEffect(() => {
     getUserQueueStatus();
-  }, []);
+  }, []); // add to searchEvents and get rid later
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -155,6 +157,7 @@ export const SearchEvents = () => {
   // }, [userId]);
 
   return (
+    
     <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold ">
@@ -173,9 +176,7 @@ export const SearchEvents = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <FiLoader className="animate-spin text-sage-500 w-8 h-8" />
-        </div>
+        LoadingSpinner
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

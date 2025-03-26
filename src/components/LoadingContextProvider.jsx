@@ -10,47 +10,39 @@ const LoadingContext = createContext({
 
 // Create a provider component
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState(0);
 
   useEffect(() => {
-    // Request interceptor
-    const requestInterceptor = axios.interceptors.request.use(
-      config => {
-        setPendingRequests(prev => prev + 1);
-        setIsLoading(true);
-        return config;
-      },
-      error => {
-        setPendingRequests(prev => Math.max(0, prev - 1));
-        if (pendingRequests <= 1) setIsLoading(false);
-        return Promise.reject(error);
-      }
-    );
-
-    // Response interceptor
-    const responseInterceptor = axios.interceptors.response.use(
-      response => {
-        setPendingRequests(prev => Math.max(0, prev - 1));
-        if (pendingRequests <= 1) setIsLoading(false);
-        return response;
-      },
-      error => {
-        setPendingRequests(prev => Math.max(0, prev - 1));
-        if (pendingRequests <= 1) setIsLoading(false);
-        return Promise.reject(error);
-      }
-    );
-
-    // Cleanup
-    return () => {
-      axios.interceptors.request.eject(requestInterceptor);
-      axios.interceptors.response.eject(responseInterceptor);
+    const handleRequest = (config) => {
+      setPendingRequests(prev => prev + 1);
+      return config;
     };
-  }, [pendingRequests]);
+
+    const handleError = (error) => {
+      setPendingRequests(prev => Math.max(0, prev - 1));
+      return Promise.reject(error);
+    };
+
+    const handleResponse = (response) => {
+      setPendingRequests(prev => Math.max(0, prev - 1));
+      return response;
+    };
+
+    // Add interceptors
+    const reqInterceptor = axios.interceptors.request.use(handleRequest, handleError);
+    const resInterceptor = axios.interceptors.response.use(handleResponse, handleError);
+
+    return () => {
+      // Remove interceptors
+      axios.interceptors.request.eject(reqInterceptor);
+      axios.interceptors.response.eject(resInterceptor);
+    };
+  }, []); // Empty dependency array ensures stable interceptors
+
+  const isLoading = pendingRequests > 0;
 
   return (
-    <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+    <LoadingContext.Provider value={{ isLoading }}>
       {children}
       {isLoading && <GlobalSpinner />}
     </LoadingContext.Provider>
