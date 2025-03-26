@@ -1,5 +1,5 @@
-
-export const GlobalSpinner = () => {
+import React from 'react'
+const GlobalSpinner = () => {
     return (
       <div className="global-spinner-overlay">
         <div className="global-spinner">
@@ -9,3 +9,6 @@ export const GlobalSpinner = () => {
       </div>
     );
   };
+
+export default GlobalSpinner
+

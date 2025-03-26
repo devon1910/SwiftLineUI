@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { eventQueueInfo } from "../../services/swiftlineService";
-import LoadingSpinner from "../LoadingSpinner";
 import { useLocation, useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { format} from "date-fns-tz"
+
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { connection } from "../../services/SignalRConn";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const location = useLocation();
   const event = location.state?.event;
@@ -23,11 +22,9 @@ const ViewQueue = () => {
     eventQueueInfo(event.id)
       .then((response) => {
         setQueues(response.data.data);
-        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
-        setIsLoading(false);
       });
   };
 
@@ -81,14 +78,6 @@ const ViewQueue = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <LoadingSpinner
-        message="Loading Queue..."
-        darkModeClassName="dark:text-sage-300"
-      />
-    );
-  }
   const onSkip = async (lineMemberId) => {
       if (window.confirm("Are you sure you want to serve this line member before the end of their estimated wait time?")) {
         if (connection.state !== "Connected") {

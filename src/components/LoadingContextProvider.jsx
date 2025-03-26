@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useState, useEffect, createContext, useContext } from 'react';
-import { GlobalSpinner } from './GlobalSpinner';
+import GlobalSpinner from './GlobalSpinner';
+import API from '../services/APIService';
 
 // Create a loading context
 const LoadingContext = createContext({
@@ -29,13 +29,13 @@ export const LoadingProvider = ({ children }) => {
     };
 
     // Add interceptors
-    const reqInterceptor = axios.interceptors.request.use(handleRequest, handleError);
-    const resInterceptor = axios.interceptors.response.use(handleResponse, handleError);
+    const reqInterceptor = API.interceptors.request.use(handleRequest, handleError);
+    const resInterceptor = API.interceptors.response.use(handleResponse, handleError);
 
     return () => {
       // Remove interceptors
-      axios.interceptors.request.eject(reqInterceptor);
-      axios.interceptors.response.eject(resInterceptor);
+      API.interceptors.request.eject(reqInterceptor);
+      API.interceptors.response.eject(resInterceptor);
     };
   }, []); // Empty dependency array ensures stable interceptors
 
