@@ -22,7 +22,6 @@ const VerifyTokenPage = () => {
     if (token) {
       validateToken(token)
         .then((response) => {
-          // Optionally store token or response details as needed
           localStorage.setItem("user", JSON.stringify(token));
           localStorage.setItem("userEmail", response.data.data.email);
           localStorage.setItem("userId", response.data.data.userId);
