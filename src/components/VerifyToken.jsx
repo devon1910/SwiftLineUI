@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 const VerifyTokenPage = () => {
   const navigator = useNavigate();
-  const [isLoading, setLoading] = useState(true);
   const alreadyCalledRef = useRef(false);
 
   function getTokenFromUrl() {
@@ -36,38 +35,12 @@ const VerifyTokenPage = () => {
           });
         })
         .catch((error) => {
-          console.error("Verification error:", error);
-          // Check for error response structure and fallback to error.message
-          const errMsg =
-            error.response && error.response.data && error.response.data.message
-              ? error.response.data.message
-              : error.message;
-          toast.error(errMsg);
-          // Optionally redirect to login on failure
-          navigator("/login");
+          toast.error(error.response.data.data.message);
         })
-        .finally(() => {
-          setLoading(false);
-        });
     } else {
-      alert("Couldn't extract token.");
-      setLoading(false);
+      toast.error("Couldn't extract token.");
     }
   }, [navigator]);
-
-  if (isLoading) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <LoadingSpinner message="Loading..." />
-      </motion.div>
-    );
-  }
-
   // Optionally render something else if not loading; otherwise, null is fine.
   return null;
 };
