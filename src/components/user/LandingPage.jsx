@@ -14,8 +14,6 @@ function LandingPage() {
   
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
-  console.log("emailFromState: ", emailFromState)
-  console.log("userEmail: ", localStorage.getItem("userEmail"));
   const [email, setEmail] = useState(emailFromState || localStorage.getItem("userEmail") || "");
   const [userId, setUserId] = useState(location.state?.userId || localStorage.getItem("userId") || "");
   

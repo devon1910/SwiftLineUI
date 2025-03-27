@@ -62,7 +62,6 @@ const ViewQueue = () => {
       });
   };
 
-  console.log("isPaused: ",isPaused)
   const togglePause = () => {
     const confirm = window.confirm(
       "Are you sure you want to " +

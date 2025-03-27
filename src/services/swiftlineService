@@ -54,9 +54,6 @@ export const loginUser = async (loginRequest) => {
   } catch (error) {
     if (error.response) {
       // The server responded with a status code outside the 2xx range
-      console.log("Error status:", error.response.status);
-      console.log("Error data:", error.response.data);
-
       // You can throw the server's error message instead of Axios's generic one
       throw error.response.data;
     } else if (error.request) {

@@ -48,23 +48,18 @@ export const SearchEvents = () => {
       console.log(error)
     } finally {
       setIsLoading(false);
-      console.log("isLoading 2: ",isLoading)
     }
   };
 
   useEffect(() => {
     const urlEventId = searchParams.get("eventId");
     const urlSearchTerm = searchParams.get("search");
-    setIsLoading(true);
-    console.log("isLoading 1: ",isLoading)
     if (urlEventId && urlSearchTerm) {
       setSearchTerm(urlSearchTerm);
       fetchEvents(1, urlSearchTerm);
     } else {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
-    setIsLoading(false);
-    console.log("isLoading 2: ",isLoading)
   }, [currentPage, debouncedSearchTerm]);
 
   const handlePageChange = (newPage) => {

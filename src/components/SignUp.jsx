@@ -88,10 +88,8 @@ const SignUp = () => {
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
       .then((response) => {
-        console.log("response: ", response);
         setIsFormSubmitted(true);
         setIsLoading(false)
-        console.log("isFormSubmitted", isFormSubmitted)
       })
       .catch((error) => {
         
