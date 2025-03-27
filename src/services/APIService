@@ -47,7 +47,7 @@ API.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
 
-      if (isPublicRoute().length > 0 && !token) {
+      if (isPublicRoute().length > 0) {
         return Promise.reject(error);
       }
       // If we receive a 401 and haven't retried yet, attempt to refresh the token.

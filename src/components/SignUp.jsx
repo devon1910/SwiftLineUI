@@ -115,7 +115,7 @@ const SignUp = () => {
       )}
 
       {isFormSubmitted ? (
-        <div className="bg-sage-100 text-sage-800 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
+        <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
           <CheckCircle className="flex-shrink-0 text-sage-600" />
           <div>
             <p className="text-sm">

@@ -40,33 +40,26 @@ export const GetUserLineInfo = () => API.get(apiUrl + "Line/GetUserLineInfo");
 export const fetchEventById = (eventId) =>
   API.get(apiUrl + "Event/GetEvent/" + eventId);
 
-export const loginUser = async (loginRequest) => {
-  try {
-    const response = await API.post(apiUrl + "Auth/Login", loginRequest);
-    if (response.data.data.accessToken) {
-      const valueToken = JSON.stringify(response.data.data.accessToken);
-      const refreshToken = JSON.stringify(response.data.data.refreshToken);
-      localStorage.setItem("user", valueToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("userId", JSON.stringify(response.data.data.userId));
-    }
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      // The server responded with a status code outside the 2xx range
-      // You can throw the server's error message instead of Axios's generic one
-      throw error.response.data;
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.log("Error request:", error.request);
-      throw new Error("No response received from server");
-    } else {
-      // Something else caused the error
-      console.log("Error message:", error.message);
-      throw error;
-    }
-  }
-};
+export const loginUser= (loginRequest) => API.post(apiUrl + "Auth/Login", loginRequest);
+
+
+// export const loginUser = async (loginRequest) => {
+//   try {
+//     const response = await API.post(apiUrl + "Auth/Login", loginRequest);
+
+//     console.log("actual response", response); 
+//     if (response.data.data.accessToken) {
+//       const valueToken = JSON.stringify(response.data.data.accessToken);
+//       const refreshToken = JSON.stringify(response.data.data.refreshToken);
+//       localStorage.setItem("user", valueToken);
+//       localStorage.setItem("refreshToken", refreshToken);
+//       localStorage.setItem("userId", JSON.stringify(response.data.data.userId));
+//     }
+//     return response;
+//   } catch (error) {
+//     return error;
+//   }
+// };
 
 export const SignUpUser = async (SignInRequest) => {
   try {

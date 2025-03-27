@@ -16,29 +16,41 @@ const Login = () => {
       toast.error("Please enter email and password.");
       return;
     }
-    const loginRequest = { email, password };
-    loginUser(loginRequest)
+
+    loginUser({ email, password })
       .then((response) => {
+        const valueToken = JSON.stringify(response.data.data.accessToken);
+        const refreshToken = JSON.stringify(response.data.data.refreshToken);
+        localStorage.setItem("user", valueToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem(
+          "userId",
+          JSON.stringify(response.data.data.userId)
+        );
         navigator("/", {
-            state: { 
-              email: response.data.email,
-              isInLine: response.data.isInLine,
-              userId: response.data.userId
-            }
+          state: {
+            email: response.data.data.email,
+            isInLine: response.data.data.isInLine,
+            userId: response.data.data.userId,
+          },
         });
       })
-      .catch((error) => {      
-       console.log("error: ", error.message);
-       toast.error(error.data.message);
+      .catch((error) => {
+        toast.error(error.response.data.data.message);
       });
   };
   return (
     <form onSubmit={handleLogin} className="space-y-6">
-      <h2 className="text-2xl font-bold text-center text-gray-900">Welcome Back</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-900">
+        Welcome Back
+      </h2>
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Email address
           </label>
           <input
@@ -52,7 +64,10 @@ const Login = () => {
         </div>
 
         <div className="relative">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Password
           </label>
           <input
@@ -84,5 +99,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
