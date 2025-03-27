@@ -61,7 +61,7 @@ export const MyQueue = () => {
 
       // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
-        console.log("SignalR update received:", isQueueActive);
+        console.log("Toggle Pause SignalR update received:", isQueueActive);
         setQueueActivity(isQueueActive);
       });
       // Clean up when component unmounts

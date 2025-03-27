@@ -22,7 +22,8 @@ const ViewQueue = () => {
   const getEventQueues = () => {
     eventQueueInfo(event.id)
       .then((response) => {
-        setQueues(response.data.data);
+        setQueues(response.data.data.lines);
+        setIsPaused(response.data.data.isEventPaused);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -61,6 +62,7 @@ const ViewQueue = () => {
       });
   };
 
+  console.log("isPaused: ",isPaused)
   const togglePause = () => {
     const confirm = window.confirm(
       "Are you sure you want to " +
@@ -190,7 +192,7 @@ const ViewQueue = () => {
                         {user.lineMember.swiftLineUser.email}
                       </td>
                       <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                        {format(new Date(user.createdAt), "hh:mm a")}
+                        {format(new Date(user.createdAt), "hh:mm:ss a")}
                       </td>
                       <td className="px-4 py-3">
                         <button
