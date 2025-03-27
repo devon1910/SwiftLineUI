@@ -9,7 +9,6 @@ import {
 import EventCard from "../EventCard.jsx";
 import { useDebounce } from "@uidotdev/usehooks";
 import { eventsList } from "../../services/swiftlineService";
-import { GetUserQueueStatus } from "../../services/swiftlineService";
 import PaginationControls from "../PaginationControl.jsx";
 import GlobalSpinner from "../GlobalSpinner.jsx";
 
@@ -40,6 +39,7 @@ export const SearchEvents = () => {
       .then((response) => {
         setEvents(response.data.data.events);
         setTotalPages(response.data.data.totalPages);
+        setIsUserInQueue(response.data.data.isUserInQueue);
         setSelectedEventId(searchParams.get("eventId"));
       })
      
@@ -67,10 +67,6 @@ export const SearchEvents = () => {
     console.log("isLoading 2: ",isLoading)
   }, [currentPage, debouncedSearchTerm]);
 
-  useEffect(() => {
-    getUserQueueStatus();
-  }, []); // add to searchEvents and get rid later
-
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -81,13 +77,6 @@ export const SearchEvents = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1); // Reset to first page on new search
-  };
-
-  const highlightSharedEvent = (events) => {
-    return events.map(event => ({
-      ...event,
-      isShared: event.id === selectedEventId
-    }));
   };
 
   // Optimized joinQueue function with loading state
@@ -138,19 +127,6 @@ export const SearchEvents = () => {
         }
         document.body.removeChild(textArea);
       });
-  };
-  const getUserQueueStatus = async () => {
-    try {
-      const response = await GetUserQueueStatus();
-      setIsUserInQueue(response.data.data);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        navigate('/login');
-        toast.error('Please login to view queue status');
-      } else {
-        toast.error('Error fetching queue status');
-      }
-    }
   };
 
   // useEffect(() => {
