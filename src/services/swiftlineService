@@ -36,8 +36,6 @@ export const lineInfo = function (queue) {
 };
 
 export const GetUserLineInfo = () => API.get(apiUrl + "Line/GetUserLineInfo");
-export const GetUserQueueStatus = () =>
-  API.get(apiUrl + "Line/GetUserQueueStatus");
 
 export const fetchEventById = (eventId) =>
   API.get(apiUrl + "Event/GetEvent/" + eventId);
