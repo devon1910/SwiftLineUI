@@ -54,7 +54,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
           </div>
           <div>
             <p className="text-xs font-medium">Organized By</p>
-            <p className="text-sm font-semibold">
+            <p className="text-sm truncate  font-semibold">
               {event.organizer || 'Unknown Organizer'}
             </p>
           </div>
