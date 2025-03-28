@@ -116,7 +116,7 @@ const SignUp = () => {
 
       {isFormSubmitted ? (
         <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
-          <CheckCircle className="flex-shrink-0 text-sage-600" />
+          <CheckCircle className="flex-shrink-0" />
           <div>
             <p className="text-sm">
               Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.
