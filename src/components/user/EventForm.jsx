@@ -95,7 +95,6 @@ const EventForm = () => {
       return false;
     }
 
-
     // const start = new Date(`1970-01-01T${eventStartTime}`);
     // const end = new Date(`1970-01-01T${eventEndTime}`);
 
@@ -175,7 +174,7 @@ const EventForm = () => {
             Average Wait Time (mins)
           </label>
           <div className="relative">
-            <LoaderCircle  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <LoaderCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="averageTime"
               type="number"
@@ -197,13 +196,13 @@ const EventForm = () => {
             Start Time
           </label>
           <div className="relative">
-          <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            
+            <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <select
               id="startTime"
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
-              style={{ paddingLeft: "4.5rem" }}
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -211,6 +210,11 @@ const EventForm = () => {
                 </option>
               ))}
             </select>
+
+            {/* Dropdown Arrow (Optional for Styling) */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+              ▼
+            </div>
           </div>
         </div>
 
@@ -220,13 +224,12 @@ const EventForm = () => {
             End Time
           </label>
           <div className="relative">
-            <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <select
               id="endTime"
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
-              style={{ paddingLeft: "4.5rem" }}
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -234,6 +237,11 @@ const EventForm = () => {
                 </option>
               ))}
             </select>
+
+            {/* Dropdown Arrow (Optional for Styling) */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+              ▼
+            </div>
           </div>
         </div>
       </div>
