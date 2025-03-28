@@ -16,7 +16,7 @@ const MyEvents = () => {
   function handleNavigation() {
     if (!userId) {
       toast.error("Please login or signup to join a queue.");
-      navigate("/login");
+      navigate("/auth");
       return;
     }
     navigate("/newEvent");

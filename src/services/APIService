@@ -5,7 +5,7 @@ const API = axios.create({
   baseURL:  apiUrl
 });
 
-const PUBLIC_ROUTES = ['/login', '/signup', '/search','/','/myQueue','/VerifyToken']; // Add your public paths here
+const PUBLIC_ROUTES = ['/auth', '/signup', '/search','/','/myQueue','/VerifyToken']; // Add your public paths here
 
 // Helper function to check if current path is public
 const isPublicRoute = () => {
@@ -27,7 +27,7 @@ API.interceptors.request.use(
         return config;
       }
       if (!token) {
-        window.location.href = '/login'; 
+        window.location.href = '/auth'; 
         return Promise.reject(new Error("No access token available"));
       }
     // If token exists, add it to the header
@@ -81,7 +81,7 @@ API.interceptors.response.use(
           // If refresh fails, clear stored tokens and redirect to login.
           localStorage.removeItem('user');
           localStorage.removeItem('refreshToken');
-          window.location.href = '/login';
+          window.location.href = '/auth';
           console.log(refreshError)
           return Promise.reject(refreshError);
         }

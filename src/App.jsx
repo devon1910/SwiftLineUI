@@ -45,7 +45,7 @@ function App() {
               <Route path="queueManagement" element={<ViewQueue />} />   
               <Route path="events/:eventId" element={<ViewEvent />} />      
             </Route>
-            <Route path="/login" element={<AuthForm />} />
+            <Route path="/auth" element={<AuthForm />} />
             <Route path="/VerifyToken" element={<VerifyToken />} />
           </Routes>
         </LoadingProvider>

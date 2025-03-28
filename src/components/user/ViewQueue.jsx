@@ -36,7 +36,7 @@ const ViewQueue = () => {
 
     if (!userId) {
       toast.error("Please login or signup to join a queue.");
-      navigate("/login");
+      navigate("/auth");
       return;
     }
     if (connection.state !== "Connected") {

@@ -42,11 +42,11 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
         localStorage.removeItem('userEmail')
         // Navigate to login
         window.history.replaceState({}, document.title);
-        navigate('/login');
+        navigate('/auth');
         setIsOpen(false);
       }
       else{
-        navigate('/login');
+        navigate('/auth');
       }
     // Clear local storage
    
