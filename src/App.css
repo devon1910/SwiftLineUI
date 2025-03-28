@@ -324,6 +324,25 @@ y
   animation: pulseEffect 2s infinite;
 }
 
+@keyframes fastForwardMove {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+.fast-forward-icon {
+  display: inline-block;
+  animation: fastForwardMove 1.5s ease-in-out infinite;
+}
+
+/* Optional: Add hover effect to control animation */
+.fast-forward-icon:hover {
+  animation-play-state: paused;
+}
+
 /*.logo {
   height: 6em;
   padding: 1.5em;

@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "./Navigation";
 import LoadingSpinner from "../LoadingSpinner";
+import { FastForward } from "lucide-react";
 
 function LandingPage() {
 
@@ -68,7 +69,7 @@ function LandingPage() {
               className="w-28 mx-auto mb-6"
             />
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Welcome to SwiftLine<span className="text-sage-500 ml-2 waving-hand">⚡</span>
+              Welcome to SwiftLine<span className="text-sage-500 ml-2 fast-forward-icon"><FastForward /></span>
             </h1>
             <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
               Queue Smarter, Not Harder – Your Time, Optimized.
