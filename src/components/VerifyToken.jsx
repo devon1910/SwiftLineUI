@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { validateToken } from "../services/swiftlineService";
 import { useNavigate } from "react-router-dom";
-import LoadingSpinner from "./LoadingSpinner";
-import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import { Loader, LoaderCircle } from "lucide-react";
 const VerifyTokenPage = () => {
   const navigator = useNavigate();
   const alreadyCalledRef = useRef(false);
@@ -17,7 +16,6 @@ const VerifyTokenPage = () => {
     // Prevent duplicate calls by checking the ref
     if (alreadyCalledRef.current) return;
     alreadyCalledRef.current = true;
-
     const token = getTokenFromUrl();
     if (token) {
       validateToken(token)
@@ -37,13 +35,18 @@ const VerifyTokenPage = () => {
         })
         .catch((error) => {
           toast.error(error.response.data.data.message);
-        })
+          navigator("/auth");
+        });
     } else {
       toast.error("Couldn't extract token.");
     }
   }, [navigator]);
   // Optionally render something else if not loading; otherwise, null is fine.
-  return null;
+  return (
+    <div class="flex items-center justify-center p-40">
+      <LoaderCircle className="animate-spin h-15 w-15 color-sage-500 align-center" />
+    </div>
+  );
 };
 
 export default VerifyTokenPage;
