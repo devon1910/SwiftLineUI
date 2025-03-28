@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import { createEvent } from "../../services/swiftlineService";
 import { updateEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiType, FiAlignLeft, FiClock, FiPlus, FiCheck } from 'react-icons/fi';
+import { FiType, FiAlignLeft, FiClock, FiPlus, FiCheck } from "react-icons/fi";
+import { Clock, LoaderCircle } from "lucide-react";
 
 const EventForm = () => {
-  
   const location = useLocation();
   const navigator = useNavigate();
 
   const editingEvent = location.state?.editingEvent;
-  
+
   const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
   const [description, setDescription] = useState(
     editingEvent ? editingEvent.description : ""
@@ -30,8 +30,8 @@ const EventForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    const eventId= editingEvent ? editingEvent.id : 0
+
+    const eventId = editingEvent ? editingEvent.id : 0;
     if (validateEventStartEnd()) {
       const newEvent = {
         eventId,
@@ -43,27 +43,28 @@ const EventForm = () => {
       };
 
       if (editingEvent) {
-       
         updateEvent(newEvent)
-        .then((response) => {
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error("There was an error in editing events. Please try again later.");
-        });
+          .then((response) => {})
+          .catch((error) => {
+            console.log(error);
+            toast.error(
+              "There was an error in editing events. Please try again later."
+            );
+          });
         navigator("/myEvents");
         //setEvents(updatedEvents);
       } else {
-        
         createEvent(newEvent)
-          .then((response) => {   
+          .then((response) => {
             navigator("/myEvents");
           })
           .catch((error) => {
             console.log(error);
-            toast.error("There was an error in creating event. Please try again later.");
+            toast.error(
+              "There was an error in creating event. Please try again later."
+            );
           });
-      }   
+      }
     }
   };
 
@@ -72,8 +73,8 @@ const EventForm = () => {
     for (let hours = 0; hours < 24; hours++) {
       for (let minutes = 0; minutes < 60; minutes += 60) {
         const time = new Date(1970, 0, 1, hours, minutes);
-        const label = format(time, 'h:mm a');
-        const value = format(time, 'HH:mm');
+        const label = format(time, "h:mm a");
+        const value = format(time, "HH:mm");
         options.push({ label, value });
       }
     }
@@ -85,9 +86,15 @@ const EventForm = () => {
   // Improved validation
   const validateEventStartEnd = () => {
     if (!eventStartTime || !eventEndTime) {
-      toast.error('Please select both start and end times');
+      toast.error("Please select both start and end times");
       return false;
     }
+
+    if (eventStartTime == eventEndTime) {
+      toast.error("Event start and end time can't be the same");
+      return false;
+    }
+
 
     // const start = new Date(`1970-01-01T${eventStartTime}`);
     // const end = new Date(`1970-01-01T${eventEndTime}`);
@@ -100,7 +107,10 @@ const EventForm = () => {
   };
 
   return (
-    <form className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md" onSubmit={handleSubmit}>
+    <form
+      className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
+      onSubmit={handleSubmit}
+    >
       <h3 className="text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
         {editingEvent ? (
           <>
@@ -135,7 +145,10 @@ const EventForm = () => {
 
       {/* Description Input */}
       <div className="mb-6 relative">
-        <label htmlFor="eventDescription" className="block text-sm font-medium mb-1">
+        <label
+          htmlFor="eventDescription"
+          className="block text-sm font-medium mb-1"
+        >
           Event Description
         </label>
         <div className="relative">
@@ -155,20 +168,25 @@ const EventForm = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Average Wait Time */}
         <div className="relative">
-          <label htmlFor="averageTime" className="block text-sm font-medium mb-1">
+          <label
+            htmlFor="averageTime"
+            className="block text-sm font-medium mb-1"
+          >
             Average Wait Time (mins)
           </label>
           <div className="relative">
+            <LoaderCircle  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="averageTime"
               type="number"
-              placeholder="15"
+              placeholder="5"
               min="0"
               max="60"
               value={averageTime}
               onChange={(e) => setAverageTime(e.target.value)}
               required
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+              style={{ paddingLeft: "2.5rem" }}
             />
           </div>
         </div>
@@ -179,12 +197,13 @@ const EventForm = () => {
             Start Time
           </label>
           <div className="relative">
-            <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <select
               id="startTime"
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+              style={{ paddingLeft: "2.5rem" }}
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -207,6 +226,7 @@ const EventForm = () => {
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+              style={{ paddingLeft: "2.5rem" }}
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -219,7 +239,7 @@ const EventForm = () => {
       </div>
 
       {/* Submit Button */}
-      <button 
+      <button
         type="submit"
         className="w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
       >

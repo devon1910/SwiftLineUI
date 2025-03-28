@@ -116,9 +116,9 @@ const SignUp = () => {
 
       {isFormSubmitted ? (
         <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
-          <CheckCircle className="flex-shrink-0" />
+          <CheckCircle className="flex-shrink-0 text-black" />
           <div>
-            <p className="text-sm">
+            <p className="text-sm text-black">
               Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.
               Contact support if you need help.
             </p>
@@ -138,7 +138,7 @@ const SignUp = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-black border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
                 placeholder="name@example.com"
               />
             </div>
@@ -152,7 +152,7 @@ const SignUp = () => {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 pr-10 border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+                className="w-full px-3 py-2 pr-10 text-black border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
                 placeholder="******"
               />
               <button

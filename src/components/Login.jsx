@@ -32,6 +32,7 @@ const Login = () => {
             email: response.data.data.email,
             isInLine: response.data.data.isInLine,
             userId: response.data.data.userId,
+            userName: response.data.data.userName,
           },
         });
       })

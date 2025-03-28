@@ -24,12 +24,14 @@ const VerifyTokenPage = () => {
         .then((response) => {
           localStorage.setItem("user", JSON.stringify(token));
           localStorage.setItem("userEmail", response.data.data.email);
+          localStorage.setItem("userName", response.data.data.userName);
           localStorage.setItem("userId", response.data.data.userId);
           navigator("/", {
             state: {
               userId: response.data.data.userId,
               email: response.data.data.email,
               isInLine: response.data.data.isInLine,
+              userName: response.data.data.userName,
             },
           });
         })

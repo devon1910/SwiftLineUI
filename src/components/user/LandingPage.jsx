@@ -7,14 +7,14 @@ import { FastForward } from "lucide-react";
 
 function LandingPage() {
 
-  const [events, setEvents] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const location = useLocation();
   
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
+  const userNameFromState = location.state?.userName;
+  const [userName, setUserName] = useState(userNameFromState || localStorage.getItem("userName") || "");
   const [email, setEmail] = useState(emailFromState || localStorage.getItem("userEmail") || "");
   const [userId, setUserId] = useState(location.state?.userId || localStorage.getItem("userId") || "");
   
@@ -23,10 +23,13 @@ function LandingPage() {
     if (emailFromState) {
       localStorage.setItem("userEmail", emailFromState);
     }
+    if (userNameFromState) {
+      localStorage.setItem("userName", userNameFromState);
+    }
     if (location.state?.userId) {
       localStorage.setItem("userId", location.state.userId);
     }
-  }, [emailFromState, location.state]);
+  }, [emailFromState, userNameFromState,location.state]);
 
   useEffect(() => {
     // Load theme preference from local storage
@@ -82,7 +85,7 @@ function LandingPage() {
           <p className="text-lg md:text-xl">
             {email ? (
               <span>
-              <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">{email}</strong>
+              <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">{userName}</strong>
               </span>
             ) : (
               <span>
@@ -92,12 +95,7 @@ function LandingPage() {
           </p>
         </div>
 
-        {loading ? (
-          <LoadingSpinner message="Loading events..." />
-        ) : (
-          // Render nested routes here
-          <Outlet context={{ events, setEvents, email, userId }} />
-        )}
+        <Outlet context={{ email, userId }} />
       </main>
     </div>
   );
