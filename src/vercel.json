@@ -1,7 +1,7 @@
 {
-    "rewrites": [
-      { "source": "/VerifyToken", "destination": "/VerifyToken" },
-      { "source": "/VerifyToken/", "destination": "/VerifyToken" },
-      { "source": "/(.*)", "destination": "/index.html" }
-    ]
+    // "rewrites": [
+    //   { "source": "/VerifyToken", "destination": "/VerifyToken" },
+    //   { "source": "/VerifyToken/", "destination": "/VerifyToken" },
+    //   { "source": "/(.*)", "destination": "/index.html" }
+    // ]
 }
