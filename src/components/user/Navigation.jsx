@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, CircleUserRound, Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -89,11 +89,12 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-1 focus:outline-none"
               >
-                <img
-                  className="h-5 w-5 rounded-full"
-                  src="https://res.cloudinary.com/dddabj5ub/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1742577198/user_2_sbozqv.png"
+                {/* <img
+                  className="h-5 w-5 rounded-full text-white"
+                  src="src\assets\person-fill.svg"
                   alt="Profile"
-                />
+                /> */}
+                <CircleUserRound />
                 <ChevronDown 
                   className={`h-5 w-5 transition-transform${
                     isProfileOpen ? 'rotate-180' : ''
