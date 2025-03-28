@@ -89,14 +89,10 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-1 focus:outline-none"
               >
-                {/* <img
-                  className="h-5 w-5 rounded-full text-white"
-                  src="src\assets\person-fill.svg"
-                  alt="Profile"
-                /> */}
+
                 <CircleUserRound />
                 <ChevronDown 
-                  className={`h-5 w-5 transition-transform${
+                  className={`h-5 w-5 transition-transform ${
                     isProfileOpen ? 'rotate-180' : ''
                   } ${darkMode ? 'text-white' : 'text-gray-700'}`}
                 />
