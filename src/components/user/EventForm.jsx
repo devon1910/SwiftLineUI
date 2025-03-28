@@ -203,7 +203,7 @@ const EventForm = () => {
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
-              style={{ paddingLeft: "2.5rem" }}
+              style={{ paddingLeft: "4.5rem" }}
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -226,7 +226,7 @@ const EventForm = () => {
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
-              style={{ paddingLeft: "2.5rem" }}
+              style={{ paddingLeft: "4.5rem" }}
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
