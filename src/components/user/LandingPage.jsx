@@ -4,20 +4,28 @@ import { motion } from "framer-motion";
 import Navigation from "./Navigation";
 import LoadingSpinner from "../LoadingSpinner";
 import { FastForward } from "lucide-react";
+import { showToast } from "../../services/ToastHelper";
 
 function LandingPage() {
-
   const [darkMode, setDarkMode] = useState(false);
 
   const location = useLocation();
-  
+
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
   const userNameFromState = location.state?.userName;
-  const [userName, setUserName] = useState(userNameFromState || localStorage.getItem("userName") || "");
-  const [email, setEmail] = useState(emailFromState || localStorage.getItem("userEmail") || "");
-  const [userId, setUserId] = useState(location.state?.userId || localStorage.getItem("userId") || "");
-  
+  const [userName, setUserName] = useState(
+    userNameFromState || localStorage.getItem("userName") || ""
+  );
+  const [email, setEmail] = useState(
+    emailFromState || localStorage.getItem("userEmail") || ""
+  );
+  const [userId, setUserId] = useState(
+    location.state?.userId || localStorage.getItem("userId") || ""
+  );
+
+  const [loaded, setLoaded] = useState(false);
+
   // Save email to localStorage if it comes from state
   useEffect(() => {
     if (emailFromState) {
@@ -29,7 +37,7 @@ function LandingPage() {
     if (location.state?.userId) {
       localStorage.setItem("userId", location.state.userId);
     }
-  }, [emailFromState, userNameFromState,location.state]);
+  }, [emailFromState, userNameFromState, location.state]);
 
   useEffect(() => {
     // Load theme preference from local storage
@@ -40,6 +48,7 @@ function LandingPage() {
     } else {
       document.body.classList.remove("dark-mode");
     }
+    setLoaded(true);
   }, []);
 
   const toggleDarkMode = () => {
@@ -71,12 +80,47 @@ function LandingPage() {
               alt="SwiftLine Logo"
               className="w-28 mx-auto mb-6"
             />
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Welcome to SwiftLine<span className="text-sage-500 ml-2 fast-forward-icon"><FastForward /></span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
-              Queue Smarter, Not Harder – Your Time, Optimized.
-            </p>
+            <div className="text-center py-12">
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight relative">
+                <span
+                  className={`inline-block transition-all duration-700 ${
+                    loaded ? "opacity-100" : "opacity-0 -translate-x-8"
+                  }`}
+                >
+                  Welcome to Swift
+                </span>
+                <span
+                  className={`inline-block transition-all duration-700 delay-300 ${
+                    loaded ? "opacity-100" : "opacity-0 translate-y-8"
+                  }`}
+                >
+                  Line
+                </span>
+                <span
+                  className={`text-sage-500 ml-2 inline-block transition-all duration-500 delay-500 ${
+                    loaded ? "opacity-100 rotate-0" : "opacity-0 rotate-180"
+                  }`}
+                >
+                  <FastForward className="fast-forward-icon" />
+                </span>
+              </h1>
+
+              <p
+                className={`text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto transition-all duration-1000 delay-700 ${
+                  loaded
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4"
+                }`}
+              >
+                <span className="inline-block animate-pulse">
+                  Queue Smarter,
+                </span>{" "}
+                <span className="inline-block">Not Harder –</span>{" "}
+                <span className="inline-block font-semibold">
+                  Your Time, Optimized.
+                </span>
+              </p>
+            </div>
           </motion.div>
         </section>
 
@@ -85,11 +129,13 @@ function LandingPage() {
           <p className="text-lg md:text-xl">
             {email ? (
               <span>
-              <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">{userName}</strong>
+                <span className="waving-hand">👋🏽</span> Hello,{" "}
+                <strong className="text-sage-500">{userName}</strong>
               </span>
             ) : (
               <span>
-                <span className="waving-hand">👋🏽</span> Hello, <strong className="text-sage-500">Guest</strong>
+                <span className="waving-hand">👋🏽</span> Hello,{" "}
+                <strong className="text-sage-500">Guest</strong>
               </span>
             )}
           </p>

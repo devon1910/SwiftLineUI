@@ -16,22 +16,12 @@ import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
+import CustomToast from "./components/CustomToast.jsx";
 
 function App() {
   return (
     <>
       <BrowserRouter>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
         <LoadingProvider>
           <Routes>         
             <Route path="/*" element={<LandingPage />}>
@@ -50,6 +40,7 @@ function App() {
           </Routes>
         </LoadingProvider>
       </BrowserRouter>
+      <CustomToast/>
       <Footer />
     </>
   );

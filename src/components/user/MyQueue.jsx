@@ -8,6 +8,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
+import { showToast } from "../../services/ToastHelper";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -140,7 +141,7 @@ export const MyQueue = () => {
       // Invoke SignalR method to join the queue
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
         .then(() => {
-          toast.success("Exited Queue.");
+          showToast.success("Exited Queue.");
           getCurrentPosition();
         })
         .catch((err) => {

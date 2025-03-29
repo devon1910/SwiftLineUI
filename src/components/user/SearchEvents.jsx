@@ -76,6 +76,7 @@ export const SearchEvents = () => {
 
   // Optimized joinQueue function with loading state
   const joinQueue = async (event) => {
+    console.log("userId: ", userId);
     if (!userId) {
       toast.error("Please login to join a queue");
       navigate("/auth");

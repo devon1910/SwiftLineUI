@@ -26,6 +26,24 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'] // Your preferred font
+      },
+      animation: {
+        'typing': 'typing 3.5s steps(40, end), blink .75s step-end infinite',
+        'float': 'float 3s ease-in-out infinite',
+      },
+      keyframes: {
+        typing: {
+          'from': { width: '0' },
+          'to': { width: '100%' }
+        },
+        blink: {
+          'from, to': { 'border-color': 'transparent' },
+          '50%': { 'border-color': 'currentColor' }
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' }
+        }
       }
     },
   },

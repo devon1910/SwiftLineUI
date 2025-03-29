@@ -3,6 +3,7 @@ import { loginUser } from "../services/swiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { showToast } from "../services/ToastHelper";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -35,6 +36,7 @@ const Login = () => {
             userName: response.data.data.userName,
           },
         });
+      
       })
       .catch((error) => {
         toast.error(error.response.data.data.message);

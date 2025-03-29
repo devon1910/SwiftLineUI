@@ -119,7 +119,7 @@ const SignUp = () => {
           <CheckCircle className="flex-shrink-0 text-black" />
           <div>
             <p className="text-sm text-black">
-              Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.
+              Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.<br/>
               Contact support if you need help.
             </p>
           </div>

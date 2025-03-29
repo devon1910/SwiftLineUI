@@ -14,7 +14,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
         </div>
       )}
    */}
-    {event.isOngoing && <div className="pulse-overlay" />}
+    {event.hasStarted && <div className="pulse-overlay" />}
 
     <div className="p-6 flex flex-col gap-4">
       <div className="flex justify-between items-start">
@@ -23,7 +23,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
             <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {event.title}
             </h3>
-            {event.isOngoing && <span className="ongoing-badge">LIVE</span>}
+            {event.hasStarted && <span className="ongoing-badge">LIVE</span>}
           </div>
         </div>
 
@@ -68,20 +68,22 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
       </div>
 
       <button
-        disabled={!event.isOngoing || isUserInQueue}
+        disabled={!event.hasStarted || isUserInQueue || !event.isActive}
         onClick={() => onJoin(event)}
         className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
-          !event.isOngoing
+          !event.hasStarted
             ? "bg-sage-200 text-sage-600 cursor-not-allowed"
             : isUserInQueue
             ? "bg-sage-200 text-sage-600 cursor-not-allowed"
             : "bg-sage-500 text-white hover:bg-sage-600"
         }`}
       >
-        {!event.isOngoing
+        {!event.hasStarted
           ? "Event Not Started"
           : isUserInQueue
           ? "Already in Queue"
+          : !event.isActive
+          ? "Queue is Paused"
           : "Join Queue"}
       </button>
     </div>

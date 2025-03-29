@@ -343,44 +343,68 @@ y
   animation-play-state: paused;
 }
 
-/*.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-} */
 
 @keyframes beep {
      0% { transform: scale(1); opacity: 1; }
      50% { transform: scale(1.5); opacity: 0.5; }
      100% { transform: scale(1); opacity: 1; }
    }
+
+/*Toast*/
+:root {
+  --toastify-color-success: #8CAA8B; /* Sage green */
+  --toastify-color-error: #C2534F; /* Complementary to sage for error */
+  --toastify-color-light: #FFFFFF;
+  --toastify-color-dark: #1E1E1E;
+  --toastify-text-color-light: #1E1E1E;
+  --toastify-text-color-dark: #F2F3F5;
+}
+
+.toast-container .Toastify__toast {
+  border-radius: 8px;
+}
+
+.Toastify__toast-theme--light.Toastify__toast--success {
+  background-color: #F5F8F5; /* Light sage-tinted background */
+  border-left: 4px solid var(--toastify-color-success);
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--success {
+  background-color: #2A332A; /* Dark sage-tinted background */
+  border-left: 4px solid var(--toastify-color-success);
+}
+
+.Toastify__toast-theme--light.Toastify__toast--error {
+  background-color: #FDF7F7; /* Light error-tinted background */
+  border-left: 4px solid var(--toastify-color-error);
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--error {
+  background-color: #332A2A; /* Dark error-tinted background */
+  border-left: 4px solid var(--toastify-color-error);
+}
+
+/* Add a subtle glow effect */
+.Toastify__toast--success .Toastify__toast-icon,
+.Toastify__toast--error .Toastify__toast-icon {
+  filter: drop-shadow(0 0 8px rgba(140, 170, 139, 0.5));
+}
+
+/* Create a custom progress bar style */
+.Toastify__progress-bar {
+  height: 3px;
+  opacity: 0.8;
+}
+
+.custom-toast-success {
+  border-left: 4px solid var(--toastify-color-success);
+  font-weight: 500;
+}
+
+.dark .custom-toast-success {
+  background-color: #2A332A; /* Dark sage-tinted background for dark mode */
+}
+
+.light .custom-toast-success {
+  background-color: #F5F8F5; /* Light sage-tinted background for light mode */
+}
