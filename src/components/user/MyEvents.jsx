@@ -15,7 +15,7 @@ const MyEvents = () => {
   const { userId } = useOutletContext();
   function handleNavigation() {
     if (!userId) {
-      toast.error("Please login or signup to join a queue.");
+      toast.error("Please login or signup to create an event.");
       navigate("/auth");
       return;
     }

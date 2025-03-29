@@ -14,7 +14,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (
         </div>
       )}
    */}
-    {event.hasStarted && <div className="pulse-overlay" />}
+    {event.hasStarted && <div className="pulse-overlay"/>}
 
     <div className="p-6 flex flex-col gap-4">
       <div className="flex justify-between items-start">

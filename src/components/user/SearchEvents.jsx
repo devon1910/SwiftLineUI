@@ -79,7 +79,7 @@ export const SearchEvents = () => {
   const joinQueue = async (event) => {
     console.log("userId: ", userId);
     if (!userId) {
-      toast.error("Please login to join a queue");
+      toast.error("Please login or sign up to join a queue");
       navigate("/auth");
       return;
     }
