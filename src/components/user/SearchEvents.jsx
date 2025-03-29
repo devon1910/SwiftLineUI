@@ -26,7 +26,7 @@ export const SearchEvents = () => {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const eventsPerPage = 3; 
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, updateSearchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { invokeWithLoading } = useSignalRWithLoading();
@@ -71,6 +71,7 @@ export const SearchEvents = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    updateSearchParams({ search: e.target.value });
     setCurrentPage(1); // Reset to first page on new search
   };
 
@@ -124,16 +125,6 @@ export const SearchEvents = () => {
         document.body.removeChild(textArea);
       });
   };
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (userId) {
-  //       getUserQueueStatus();
-  //     }
-  //   }, 30000); // Refresh every 30 seconds
-
-  //   return () => clearInterval(interval);
-  // }, [userId]);
 
   return (
     
