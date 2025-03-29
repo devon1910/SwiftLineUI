@@ -7,6 +7,7 @@ const apiUrl = import.meta.env.VITE_API_SIGNALR_URL;
 
 export const connection = new HubConnectionBuilder()
   .withUrl(apiUrl + "queueHub")
+  .withAutomaticReconnect()
   .build();
   
 connection
