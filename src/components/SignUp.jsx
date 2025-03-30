@@ -7,7 +7,11 @@ const handleGoogleSignIn = async () => {
  window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle";
 };
 
+
+
 const SignUp = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-black">Create your account</h2>
@@ -20,6 +24,7 @@ const SignUp = () => {
             id="email"
             name="email"
             type="email"
+            onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
@@ -33,6 +38,7 @@ const SignUp = () => {
             id="password"
             name="password"
             type="password"
+            onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"

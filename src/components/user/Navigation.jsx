@@ -9,7 +9,7 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem('user');
-
+  
   const navItems = [
     { label: "Dashboard", path: "" },
     { label: "Search Events", path: "search" },
@@ -36,7 +36,7 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const currentPath = location.pathname.split("/")[1] || "dashboard";
   const handleAuthAction = () => {
 
-    if(isAuthenticated)
+    if(isAuthenticated && isAuthenticated !== "undefined") 
       {
         localStorage.removeItem('user');
         localStorage.removeItem('refreshToken');
@@ -120,7 +120,7 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    {isAuthenticated ? 'Log Out' : 'Log In'}
+                    {isAuthenticated && isAuthenticated !== "undefined" ? 'Log Out' : 'Log In'}
                   </button>
                 </div>
               )}
