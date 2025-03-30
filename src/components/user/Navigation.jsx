@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { ChevronDown, CircleUserRound, Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import Cookies from "js-cookie"
 
 const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem('user');
+  const isAuthenticated = localStorage.getItem('user');
 
   const navItems = [
     { label: "Dashboard", path: "" },
@@ -42,15 +43,17 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
         localStorage.removeItem('userEmail')
         localStorage.removeItem('userId') 
         localStorage.removeItem('userName')
+
+        Cookies.remove('accessToken') 
+        Cookies.remove('refreshToken')  
+        Cookies.remove('username')
+        Cookies.remove('userId')
         // Navigate to login
         window.history.replaceState({}, document.title);
         navigate('/auth');
         setIsOpen(false);
       }
-      else{
-        navigate('/auth');
-      }
-    // Clear local storage
+      navigate('/auth');
    
   };
     return (

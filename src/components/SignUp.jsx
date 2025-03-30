@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { Form, Button, InputGroup, Alert } from "react-bootstrap";
 import styled from "styled-components";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
-
+import Cookies from "js-cookie"
 const handleGoogleSignIn = async () => {
- console.log("Google sign-in clicked");
-
- window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle/login/google?returnUrl=http://localhost:5173";
+ window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle";
 };
 
 const SignUp = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+      <h2 className="text-2xl font-bold text-black">Create your account</h2>
       <form className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -23,6 +21,7 @@ const SignUp = () => {
             name="email"
             type="email"
             required
+            autoComplete="username"
             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
         </div>
@@ -35,6 +34,7 @@ const SignUp = () => {
             name="password"
             type="password"
             required
+            autoComplete="current-password"
             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
         </div>

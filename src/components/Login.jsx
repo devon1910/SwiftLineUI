@@ -4,13 +4,58 @@ import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../services/ToastHelper";
+import Cookies from "js-cookie"
 
 
 const Login = ({ onResetPassword }) => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigator = useNavigate();
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Add your login logic here.
+    if (!email || !password) {
+      toast.error("Please enter email and password.");
+      return;
+    }
+
+    loginUser({ email, password })
+      .then((response) => {
+        const valueToken = JSON.stringify(response.data.data.accessToken);
+        const refreshToken = JSON.stringify(response.data.data.refreshToken);
+        localStorage.setItem("user", valueToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem(
+          "userId",
+          JSON.stringify(response.data.data.userId)
+        );
+        navigator("/", {
+          state: {
+            email: response.data.data.email,
+            isInLine: response.data.data.isInLine,
+            userId: response.data.data.userId,
+            userName: response.data.data.userName,
+          },
+        });
+      
+      })
+      .catch((error) => {
+        toast.error(error.response.data.data.message);
+      });
+  };
+
+  const handleGoogleSignIn = async () => {
+    window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle";
+   
+   };
+  
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-      <form className="space-y-4">
+      <h2 className="text-2xl font-bold text-black">Welcome back</h2>
+      <form className="space-y-4" onSubmit={handleLogin}>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email address
@@ -20,6 +65,7 @@ const Login = ({ onResetPassword }) => {
             name="email"
             type="email"
             required
+            autoComplete="username"
             className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
         </div>
@@ -32,6 +78,7 @@ const Login = ({ onResetPassword }) => {
             name="password"
             type="password"
             required
+            autoComplete="current-password"
             className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
         </div>
@@ -75,6 +122,7 @@ const Login = ({ onResetPassword }) => {
           <button
             type="button"
             className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700  hover:bg-gray-50"
+            onClick={handleGoogleSignIn}
           >
             <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
               <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
@@ -86,5 +134,6 @@ const Login = ({ onResetPassword }) => {
     </div>
   );
 };
+
 
 export default Login;

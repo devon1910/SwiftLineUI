@@ -5,6 +5,7 @@ import Navigation from "./Navigation";
 import LoadingSpinner from "../LoadingSpinner";
 import { FastForward } from "lucide-react";
 import { showToast } from "../../services/ToastHelper";
+import Cookies from "js-cookie"
 
 function LandingPage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -14,30 +15,19 @@ function LandingPage() {
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
   const userNameFromState = location.state?.userName;
-  const [userName, setUserName] = useState(
-    userNameFromState || localStorage.getItem("userName") || ""
-  );
-  const [email, setEmail] = useState(
-    emailFromState || localStorage.getItem("userEmail") || ""
-  );
-  const [userId, setUserId] = useState(
-    location.state?.userId || localStorage.getItem("userId") || ""
-  );
+  const userName = userNameFromState || localStorage.getItem("userName") || Cookies.get("username")|| ""
+  const email = emailFromState || localStorage.getItem("userEmail") || ""
+  const userId = location.state?.userId || localStorage.getItem("userId") || Cookies.get("userId") || ""
+  const token = Cookies.get("accessToken");
+  const refresh = Cookies.get("refreshToken");
 
+  localStorage.setItem("userEmail", email);
+  localStorage.setItem("userName", userName);
+  localStorage.setItem("userId", userId);
+  localStorage.setItem("user", JSON.stringify(token));
+  localStorage.setItem("refreshToken", JSON.stringify(refresh));
+ 
   const [loaded, setLoaded] = useState(false);
-
-  // Save email to localStorage if it comes from state
-  useEffect(() => {
-    if (emailFromState) {
-      localStorage.setItem("userEmail", emailFromState);
-    }
-    if (userNameFromState) {
-      localStorage.setItem("userName", userNameFromState);
-    }
-    if (location.state?.userId) {
-      localStorage.setItem("userId", location.state.userId);
-    }
-  }, [emailFromState, userNameFromState, location.state]);
 
   useEffect(() => {
     // Load theme preference from local storage
@@ -127,7 +117,7 @@ function LandingPage() {
         {/* Welcome Message */}
         <div className="mb-12 text-center md:text-left">
           <p className="text-lg md:text-xl">
-            {email ? (
+            {userName ? (
               <span>
                 <span className="waving-hand">👋🏽</span> Hello,{" "}
                 <strong className="text-sage-500">{userName}</strong>
