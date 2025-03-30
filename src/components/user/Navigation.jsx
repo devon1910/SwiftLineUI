@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { ChevronDown, CircleUserRound, Menu, X } from 'lucide-react';
-import { FiMoon, FiSun } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
-import Cookies from "js-cookie"
-import { LogOut } from '../../services/swiftlineService';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { ChevronDown, CircleUserRound, Menu, X } from "lucide-react";
+import { FiMoon, FiSun } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { LogOut } from "../../services/swiftlineService";
+import { toast } from "react-toastify";
 
-const Navigation = ({ darkMode,toggleDarkMode  }) => {
+const Navigation = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
-  const isAuthenticated = localStorage.getItem('user');
-  
+  const isAuthenticated = localStorage.getItem("user");
+
   const navItems = [
     { label: "Dashboard", path: "" },
     { label: "Search Events", path: "search" },
@@ -25,124 +25,132 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
   };
 
   // Common button styles
-  const menuButtonStyles = (isActive) => 
+  const menuButtonStyles = (isActive) =>
     `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-      isActive 
-        ? 'bg-sage-600 text-white dark:bg-sage-700' 
+      isActive
+        ? "bg-sage-600 text-white dark:bg-sage-700"
         : `text-gray-700 hover:bg-sage-50 dark:text-gray-300 dark:hover:bg-sage-900 dark:hover:text-white ${
-            darkMode ? 'hover:bg-opacity-10' : ''
+            darkMode ? "hover:bg-opacity-10" : ""
           }`
     }`;
 
-      // Derive active page from the URL (assuming /LandingPage/{page})
+  // Derive active page from the URL (assuming /LandingPage/{page})
   const currentPath = location.pathname.split("/")[1] || "dashboard";
   const handleAuthAction = () => {
 
-    const confirmAction= confirm("Are you sure you want to "+ (isAuthenticated ? "logout" : "login"));
+    if (isAuthenticated && isAuthenticated !== "undefined") {
+      const confirmAction = confirm(
+        "Are you sure you want to " + (isAuthenticated ? "logout" : "login")
+      );
 
-    if(confirmAction) 
-      {
-        if(isAuthenticated && isAuthenticated !== "undefined") 
-          {
-              LogOut()
-                  .then((response) => {
-                    localStorage.removeItem('user');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('userEmail')
-            localStorage.removeItem('userId') 
-            localStorage.removeItem('userName')
-    
-            Cookies.remove('accessToken') 
-            Cookies.remove('refreshToken')  
-            Cookies.remove('username')
-            Cookies.remove('userId')
+      if (confirmAction) {
+        LogOut()
+          .then((response) => {
+            localStorage.removeItem("user");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("userEmail");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("userName");
+
+            Cookies.remove("accessToken");
+            Cookies.remove("refreshToken");
+            Cookies.remove("username");
+            Cookies.remove("userId");
             // Navigate to login
             window.history.replaceState({}, document.title);
             setIsOpen(false);
-                  
-            })
-            .catch((error) => {
-              toast.error(error.response.data.data.message);
-            }); 
-          }
-
-          navigate('/auth');
+            navigate("/auth");
+          })
+          .catch((error) => {
+            toast.error(error.response.data.data.message);
+          });
       }
+    }else{
+      navigate("/auth");
+    }
 
-    
    
   };
-    return (
-      <nav className={`sticky top-0 z-50 ${darkMode ? 'bg-gray-900' : 'bg-white'} shadow-sm border-b border-opacity-10 backdrop-blur-sm bg-opacity-90`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            {/* Left side - Logo */}
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center">
-                <img 
-                  className="h-8 w-auto" 
-                  src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp" 
-                  alt="Swiftline" 
-                />
-                <span className={`ml-2 text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} hidden sm:block`}>
-                  Swiftline
-                </span>
-              </div>
+  return (
+    <nav
+      className={`sticky top-0 z-50 ${
+        darkMode ? "bg-gray-900" : "bg-white"
+      } shadow-sm border-b border-opacity-10 backdrop-blur-sm bg-opacity-90`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Left side - Logo */}
+          <div className="flex items-center">
+            <div className="flex-shrink-0 flex items-center">
+              <img
+                className="h-8 w-auto"
+                src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp"
+                alt="Swiftline"
+              />
+              <span
+                className={`ml-2 text-lg font-medium ${
+                  darkMode ? "text-white" : "text-gray-900"
+                } hidden sm:block`}
+              >
+                Swiftline
+              </span>
             </div>
-    
-            {/* Right side - Navigation items and buttons */}
-            <div className="flex items-center gap-4">
-              {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-2">
-                {navItems.map((page) => (
-                  <button
-                    key={page.path}
-                    onClick={() => handleNavigation(page.path)}
-                    className={menuButtonStyles(currentPath === page.path)}
-                  >
-                    {page.label}
-                  </button>
-                ))}
-              </div>
+          </div>
 
-              <div className="relative ml-4">
+          {/* Right side - Navigation items and buttons */}
+          <div className="flex items-center gap-4">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2">
+              {navItems.map((page) => (
+                <button
+                  key={page.path}
+                  onClick={() => handleNavigation(page.path)}
+                  className={menuButtonStyles(currentPath === page.path)}
+                >
+                  {page.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative ml-4">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-1 focus:outline-none"
               >
-
                 <CircleUserRound />
-                <ChevronDown 
+                <ChevronDown
                   className={`h-5 w-5 transition-transform ${
-                    isProfileOpen ? 'rotate-180' : ''
-                  } ${darkMode ? 'text-white' : 'text-gray-700'}`}
+                    isProfileOpen ? "rotate-180" : ""
+                  } ${darkMode ? "text-white" : "text-gray-700"}`}
                 />
               </button>
-             
+
               {/* Dropdown Menu */}
               {isProfileOpen && (
-                <div 
+                <div
                   className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
-                    darkMode 
-                      ? 'bg-gray-800 border border-gray-700' 
-                      : 'bg-white border border-gray-200'
+                    darkMode
+                      ? "bg-gray-800 border border-gray-700"
+                      : "bg-white border border-gray-200"
                   }`}
                 >
                   <button
                     onClick={handleAuthAction}
                     className={`block w-full px-4 py-2 text-sm text-left ${
                       darkMode
-                        ? 'text-gray-300 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? "text-gray-300 hover:bg-gray-700"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
-                    {isAuthenticated && isAuthenticated !== "undefined" ? 'Log Out' : 'Log In'}
+                    {isAuthenticated && isAuthenticated !== "undefined"
+                      ? "Log Out"
+                      : "Log In"}
                   </button>
                 </div>
               )}
             </div>
-    
-              <button
+
+            <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-opacity-10 hover:bg-gray-500 transition-colors"
             >
@@ -192,10 +200,8 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
             </div>
           </div>
         )}
-        </div>
-      </nav>
-    );
+      </div>
+    </nav>
+  );
 };
 export default Navigation;
-
-
