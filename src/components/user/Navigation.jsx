@@ -3,6 +3,8 @@ import { ChevronDown, CircleUserRound, Menu, X } from 'lucide-react';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie"
+import { LogOut } from '../../services/swiftlineService';
+import { toast } from 'react-toastify';
 
 const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,24 +38,38 @@ const Navigation = ({ darkMode,toggleDarkMode  }) => {
   const currentPath = location.pathname.split("/")[1] || "dashboard";
   const handleAuthAction = () => {
 
-    if(isAuthenticated && isAuthenticated !== "undefined") 
-      {
-        localStorage.removeItem('user');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userEmail')
-        localStorage.removeItem('userId') 
-        localStorage.removeItem('userName')
+    const confirmAction= confirm("Are you sure you want to "+ (isAuthenticated ? "logout" : "login"));
 
-        Cookies.remove('accessToken') 
-        Cookies.remove('refreshToken')  
-        Cookies.remove('username')
-        Cookies.remove('userId')
-        // Navigate to login
-        window.history.replaceState({}, document.title);
-        navigate('/auth');
-        setIsOpen(false);
+    if(confirmAction) 
+      {
+        if(isAuthenticated && isAuthenticated !== "undefined") 
+          {
+              LogOut()
+                  .then((response) => {
+                    localStorage.removeItem('user');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userEmail')
+            localStorage.removeItem('userId') 
+            localStorage.removeItem('userName')
+    
+            Cookies.remove('accessToken') 
+            Cookies.remove('refreshToken')  
+            Cookies.remove('username')
+            Cookies.remove('userId')
+            // Navigate to login
+            window.history.replaceState({}, document.title);
+            setIsOpen(false);
+                  
+            })
+            .catch((error) => {
+              toast.error(error.response.data.data.message);
+            }); 
+          }
+
+          navigate('/auth');
       }
-      navigate('/auth');
+
+    
    
   };
     return (

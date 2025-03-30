@@ -1,4 +1,4 @@
-import { sign } from "node:crypto";
+
 import API from "./APIService";
 
 
@@ -43,6 +43,7 @@ export const fetchEventById = (eventId) =>
 
 export const loginUser= (loginRequest) => API.post(apiUrl + "Auth/Login", loginRequest);
 export const SignUpUser= (SignUpRequest) => API.post(apiUrl + "Auth/SignUp", SignUpRequest);
+export const LogOut= () => API.post(apiUrl + "Auth/Revoke");
 
 
 // export const loginUser = async (loginRequest) => {

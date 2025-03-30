@@ -16,11 +16,11 @@ const isPublicRoute = () => {
 API.interceptors.request.use(
 
   config => {
-  
-   
+    
+    const userToken = localStorage.getItem('user') === "undefined" ? null : localStorage.getItem('user');
     // Get token from localStorage
-    const token = localStorage.getItem('user') 
-      ? JSON.parse(localStorage.getItem('user')) 
+    const token = userToken 
+      ? JSON.parse(userToken) 
       : null;
 
       if (isPublicRoute().length > 0 && !token) {

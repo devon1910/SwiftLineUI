@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Form, Button, InputGroup, Alert } from "react-bootstrap";
 import styled from "styled-components";
-import { Eye, EyeSlashFill } from "react-bootstrap-icons";
+import { CheckCircle, Eye, EyeSlashFill } from "react-bootstrap-icons";
 import Cookies from "js-cookie";
 import { SignUpUser } from "../services/swiftlineService";
 import { toast } from "react-toastify";
+import LoadingSpinner from "./LoadingSpinner";
+import { motion } from "framer-motion";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const handleGoogleSignIn = async () => {
@@ -17,22 +19,33 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   function handleSubmit(e) {
+    setIsLoading(true)
     e.preventDefault();
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
       .then((response) => {
-        console.log(response);
+        console.log("res: ",response);
         setIsFormSubmitted(true);
       })
       .catch((error) => {
-        console.log(error);
-       toast.error(error.response.data.data.message);
+        toast.error(error.response.data.data.message);
+        console.log("err: ",error);
       });
+      setIsLoading(false)
   }
   return (
     <div className="space-y-6">
+    {isLoading && (
+        <motion.div
+          // ... existing motion props
+          className="fixed inset-0 bg-white/70 flex items-center justify-center z-50"
+        >
+          <LoadingSpinner message="Creating your account..." />
+        </motion.div>
+      )}
     {isFormSubmitted ? (
       <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
         <CheckCircle className="flex-shrink-0 text-black" />
@@ -105,7 +118,7 @@ const SignUp = () => {
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
