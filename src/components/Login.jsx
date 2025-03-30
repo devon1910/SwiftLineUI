@@ -45,10 +45,9 @@ const Login = ({ onResetPassword }) => {
         toast.error(error.response.data.data.message);
       });
   };
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleGoogleSignIn = async () => {
-    window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle";
-   
+    window.location.href = apiUrl+ "Auth/LoginWithGoogle";
    };
   
 
@@ -72,7 +71,7 @@ const Login = ({ onResetPassword }) => {
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with email or password</span>
+            <span className="px-2 bg-white text-gray-500">Or continue with email and password</span>
           </div>
         </div>
       
@@ -98,7 +97,7 @@ const Login = ({ onResetPassword }) => {
           </label>
           <input
             id="password"
-            type="password"
+            type= {showPassword ? "text" : "password"}
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
@@ -107,23 +106,20 @@ const Login = ({ onResetPassword }) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 text-sage-600 focus:ring-sage-500 border-gray-300 rounded"
-            />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-              Remember me
-            </label>
-          </div>
           <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <Eye /> : <EyeSlashFill />}
+          </button>
+          </div>
+          {/* <button
             type="button"
             onClick={onResetPassword}
             className="text-sm font-medium text-sage-600 hover:text-sage-700"
           >
             Forgot password?
-          </button>
+          </button> */}
         </div>
         <button
           type="submit"
