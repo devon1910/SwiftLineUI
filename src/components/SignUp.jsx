@@ -2,180 +2,73 @@ import React, { useState } from "react";
 import { Form, Button, InputGroup, Alert } from "react-bootstrap";
 import styled from "styled-components";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
-import { SignUpUser } from "../services/swiftlineService";
-import { motion } from "framer-motion";
-import { toast } from "react-toastify";
-import LoadingSpinner from "./LoadingSpinner";
-import { CheckCircle } from "lucide-react";
 
-// Wrapper to center the signup card vertically and horizontally
-const SignUpWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f9f9f9;
-`;
+const handleGoogleSignIn = async () => {
+ console.log("Google sign-in clicked");
 
-// Card styling for the signup form
-const SignUpCard = styled.div`
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  position: relative;
-`;
-
-// Title styling for the form
-const FormTitle = styled.h3`
-  font-family: "Inter", sans-serif;
-  color: black;
-  margin-bottom: 20px;
-  text-align: center;
-`;
-
-// Styled floating input group for spacing and alignment
-const StyledFormFloating = styled(Form.Floating)`
-  margin-bottom: 20px;
-`;
-
-// Input styling with sage green borders and focus effects
-const StyledFormControl = styled(Form.Control)`
-  border: 2px solid #698474;
-  border-radius: 6px;
-  font-family: "Inter", sans-serif;
-  &:focus {
-    border-color: #698474;
-    box-shadow: 0 0 5px rgba(105, 132, 116, 0.3);
-  }
-`;
-
-// Icon styling for toggling password visibility
-const ToggleIcon = styled(InputGroup.Text)`
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  z-index: 5;
-  background-color: transparent;
-  border: none;
-`;
-
-// Styled submit button using SwiftLine's signature sage green
-const StyledButton = styled(Button)`
-  background-color: #698474;
-  border: none;
-  font-family: "Inter", sans-serif;
-  width: 100%;
-  margin-top: 20px;
-  &:hover {
-    background-color: #556c60;
-  }
-`;
+ window.location.href = "http://localhost:5267/api/v1/Auth/LoginWithGoogle/login/google?returnUrl=http://localhost:5173";
+};
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false)
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setIsLoading(true)
-    const signUpRequest = { email, password };
-    SignUpUser(signUpRequest)
-      .then((response) => {
-        setIsFormSubmitted(true);
-        setIsLoading(false)
-      })
-      .catch((error) => {
-        
-        if (error.data) {
-          console.log("error: ", error.message);
-          toast.error(error.data.message);
-        } else {
-          toast.error("Something went wrong. Please try again later.");
-        }
-        setIsLoading(false)
-      });
-  }
-
   return (
     <div className="space-y-6">
-      {isLoading && (
-        <motion.div
-          // ... existing motion props
-          className="fixed inset-0 bg-white/70 flex items-center justify-center z-50"
+      <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+      <form className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email address
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
         >
-          <LoadingSpinner message="Creating your account..." />
-        </motion.div>
-      )}
-
-      {isFormSubmitted ? (
-        <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
-          <CheckCircle className="flex-shrink-0 text-black" />
-          <div>
-            <p className="text-sm text-black">
-              Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.<br/>
-              Contact support if you need help.
-            </p>
+          Create account
+        </button>
+      </form>
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
           </div>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-bold text-center text-gray-900">Get Started</h2>
-
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 text-black border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
-                placeholder="name@example.com"
-              />
-            </div>
-
-            <div className="relative">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 pr-10 text-black border border-sage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
-                placeholder="******"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-7 text-sage-500 hover:text-sage-600"
-              >
-                {showPassword ? <EyeSlashFill /> : <Eye />}
-              </button>
-            </div>
-          </div>
-
+        <div className="mt-6">
           <button
-            type="submit"
-            className="w-full bg-sage-600 text-white py-2 px-4 rounded-lg hover:bg-sage-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+            type="button"
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={handleGoogleSignIn}
           >
-            Create Account
+            <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+              <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+            </svg>
+            Sign up with Google
           </button>
-        </form>
-      )}
+        </div>
+      </div>
     </div>
   );
-  
 };
 
 export default SignUp;
