@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const DidYouKnowSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [randomReasons, setRandomReasons] = useState([]);
+  const [contentHeight, setContentHeight] = useState(120);
+  const currentSlideRef = useRef(null);
+  
   
   const swiftlineReasons = [
   "The average American spends approximately 37 billion hours waiting in lines each year, equivalent to about 113 hours per person annually.",
@@ -34,35 +37,64 @@ const DidYouKnowSlider = () => {
     return () => clearInterval(interval);
   }, [randomReasons]);
 
+  
+  // Auto-adjust height when slide changes
+  useEffect(() => {
+    if (currentSlideRef.current) {
+      // Add small buffer (20px) to ensure text doesn't touch edges
+      setContentHeight(currentSlideRef.current.scrollHeight + 20);
+    }
+  }, [currentIndex, randomReasons]);
+
+  // Handle window resize to recalculate height
+  useEffect(() => {
+    const handleResize = () => {
+      if (currentSlideRef.current) {
+        setContentHeight(currentSlideRef.current.scrollHeight + 20);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div className="mt-4  rounded-lg shadow-md overflow-hidden">
+    <div className="mt-4 rounded-lg shadow-md overflow-hidden">
       <div className="p-3 border-b border-sage-200">
         <h5 className="font-semibold">Did you know?</h5>
       </div>
       
-      <div className="relative h-24 md:h-32 overflow-hidden">
-        {randomReasons.map((reason, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 flex items-center justify-center p-4 md:p-6 transition-opacity duration-2000 ${
-              index === currentIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              backgroundColor: `var(--bg-color-${index % 4})`,
-              background: `
-                linear-gradient(
-                  15deg,
-                  ${index % 4 === 0 ? '#8A9A8B' : '#7A8A7B'},
-                  ${index % 4 === 1 ? '#6B7D6B' : '#5A6A5B'}
-                )
-              `
-            }}
-          >
-            <p className="text-center text-sm md:text-base text-white leading-tight md:leading-normal">
-              {reason}
-            </p>
-          </div>
-        ))}
+      <div 
+        className="relative transition-all duration-300 overflow-hidden"
+        style={{ minHeight: `${contentHeight}px` }}
+      >
+        {randomReasons.map((reason, index) => {
+          const isActive = index === currentIndex;
+          
+          return (
+            <div
+              key={index}
+              ref={isActive ? currentSlideRef : null}
+              className={`absolute inset-0 flex items-center justify-center p-3 sm:p-4 md:p-6 transition-opacity duration-2000 ${
+                isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
+              }`}
+              style={{
+                backgroundColor: `var(--bg-color-${index % 4})`,
+                background: `
+                  linear-gradient(
+                    15deg,
+                    ${index % 4 === 0 ? '#8A9A8B' : '#7A8A7B'},
+                    ${index % 4 === 1 ? '#6B7D6B' : '#5A6A5B'}
+                  )
+                `
+              }}
+            >
+              <p className="text-xs xs:text-sm md:text-base text-white leading-tight md:leading-normal max-w-full">
+                {reason}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
