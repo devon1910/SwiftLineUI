@@ -39,10 +39,6 @@ function LandingPage() {
         localStorage.setItem('userName', username);
         localStorage.setItem('userId', userId);
         
-        console.log("userName: ",userName)
-        console.log("userId: ",userId)
-        console.log("token: ",accessToken)
-        console.log("refresh: ",refreshToken)
         // Clean up the URL to remove the tokens
         navigate('/', { replace: true }); // Redirect to dashboard or home page
         

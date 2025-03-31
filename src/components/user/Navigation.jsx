@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { ChevronDown, CircleUserRound, Menu, X } from "lucide-react";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import { LogOut } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 
@@ -52,11 +51,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
             localStorage.removeItem("userId");
             localStorage.removeItem("userName");
 
-            Cookies.remove("accessToken");
-            Cookies.remove("refreshToken");
-            Cookies.remove("username");
-            Cookies.remove("userId");
-            // Navigate to login
             window.history.replaceState({}, document.title);
             setIsOpen(false);
             navigate("/auth");
