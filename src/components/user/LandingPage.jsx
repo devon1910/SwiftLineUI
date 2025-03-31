@@ -21,6 +21,11 @@ function LandingPage() {
   const token = Cookies.get("accessToken");
   const refresh = Cookies.get("refreshToken");
 
+  console.log("userName: ",userName)
+  console.log("userId: ",userId)
+  console.log("token: ",token)
+  console.log("refresh: ",refresh)
+
   localStorage.setItem("userEmail", email);
   localStorage.setItem("userName", userName);
   localStorage.setItem("userId", userId);
