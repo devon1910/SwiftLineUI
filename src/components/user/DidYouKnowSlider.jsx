@@ -3,26 +3,23 @@ import React, { useState, useEffect, useRef } from 'react';
 const DidYouKnowSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [randomReasons, setRandomReasons] = useState([]);
-  const [contentHeight, setContentHeight] = useState(120);
-  const currentSlideRef = useRef(null);
-  
   
   const swiftlineReasons = [
-  "The average American spends approximately 37 billion hours waiting in lines each year, equivalent to about 113 hours per person annually.",
-  "Studies show that people waste up to 20% of their working hours waiting in various queues - from coffee shops to government offices.",
-  "In a typical lifetime, a person spends around 6 months waiting in lines, which could instead be used for learning a new skill, spending time with family, or pursuing personal projects.",
-  "A survey revealed that 75% of consumers consider waiting in line the most frustrating part of customer service experiences.",
-  "The economic cost of waiting is estimated at $37.7 billion per year in the United States alone, accounting for lost productivity and opportunity costs.",
-  "People waiting in physical lines experience increased stress levels, with cortisol (stress hormone) rising by up to 15% for every 10 minutes of waiting.",
-  "Millennials and Gen Z are particularly averse to waiting, with 69% saying they would abandon a service or business if the waiting time is too long.",
-  "In healthcare, patients waiting for appointments lose an estimated 3.5 billion minutes annually, which could be redirected to personal or professional activities.",
-  "The entertainment industry loses billions due to long queues, with theme parks reporting that queue management directly impacts customer satisfaction and repeat visits.",
-  "A study by MIT found that virtual queuing can increase overall customer satisfaction by up to 35% compared to traditional physical line waiting.",
-  "On average, people check their phones 58 times a day - much of this time occurs while waiting in lines, highlighting the unproductive nature of traditional queuing.",
-  "The psychological impact of waiting can be so significant that it's estimated to reduce perceived service quality by up to 50% in some industries.",
-  "Restaurant customers who use virtual queuing are 85% more likely to return, demonstrating the value of time-saving queue management technologies.",
-  "In corporate settings, employees waste approximately 3 hours per week waiting in various internal queues - time that could be spent on productive work.",
-  "The rise of on-demand services and virtual queuing reflects a growing global understanding that time is the most valuable non-renewable resource."
+    "The average American spends approximately 37 billion hours waiting in lines each year, equivalent to about 113 hours per person annually.",
+    "Studies show that people waste up to 20% of their working hours waiting in various queues - from coffee shops to government offices.",
+    "In a typical lifetime, a person spends around 6 months waiting in lines, which could instead be used for learning a new skill, spending time with family, or pursuing personal projects.",
+    "A survey revealed that 75% of consumers consider waiting in line the most frustrating part of customer service experiences.",
+    "The economic cost of waiting is estimated at $37.7 billion per year in the United States alone, accounting for lost productivity and opportunity costs.",
+    "People waiting in physical lines experience increased stress levels, with cortisol (stress hormone) rising by up to 15% for every 10 minutes of waiting.",
+    "Millennials and Gen Z are particularly averse to waiting, with 69% saying they would abandon a service or business if the waiting time is too long.",
+    "In healthcare, patients waiting for appointments lose an estimated 3.5 billion minutes annually, which could be redirected to personal or professional activities.",
+    "The entertainment industry loses billions due to long queues, with theme parks reporting that queue management directly impacts customer satisfaction and repeat visits.",
+    "A study by MIT found that virtual queuing can increase overall customer satisfaction by up to 35% compared to traditional physical line waiting.",
+    "On average, people check their phones 58 times a day - much of this time occurs while waiting in lines, highlighting the unproductive nature of traditional queuing.",
+    "The psychological impact of waiting can be so significant that it's estimated to reduce perceived service quality by up to 50% in some industries.",
+    "Restaurant customers who use virtual queuing are 85% more likely to return, demonstrating the value of time-saving queue management technologies.",
+    "In corporate settings, employees waste approximately 3 hours per week waiting in various internal queues - time that could be spent on productive work.",
+    "The rise of on-demand services and virtual queuing reflects a growing global understanding that time is the most valuable non-renewable resource."
   ];
 
   useEffect(() => {
@@ -37,46 +34,20 @@ const DidYouKnowSlider = () => {
     return () => clearInterval(interval);
   }, [randomReasons]);
 
-  
-  // Auto-adjust height when slide changes
-  useEffect(() => {
-    if (currentSlideRef.current) {
-      // Add small buffer (20px) to ensure text doesn't touch edges
-      setContentHeight(currentSlideRef.current.scrollHeight + 20);
-    }
-  }, [currentIndex, randomReasons]);
-
-  // Handle window resize to recalculate height
-  useEffect(() => {
-    const handleResize = () => {
-      if (currentSlideRef.current) {
-        setContentHeight(currentSlideRef.current.scrollHeight + 20);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <div className="mt-4 rounded-lg shadow-md overflow-hidden">
       <div className="p-3 border-b border-sage-200">
         <h5 className="font-semibold">Did you know?</h5>
       </div>
       
-      <div 
-        className="relative transition-all duration-300 overflow-hidden"
-        style={{ minHeight: `${contentHeight}px` }}
-      >
-        {randomReasons.map((reason, index) => {
-          const isActive = index === currentIndex;
-          
-          return (
+      <div className="relative overflow-y-auto">
+        {/* Fixed height container with scrolling capability */}
+        <div className="h-[160px] xs:h-[180px] sm:h-[200px] md:h-[220px]">
+          {randomReasons.map((reason, index) => (
             <div
               key={index}
-              ref={isActive ? currentSlideRef : null}
               className={`absolute inset-0 flex items-center justify-center p-3 sm:p-4 md:p-6 transition-opacity duration-2000 ${
-                isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
               }`}
               style={{
                 backgroundColor: `var(--bg-color-${index % 4})`,
@@ -89,12 +60,14 @@ const DidYouKnowSlider = () => {
                 `
               }}
             >
-              <p className="text-xs xs:text-sm md:text-base text-white leading-tight md:leading-normal max-w-full">
-                {reason}
-              </p>
+              <div className="w-full max-h-full overflow-y-auto px-2 py-1">
+                <p className="text-xs xs:text-sm md:text-base text-white leading-tight md:leading-normal">
+                  {reason}
+                </p>
+              </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </div>
   );
