@@ -11,30 +11,47 @@ function LandingPage() {
   const [darkMode, setDarkMode] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Get email from location.state if available, otherwise from localStorage
   const emailFromState = location.state?.email;
   const userNameFromState = location.state?.userName;
-  const userName = userNameFromState || localStorage.getItem("userName") || Cookies.get("username")|| ""
+  const userName = userNameFromState || localStorage.getItem("userName") || ""
   const email = emailFromState || localStorage.getItem("userEmail") || ""
-  const userId = location.state?.userId || localStorage.getItem("userId") || Cookies.get("userId") || ""
-  const token = Cookies.get("accessToken");
-  const refresh = Cookies.get("refreshToken");
-
-  console.log("userName: ",userName)
-  console.log("userId: ",userId)
-  console.log("token: ",token)
-  console.log("refresh: ",refresh)
-
-  localStorage.setItem("userEmail", email);
-  localStorage.setItem("userName", userName);
-  localStorage.setItem("userId", userId);
-  localStorage.setItem("user", JSON.stringify(token));
-  localStorage.setItem("refreshToken", JSON.stringify(refresh));
+  const userId = location.state?.userId || localStorage.getItem("userId") || ""
  
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+
+    const urlParams = new URLSearchParams(window.location.search);
+      
+      // Check if we have auth data in the URL
+      const accessToken = urlParams.get('accessToken');
+      const refreshToken = urlParams.get('refreshToken');
+      const username = urlParams.get('username');
+      const userId = urlParams.get('userId');
+      
+      // If we have the access token, store everything in localStorage
+      if (accessToken) {
+        localStorage.setItem('user', JSON.stringify(accessToken));
+        localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+        localStorage.setItem('userName', username);
+        localStorage.setItem('userId', userId);
+        
+        console.log("userName: ",userName)
+        console.log("userId: ",userId)
+        console.log("token: ",accessToken)
+        console.log("refresh: ",refreshToken)
+        // Clean up the URL to remove the tokens
+        navigate('/', { replace: true }); // Redirect to dashboard or home page
+        
+        // Or if you want to stay on the same page but clean the URL:
+        // window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // You might also want to trigger any auth state updates in your app
+        // setIsAuthenticated(true); // If you're using a state for auth
+      }
     // Load theme preference from local storage
     const savedTheme = localStorage.getItem("darkMode");
     if (savedTheme === "true") {

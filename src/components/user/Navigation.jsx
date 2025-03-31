@@ -62,6 +62,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
             navigate("/auth");
           })
           .catch((error) => {
+            console.log(error);
             toast.error(error.response.data.data.message);
           });
       }
