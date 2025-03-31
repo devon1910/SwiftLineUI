@@ -69,7 +69,7 @@ const EventForm = () => {
   };
 
   const generateTimeOptions = () => {
-    const options = [];
+    const options = [{ label: "Select Time", value: "" }];
     for (let hours = 0; hours < 24; hours++) {
       for (let minutes = 0; minutes < 60; minutes += 60) {
         const time = new Date(1970, 0, 1, hours, minutes);

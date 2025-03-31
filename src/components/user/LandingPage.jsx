@@ -5,7 +5,6 @@ import Navigation from "./Navigation";
 import LoadingSpinner from "../LoadingSpinner";
 import { FastForward } from "lucide-react";
 import { showToast } from "../../services/ToastHelper";
-import Cookies from "js-cookie"
 
 function LandingPage() {
   const [darkMode, setDarkMode] = useState(false);

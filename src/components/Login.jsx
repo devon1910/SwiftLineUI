@@ -4,7 +4,6 @@ import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../services/ToastHelper";
-import Cookies from "js-cookie"
 
 
 const Login = ({ onResetPassword }) => {
