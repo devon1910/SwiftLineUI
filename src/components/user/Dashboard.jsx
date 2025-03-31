@@ -22,7 +22,7 @@ const Dashboard = () => {
             Manage and monitor your own event queues. Create custom events and track attendees.
           </p>
           <button 
-            onClick={() => handleNavigation("myevents")}
+            onClick={() => handleNavigation("myEvents")}
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all flex items-center justify-center"
           >
             <span>Go to My Events</span>

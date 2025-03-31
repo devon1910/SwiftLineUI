@@ -17,18 +17,19 @@ const ProtectedRoute = () => {
     return <Outlet />;
   }
 
-  // Assume the user object is stored in localStorage under 'user'
-  const user = localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user'))
+  const userToken = localStorage.getItem('user') === "undefined" ? null : localStorage.getItem('user');
+  // Get token from localStorage
+  const token = userToken 
+    ? JSON.parse(userToken) 
     : null;
 
   // If the user is not logged in, redirect to the login page.
-  if (!user) {
+  if (!token) {
     return <Navigate to="/auth" replace />;
   }
 
   // If the user is logged in, render the child components.
-  return <Outlet />;;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
