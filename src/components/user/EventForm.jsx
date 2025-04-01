@@ -4,8 +4,8 @@ import { createEvent } from "../../services/swiftlineService";
 import { updateEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiType, FiAlignLeft, FiClock, FiPlus, FiCheck } from "react-icons/fi";
-import { Clock, LoaderCircle } from "lucide-react";
+import {  FiClock, FiPlus, FiCheck } from "react-icons/fi";
+import {  LoaderCircle } from "lucide-react";
 
 const EventForm = () => {
   const location = useLocation();

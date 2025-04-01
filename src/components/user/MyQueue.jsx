@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, Alert, ProgressBar, Button } from "react-bootstrap";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider";
 import { connection, useSignalRWithLoading } from "../../services/SignalRConn.js";

@@ -1,6 +1,4 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { useContext } from "react";
-import { LoadingContext } from "./LoadingContext";
 import { useLoading } from "./useLoader";
 
 const apiUrl = import.meta.env.VITE_API_SIGNALR_URL;

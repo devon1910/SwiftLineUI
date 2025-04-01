@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "./Navigation";
-import LoadingSpinner from "../LoadingSpinner";
 import { FastForward } from "lucide-react";
-import { showToast } from "../../services/ToastHelper";
 
 function LandingPage() {
   const [darkMode, setDarkMode] = useState(false);

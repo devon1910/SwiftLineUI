@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, InputGroup, Alert } from "react-bootstrap";
-import styled from "styled-components";
+
 import { CheckCircle, Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { SignUpUser } from "../services/swiftlineService";
 import { toast } from "react-toastify";
