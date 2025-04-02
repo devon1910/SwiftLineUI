@@ -45,21 +45,3 @@ export const loginUser= (loginRequest) => API.post(apiUrl + "Auth/Login", loginR
 export const SignUpUser= (SignUpRequest) => API.post(apiUrl + "Auth/SignUp", SignUpRequest);
 export const LogOut= () => API.post(apiUrl + "Auth/Revoke");
 
-
-// export const loginUser = async (loginRequest) => {
-//   try {
-//     const response = await API.post(apiUrl + "Auth/Login", loginRequest);
-
-//     console.log("actual response", response); 
-//     if (response.data.data.accessToken) {
-//       const valueToken = JSON.stringify(response.data.data.accessToken);
-//       const refreshToken = JSON.stringify(response.data.data.refreshToken);
-//       localStorage.setItem("user", valueToken);
-//       localStorage.setItem("refreshToken", refreshToken);
-//       localStorage.setItem("userId", JSON.stringify(response.data.data.userId));
-//     }
-//     return response;
-//   } catch (error) {
-//     return error;
-//   }
-// };
