@@ -10,9 +10,6 @@ export const eventsList = (page, eventsPerPage, search="") =>
 export const createEvent = (event) =>
   API.post(apiUrl + "Event/CreateEvent", event);
 
-// export const getEmployeeById = (id) =>
-//   axios.get(EMPLOYEE_API_BASE_URL + "/" + id);
-
 export const eventQueueInfo = (eventId) =>
   API.get(apiUrl + "Event/GetEventQueue/" + eventId);
 
@@ -27,9 +24,6 @@ export const validateToken = (token) =>
   API.post(apiUrl + "Auth/VerifyToken?token=" + token);
 export const deleteEvent = (id) =>
   API.delete(apiUrl + "Event/DeleteEvent/"+id);
-
-// export const deleteEmployee = (id) =>
-//   axios.delete(EMPLOYEE_API_BASE_URL + "/" + id);
 
 export const lineInfo = function (queue) {
   const lineMemberId = queue.lineMemberId;
