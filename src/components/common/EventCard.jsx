@@ -1,5 +1,5 @@
 import { FiShare2, FiUser } from "react-icons/fi";
-import StatItem from "./user/StatItem";
+import StatItem from "./StatItem";
 import { format } from "date-fns";
 
 const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => (

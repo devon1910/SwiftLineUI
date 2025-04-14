@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
-import DidYouKnowSlider from "./DidYouKnowSlider";
-import { connection, useSignalRWithLoading } from "../../services/SignalRConn.js";
-import { GetUserLineInfo } from "../../services/swiftlineService";
-import LoadingSpinner from "../LoadingSpinner";
+import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
+import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn.js";
+import { GetUserLineInfo } from "../../services/api/swiftlineService.js";
+import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
-import { showToast } from "../../services/ToastHelper";
+import { showToast } from "../../services/utils/ToastHelper.js";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,7 +1,7 @@
 import { useEffect, useState} from 'react';
 import GlobalSpinner from './GlobalSpinner';
-import API from '../services/APIService';
-import { LoadingContext } from '../services/LoadingContext';
+import API from '../../services/api/APIService';
+import { LoadingContext } from '../../services/context/LoadingContext';
 
 export const LoadingProvider = ({ children }) => {
   const [pendingOperations, setPendingOperations] = useState(0);

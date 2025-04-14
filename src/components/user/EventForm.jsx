@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { createEvent } from "../../services/swiftlineService";
-import { updateEvent } from "../../services/swiftlineService";
+import { createEvent } from "../../services/api/swiftlineService";
+import { updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import {  FiClock, FiPlus, FiCheck } from "react-icons/fi";

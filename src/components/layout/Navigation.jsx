@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChevronDown, CircleUserRound, Menu, X } from "lucide-react";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "../../services/swiftlineService";
+import { LogOut } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 
 const Navigation = ({ darkMode, toggleDarkMode }) => {

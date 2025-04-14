@@ -1,8 +1,8 @@
 import React, { use, useEffect, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
-import { UserEvents } from "../../services/swiftlineService";
+import { UserEvents } from "../../services/api/swiftlineService";
 import { FiTrash2 } from "react-icons/fi";
-import { deleteEvent } from "../../services/swiftlineService";
+import { deleteEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
 

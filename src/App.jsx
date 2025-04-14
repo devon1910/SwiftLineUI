@@ -1,14 +1,14 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import AuthForm from "./components/AuthForm";
+import AuthForm from "./components/auth/AuthForm";
 import LandingPage from "./components/user/LandingPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 import { ToastContainer } from "react-toastify";
-import Footer from "./components/Footer";
-import VerifyToken from "./components/VerifyToken";
-import { LoadingProvider } from "./components/LoadingContextProvider";
+import Footer from "./components/layout/Footer";
+import VerifyToken from "./components/auth/VerifyToken";
+import { LoadingProvider } from "./components/common/LoadingContextProvider";
 import MyEvents from "./components/user/MyEvents";
 import SearchEvents from "./components/user/SearchEvents";
 import MyQueue from "./components/user/MyQueue";
@@ -16,7 +16,7 @@ import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
-import CustomToast from "./components/CustomToast.jsx";
+import CustomToast from "./components/common/CustomToast.jsx";
 
 function App() {
   return (

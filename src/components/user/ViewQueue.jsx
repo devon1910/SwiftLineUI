@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { eventQueueInfo } from "../../services/swiftlineService";
+import { eventQueueInfo } from "../../services/api/swiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { format} from "date-fns-tz"
 
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
 import { toast } from "react-toastify";
-import { connection, useSignalRWithLoading } from "../../services/SignalRConn";
+import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);

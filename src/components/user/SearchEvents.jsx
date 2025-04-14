@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { connection, useSignalRWithLoading } from "../../services/SignalRConn.js";
+import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn.js";
 import { toast } from "react-toastify";
 import {
   useNavigate,
   useOutletContext,
   useSearchParams,
 } from "react-router-dom";
-import EventCard from "../EventCard.jsx";
+import EventCard from "../common/EventCard.jsx";
 import { useDebounce } from "@uidotdev/usehooks";
-import { eventsList } from "../../services/swiftlineService";
-import PaginationControls from "../PaginationControl.jsx";
-import GlobalSpinner from "../GlobalSpinner.jsx";
+import { eventsList } from "../../services/api/swiftlineService.js";
+import PaginationControls from "../common/PaginationControl.jsx";
+import GlobalSpinner from "../common/GlobalSpinner.jsx";
 
 
 export const SearchEvents = () => {
@@ -77,8 +77,13 @@ export const SearchEvents = () => {
 
   // Optimized joinQueue function with loading state
   const joinQueue = async (event) => {
-    console.log("userId: ", userId);
-    if (!userId) {
+    const userToken = localStorage.getItem('user') === "undefined" ? null : localStorage.getItem('user');
+    // Get token from localStorage
+    const token = userToken 
+      ? JSON.parse(userToken) 
+      : null;
+
+    if (!userId || !token) {
       toast.error("Please login or sign up to join a queue");
       navigate("/auth");
       return;

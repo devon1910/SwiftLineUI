@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import Navigation from "./Navigation";
+import Navigation from "../layout/Navigation";
 import { FastForward } from "lucide-react";
 
 function LandingPage() {
