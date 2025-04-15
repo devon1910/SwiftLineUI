@@ -125,7 +125,7 @@ export const SearchEvents = () => {
     } catch (error) {
       console.log(error);
       showToast.error(
-        "Error joining queue, kindly refresh this page. If this error persists, please try again later."
+        "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:"+ error
       );
     }
   };
