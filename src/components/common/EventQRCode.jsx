@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import QRCode from 'qrcode.react';
+import  { QRCodeCanvas } from 'qrcode.react';
 import { FiDownload, FiX } from 'react-icons/fi';
 
 const EventQRCode = ({ eventId, eventTitle, onClose }) => {
@@ -28,7 +28,7 @@ const EventQRCode = ({ eventId, eventTitle, onClose }) => {
         
         <div className="flex flex-col items-center">
           <div className="border border-gray-200 p-4 mb-4">
-            <QRCode 
+            <QRCodeCanvas 
               id="qr-code-canvas"
               value={eventUrl}
               size={256}
