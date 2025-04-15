@@ -34,7 +34,7 @@ function LandingPage() {
       localStorage.setItem("user", JSON.stringify(accessToken));
       localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
       localStorage.setItem("userName", username);
-      localStorage.setItem("userId", userId);
+      localStorage.setItem("userId", JSON.stringify(userId));
 
       // // Clean up the URL to remove the tokens
       // navigate('/', { replace: true }); // Redirect to dashboard or home page
