@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "../layout/Navigation";
 import { FastForward } from "lucide-react";
+import { useNetworkStatus } from "../../services/utils/NetworkStatus";
 
 function LandingPage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -61,9 +62,7 @@ function LandingPage() {
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("darkMode", !darkMode);
   };
-  console.log("state user: ", userNameFromState)
-  console.log("local user: ",localStorage.getItem("userName"))
-  console.log("userName: ",userName);
+  useNetworkStatus()
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${

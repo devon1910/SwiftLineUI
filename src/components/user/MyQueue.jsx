@@ -123,7 +123,6 @@ export const MyQueue = () => {
           window.location.href = "/";
         }
         console.log(error);
-        showToast.error("Something went wrong. Please check your internet connection or try again later.")
       });
   }
 
@@ -149,7 +148,6 @@ export const MyQueue = () => {
         })
         .catch((err) => {
           console.error(err);
-          showToast.error("Error in exiting queue. Please try again.");
         });
     }
   };

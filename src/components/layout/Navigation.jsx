@@ -4,6 +4,7 @@ import { FiMoon, FiSun } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const Navigation = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,8 +57,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
             navigate("/auth");
           })
           .catch((error) => {
-            console.log(error);
-            toast.error(error.response.data.data.message);
+            showToast.error(error.response.data.data.message);
           });
       }
     }else{

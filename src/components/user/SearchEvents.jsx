@@ -86,7 +86,8 @@ export const SearchEvents = () => {
 
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
-      navigate("/auth");
+      console.log("from: ",location.pathname )
+      navigate("/auth",{state: { from: location.pathname },});
       return;
     }
 
