@@ -3,6 +3,7 @@ import { loginUser } from "../../services/api/swiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { showToast } from "../../services/utils/ToastHelper";
 
 
 const Login = ({ onResetPassword }) => {
@@ -15,7 +16,7 @@ const Login = ({ onResetPassword }) => {
     e.preventDefault();
     // Add your login logic here.
     if (!email || !password) {
-      toast.error("Please enter email and password.");
+      showToast.error("Please enter email and password.");
       return;
     }
 
@@ -25,6 +26,7 @@ const Login = ({ onResetPassword }) => {
         const refreshToken = JSON.stringify(response.data.data.refreshToken);
         localStorage.setItem("user", valueToken);
         localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userName",response.data.data.userName) 
         localStorage.setItem(
           "userId",
           JSON.stringify(response.data.data.userId)
@@ -40,7 +42,7 @@ const Login = ({ onResetPassword }) => {
       
       })
       .catch((error) => {
-        toast.error(error.response.data.data.message);
+        showToast.error(error.response.data.data.message);
       });
   };
   const apiUrl = import.meta.env.VITE_API_URL;

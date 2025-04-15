@@ -63,8 +63,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
     }else{
       navigate("/auth");
     }
-
-   
   };
   return (
     <nav
@@ -87,7 +85,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                   darkMode ? "text-white" : "text-gray-900"
                 } hidden sm:block`}
               >
-                Swiftline
+                SwiftLine
               </span>
             </div>
           </div>

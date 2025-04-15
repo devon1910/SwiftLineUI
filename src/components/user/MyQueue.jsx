@@ -8,9 +8,12 @@ import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.js";
+import { useNavigate } from "react-router-dom";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const [myQueue, setMyQueue] = useState({});
 
@@ -120,6 +123,7 @@ export const MyQueue = () => {
           window.location.href = "/";
         }
         console.log(error);
+        showToast.error("Something went wrong. Please check your internet connection or try again later.")
       });
   }
 
@@ -141,22 +145,23 @@ export const MyQueue = () => {
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
         .then(() => {
           showToast.success("Exited Queue.");
-          getCurrentPosition();
+          navigate("/")
         })
         .catch((err) => {
           console.error(err);
-          toast.error("Error in exiting queue. Please try again.");
+          showToast.error("Error in exiting queue. Please try again.");
         });
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-4 font-sans">
-      {myQueue.position === -1 ? (
+      {myQueue.position === -1 && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>
         </div>
-      ) : (
+      ) }
+      {myQueue.position > 0 && (
         <div className="border-2 border-sage-400 rounded-xl shadow-lg overflow-hidden relative">
           <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600 flex justify-between items-center">
             <h3 className="text-xl font-semibold ">{myQueue.eventTitle}</h3>

@@ -61,7 +61,9 @@ function LandingPage() {
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("darkMode", !darkMode);
   };
-
+  console.log("state user: ", userNameFromState)
+  console.log("local user: ",localStorage.getItem("userName"))
+  console.log("userName: ",userName);
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${

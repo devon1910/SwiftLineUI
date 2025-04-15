@@ -43,10 +43,9 @@ export const SearchEvents = () => {
         setIsUserInQueue(response.data.data.isUserInQueue);
         setSelectedEventId(searchParams.get("eventId"));
       })
-      console.log(showToast.success.toString());
-     showToast.success("Events loaded successfully.");
+
     } catch (error) {
-      toast.error("Failed to load events");
+      showToast.error("Failed to load events");
       console.log(error)
     } finally {
       setIsLoading(false);
@@ -86,29 +85,29 @@ export const SearchEvents = () => {
       : null;
 
     if (!userId || !token) {
-      toast.error("Please login or sign up to join a queue");
+      showToast.error("Please login or sign up to join a queue");
       navigate("/auth");
       return;
     }
 
     if (isUserInQueue) {
-      toast.warning("You're already in a queue");
+      showToast.warning("You're already in a queue");
       return;
     }
 
     try {
 
-      const res= await invokeWithLoading(connection,"JoinQueueGroup", event.id, userId);
+      const res= await invokeWithLoading(connection,"JoinQueueGroup", event.id, JSON.parse(userId));
 
       if(res===-1){
-        toast.error("Can't queue for an inactive event. Please check back later.");
+        showToast.error("Can't queue for an inactive event. Please check back later.");
         return
       }
-      toast.success("Joined queue successfully");
+      showToast.success("Joined queue successfully");
       navigate("/myQueue");
     } catch (error) {
       console.log(error)
-      toast.error("Error joining queue, kindly refresh this page. If this error persists, please try again later.");
+      showToast.error("Error joining queue, kindly refresh this page. If this error persists, please try again later.");
     }
   };
 
@@ -125,9 +124,10 @@ export const SearchEvents = () => {
         textArea.select();
         try {
           document.execCommand('copy');
-          toast.success('Link copied!');
+          showToast.success('Link copied!');
         } catch (err) {
-          toast.error('Failed to copy link');
+          console.log(err);
+          showToast.error('Failed to copy link');
         }
         document.body.removeChild(textArea);
       });
