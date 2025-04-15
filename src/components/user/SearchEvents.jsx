@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn.js";
+import {
+  connection,
+  useSignalRWithLoading,
+} from "../../services/api/SignalRConn.js";
 import { toast } from "react-toastify";
 import {
   useNavigate,
@@ -13,9 +16,7 @@ import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.js";
 
-
 export const SearchEvents = () => {
-
   const { userId } = useOutletContext();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +26,7 @@ export const SearchEvents = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
-  const eventsPerPage = 3; 
+  const eventsPerPage = 3;
 
   const [searchParams, updateSearchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -33,20 +34,16 @@ export const SearchEvents = () => {
   const { invokeWithLoading } = useSignalRWithLoading();
 
   const fetchEvents = async (page = 1, search = "") => {
-  
     try {
-
-      eventsList(page,eventsPerPage,search)
-      .then((response) => {
+      eventsList(page, eventsPerPage, search).then((response) => {
         setEvents(response.data.data.events);
         setTotalPages(response.data.data.totalPages);
         setIsUserInQueue(response.data.data.isUserInQueue);
         setSelectedEventId(searchParams.get("eventId"));
-      })
-
+      });
     } catch (error) {
       showToast.error("Failed to load events");
-      console.log(error)
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -63,6 +60,20 @@ export const SearchEvents = () => {
     }
   }, [currentPage, debouncedSearchTerm]);
 
+  // In your search page component
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const eventId = queryParams.get("eventId");
+
+    if (eventId) {
+      // Automatically join the queue if the user came from a QR code
+      const event = events.find((e) => e.id.toString() === eventId);
+      if (event) {
+        joinQueue(event);
+      }
+    }
+  }, [events]);
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -78,15 +89,16 @@ export const SearchEvents = () => {
 
   // Optimized joinQueue function with loading state
   const joinQueue = async (event) => {
-    const userToken = localStorage.getItem('user') === "undefined" ? null : localStorage.getItem('user');
+    const userToken =
+      localStorage.getItem("user") === "undefined"
+        ? null
+        : localStorage.getItem("user");
     // Get token from localStorage
-    const token = userToken 
-      ? JSON.parse(userToken) 
-      : null;
+    const token = userToken ? JSON.parse(userToken) : null;
 
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
-      navigate("/auth",{state: { from: location.href },});
+      navigate("/auth", { state: { from: location.href } });
       return;
     }
 
@@ -95,49 +107,58 @@ export const SearchEvents = () => {
       return;
     }
     try {
-      const res= await invokeWithLoading(connection,"JoinQueueGroup", event.id, JSON.parse(userId));
-      if(res===-1){
-        showToast.error("Can't queue for an inactive event. Please check back later.");
-        return
+      const res = await invokeWithLoading(
+        connection,
+        "JoinQueueGroup",
+        event.id,
+        JSON.parse(userId)
+      );
+      if (res === -1) {
+        showToast.error(
+          "Can't queue for an inactive event. Please check back later."
+        );
+        return;
       }
       showToast.success("Joined queue successfully");
       navigate("/myQueue");
     } catch (error) {
-      console.log(error)
-      showToast.error("Error joining queue, kindly refresh this page. If this error persists, please try again later.");
+      console.log(error);
+      showToast.error(
+        "Error joining queue, kindly refresh this page. If this error persists, please try again later."
+      );
     }
   };
 
   const handleShare = (eventId, eventTitle) => {
-    const searchUrl = `${window.location.origin}/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
-    
-    navigator.clipboard.writeText(searchUrl)
-      .then(() => toast.success('Event link copied!'))
+    const searchUrl = `${
+      window.location.origin
+    }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
+
+    navigator.clipboard
+      .writeText(searchUrl)
+      .then(() => toast.success("Event link copied!"))
       .catch(() => {
         // Fallback for browsers without clipboard API
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = searchUrl;
         document.body.appendChild(textArea);
         textArea.select();
         try {
-          document.execCommand('copy');
-          showToast.success('Link copied!');
+          document.execCommand("copy");
+          showToast.success("Link copied!");
         } catch (err) {
           console.log(err);
-          showToast.error('Failed to copy link');
+          showToast.error("Failed to copy link");
         }
         document.body.removeChild(textArea);
       });
   };
 
   return (
-    
     <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold ">
-          Search Events
-        </h2>
-        
+        <h2 className="text-3xl font-bold ">Search Events</h2>
+
         <div className="w-full md:max-w-xs">
           <input
             type="text"
@@ -154,7 +175,7 @@ export const SearchEvents = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(events).map((event) => (
+            {events.map((event) => (
               <EventCard
                 key={event.id}
                 event={event}

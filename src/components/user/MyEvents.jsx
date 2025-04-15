@@ -1,5 +1,4 @@
-import React, { use, useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { UserEvents } from "../../services/api/swiftlineService";
 import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/api/swiftlineService";
@@ -14,6 +13,8 @@ const MyEvents = () => {
   useEffect(() => {
     getUserEvents();
   }, []);
+
+  
   const { userId } = useOutletContext();
 
   const [showQRCode, setShowQRCode] = useState(false);
