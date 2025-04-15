@@ -5,6 +5,8 @@ import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { QrCode } from "lucide-react";
+import EventQRCode from "../common/EventQRCode";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
@@ -13,6 +15,9 @@ const MyEvents = () => {
     getUserEvents();
   }, []);
   const { userId } = useOutletContext();
+
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   function handleNavigation() {
     if (!userId) {
       toast.error("Please login or signup to create an event.");
@@ -42,7 +47,7 @@ const MyEvents = () => {
     const searchUrl = `${
       window.location.origin
     }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
-    
+
     navigator.clipboard
       .writeText(searchUrl)
       .then(() => toast.success("Event link copied!"))
@@ -138,6 +143,15 @@ const MyEvents = () => {
                     >
                       Edit Event
                     </button>
+                    <button
+                      onClick={() => {
+                        setSelectedEvent(event);
+                        setShowQRCode(true);
+                      }}
+                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 flex items-center justify-center gap-2"
+                    >
+                      <QrCode /> Get QR Code
+                    </button>
                   </div>
                 </div>
               </div>
@@ -145,6 +159,13 @@ const MyEvents = () => {
           </div>
         )}
       </div>
+      {showQRCode && selectedEvent && (
+        <EventQRCode 
+          eventId={selectedEvent.id}
+          eventTitle={selectedEvent.title}
+          onClose={() => setShowQRCode(false)}
+        />
+      )}
     </div>
   );
 };

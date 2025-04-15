@@ -86,7 +86,6 @@ export const SearchEvents = () => {
 
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
-      console.log("from: ",location.href )
       navigate("/auth",{state: { from: location.href },});
       return;
     }
@@ -95,11 +94,8 @@ export const SearchEvents = () => {
       showToast.warning("You're already in a queue");
       return;
     }
-
     try {
-
       const res= await invokeWithLoading(connection,"JoinQueueGroup", event.id, JSON.parse(userId));
-
       if(res===-1){
         showToast.error("Can't queue for an inactive event. Please check back later.");
         return
