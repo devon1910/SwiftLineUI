@@ -11,6 +11,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { eventsList } from "../../services/api/swiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
+import { showToast } from "../../services/utils/ToastHelper.js";
 
 
 export const SearchEvents = () => {
@@ -42,7 +43,8 @@ export const SearchEvents = () => {
         setIsUserInQueue(response.data.data.isUserInQueue);
         setSelectedEventId(searchParams.get("eventId"));
       })
-     
+      console.log(showToast.success.toString());
+     showToast.success("Events loaded successfully.");
     } catch (error) {
       toast.error("Failed to load events");
       console.log(error)

@@ -394,6 +394,7 @@ y
 .Toastify__progress-bar {
   height: 3px;
   opacity: 0.8;
+  color: #7D9D74; /* Sage green */
 }
 
 .custom-toast-success {
@@ -408,3 +409,4 @@ y
 .light .custom-toast-success {
   background-color: #F5F8F5; /* Light sage-tinted background for light mode */
 }
+
