@@ -51,10 +51,9 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
             localStorage.removeItem("userEmail");
             localStorage.removeItem("userId");
             localStorage.removeItem("userName");
-
             window.history.replaceState({}, document.title);
             setIsOpen(false);
-            navigate("/auth");
+            navigate("/");
           })
           .catch((error) => {
             showToast.error(error.response.data.data.message);

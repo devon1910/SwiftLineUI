@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { loginUser } from "../../services/api/swiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../../services/utils/ToastHelper";
 
@@ -12,6 +12,9 @@ const Login = ({ onResetPassword }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigator = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || null;
+
   const handleLogin = (e) => {
     e.preventDefault();
     // Add your login logic here.
@@ -27,19 +30,24 @@ const Login = ({ onResetPassword }) => {
         localStorage.setItem("user", valueToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("userName",response.data.data.userName) 
-        localStorage.setItem(
-          "userId",
-          JSON.stringify(response.data.data.userId)
-        );
-        navigator("/", {
-          state: {
-            email: response.data.data.email,
-            isInLine: response.data.data.isInLine,
-            userId: response.data.data.userId,
-            userName: response.data.data.userName,
-          },
-        });
-      
+        localStorage.setItem("userId",JSON.stringify(response.data.data.userId));
+        if(from)
+        {
+          console.log("from 3: ",from)
+          window.location.href=from
+        }else
+        {
+          navigator("/", {
+            state: {
+              email: response.data.data.email,
+              isInLine: response.data.data.isInLine,
+              userId: response.data.data.userId,
+              userName: response.data.data.userName,
+            },
+            replace:true
+          },); 
+        }
+        
       })
       .catch((error) => {
         showToast.error(error.response.data.data.message);
