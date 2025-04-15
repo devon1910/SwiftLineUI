@@ -6,7 +6,7 @@ import { Loader, LoaderCircle } from "lucide-react";
 const VerifyTokenPage = () => {
   const navigator = useNavigate();
   const alreadyCalledRef = useRef(false);
-  const from = location.state?.from || null;
+  const from = location.state?.from || "/";
 
   function getTokenFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, replace, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "../layout/Navigation";
-import { FastForward } from "lucide-react";
+import { FastForward, TrendingUpDown } from "lucide-react";
 import { useNetworkStatus } from "../../services/utils/NetworkStatus";
 
 function LandingPage() {
@@ -17,7 +17,7 @@ function LandingPage() {
   const userName = userNameFromState || localStorage.getItem("userName") || ""
   const email = emailFromState || localStorage.getItem("userEmail") || ""
   const userId = location.state?.userId || localStorage.getItem("userId") || ""
- 
+  const from = location.state?.from || "/";
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -37,8 +37,18 @@ function LandingPage() {
         localStorage.setItem('userName', username);
         localStorage.setItem('userId', userId);
         
-        // Clean up the URL to remove the tokens
-        navigate('/', { replace: true }); // Redirect to dashboard or home page
+        // // Clean up the URL to remove the tokens
+        // navigate('/', { replace: true }); // Redirect to dashboard or home page
+
+        if(from)
+          {
+            window.location.href=from
+          }else{
+            navigator(from, {
+              replace:true
+            });
+          }
+
         
         // Or if you want to stay on the same page but clean the URL:
         // window.history.replaceState({}, document.title, window.location.pathname);
