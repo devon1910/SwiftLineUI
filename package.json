@@ -20,6 +20,7 @@
     "date-fns-tz": "^3.2.0",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.5.0",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.479.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",

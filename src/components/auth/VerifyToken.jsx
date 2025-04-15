@@ -6,6 +6,7 @@ import { Loader, LoaderCircle } from "lucide-react";
 const VerifyTokenPage = () => {
   const navigator = useNavigate();
   const alreadyCalledRef = useRef(false);
+  const from = location.state?.from || null;
 
   function getTokenFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -24,14 +25,21 @@ const VerifyTokenPage = () => {
           localStorage.setItem("userEmail", response.data.data.email);
           localStorage.setItem("userName", response.data.data.userName);
           localStorage.setItem("userId", response.data.data.userId);
-          navigator("/", {
-            state: {
-              userId: response.data.data.userId,
-              email: response.data.data.email,
-              isInLine: response.data.data.isInLine,
-              userName: response.data.data.userName,
-            },
-          });
+          if(from)
+            {
+              window.location.href=from
+            }
+            else{
+              navigator(from, {
+                state: {
+                  userId: response.data.data.userId,
+                  email: response.data.data.email,
+                  isInLine: response.data.data.isInLine,
+                  userName: response.data.data.userName,
+                },
+              });
+            }
+          
         })
         .catch((error) => {
           toast.error(error.response.data.data.message);

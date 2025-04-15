@@ -33,7 +33,6 @@ const Login = ({ onResetPassword }) => {
         localStorage.setItem("userId",JSON.stringify(response.data.data.userId));
         if(from)
         {
-          console.log("from 3: ",from)
           window.location.href=from
         }else
         {

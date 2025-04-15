@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { showToast } from "../../services/utils/ToastHelper";
+import QRCodeScanner from "../common/QRCodeScanner";
 
 const Navigation = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -103,8 +104,9 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                 </button>
               ))}
             </div>
-
+            
             <div className="relative ml-4">
+              
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-1 focus:outline-none"
@@ -116,7 +118,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                   } ${darkMode ? "text-white" : "text-gray-700"}`}
                 />
               </button>
-
+              
               {/* Dropdown Menu */}
               {isProfileOpen && (
                 <div
