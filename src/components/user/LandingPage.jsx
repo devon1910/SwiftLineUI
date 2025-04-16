@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, replace, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, replace, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "../layout/Navigation";
 import { FastForward, TrendingUpDown } from "lucide-react";
@@ -43,7 +43,7 @@ function LandingPage() {
         localStorage.removeItem("from");
         window.location.href = from;
       } else {
-        navigator("/", {
+        navigate("/", {
           replace: true,
         });
       }
