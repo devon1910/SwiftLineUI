@@ -410,3 +410,52 @@ y
   background-color: #F5F8F5; /* Light sage-tinted background for light mode */
 }
 
+
+
+/* Custom scrollbar styles */
+/* Style for the slider thumb (ball) */
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #9cba9f; /* Sage green */
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #9cba9f; /* Sage green */
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #9cba9f; /* Sage green */
+  cursor: pointer;
+}
+
+
+select {
+  background-color: transparent; /* Makes the background inherit the parent color */
+  color: inherit; /* Ensures text color matches the parent */
+}
+
+option {
+  background-color: white; /* Set this to your light mode background color */
+  color: black; /* Set this to your light mode text color */
+}
+
+.dark-mode select {
+  background-color: transparent;
+  color: inherit;
+}
+
+.dark-mode option {
+  background-color: #1A202C; /* Set this to your dark mode background color */
+  color: white; /* Set this to your dark mode text color */
+}

@@ -4,8 +4,15 @@ import { createEvent } from "../../services/api/swiftlineService";
 import { updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import {  FiClock, FiPlus, FiCheck } from "react-icons/fi";
-import {  LoaderCircle } from "lucide-react";
+import {
+  FiClock,
+  FiPlus,
+  FiCheck,
+  FiUsers,
+  FiUserPlus,
+  FiSliders,
+} from "react-icons/fi";
+import { LoaderCircle } from "lucide-react";
 
 const EventForm = () => {
   const location = useLocation();
@@ -27,6 +34,11 @@ const EventForm = () => {
   const [eventEndTime, setEndTime] = useState(
     editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
   );
+
+  const [staffCount, setStaffCount] = useState(0);
+  const [capacity, setCapacity] = useState(0);
+  const [minCapacity, setMinCapacity] = useState(0);
+  const [maxCapacity, setMaxCapacity] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -135,6 +147,7 @@ const EventForm = () => {
             type="text"
             placeholder="Tech Conference 2024"
             value={title}
+            maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
             required
             className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
@@ -154,6 +167,7 @@ const EventForm = () => {
           <textarea
             id="eventDescription"
             rows={5}
+            maxLength={300}
             placeholder="Describe your event details..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -190,19 +204,68 @@ const EventForm = () => {
           </div>
         </div>
 
+        {/* Number of Staff */}
+        <div className="relative">
+          <label
+            htmlFor="staffCount"
+            className="block text-sm font-medium mb-1"
+          >
+            Number of Staff
+          </label>
+          <div className="relative">
+            <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              id="staffCount"
+              type="number"
+              placeholder="2"
+              min="1"
+              max="20"
+              value={staffCount}
+              onChange={(e) => setStaffCount(e.target.value)}
+              required
+              style={{ paddingLeft: "2.5rem" }}
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+            />
+          </div>
+        </div>
+        <div className="mb-6">
+          <label
+            htmlFor="capacitySlider"
+            className="block text-sm font-medium mb-2"
+          >
+            Queue Capacity: <span className="font-bold">{capacity}</span>/75
+          </label>
+
+          <div className="flex items-center gap-3">
+            <FiUsers className="text-gray-400" />
+            <input
+              type="range"
+              id="capacitySlider"
+              min="1"
+              max="75"
+              value={capacity}
+              onChange={(e) => setCapacity(parseInt(e.target.value))}
+              className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+            />
+            <FiUsers className="text-gray-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* Time Selection Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {/* Start Time */}
         <div className="relative">
           <label htmlFor="startTime" className="block text-sm font-medium mb-1">
             Start Time
           </label>
           <div className="relative">
-            
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <select
               id="startTime"
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition "
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -210,8 +273,6 @@ const EventForm = () => {
                 </option>
               ))}
             </select>
-
-            {/* Dropdown Arrow (Optional for Styling) */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
               ▼
             </div>
@@ -229,7 +290,7 @@ const EventForm = () => {
               id="endTime"
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-white text-gray-900"
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
             >
               {timeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -237,8 +298,6 @@ const EventForm = () => {
                 </option>
               ))}
             </select>
-
-            {/* Dropdown Arrow (Optional for Styling) */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
               ▼
             </div>
@@ -266,5 +325,4 @@ const EventForm = () => {
     </form>
   );
 };
-
 export default EventForm;
