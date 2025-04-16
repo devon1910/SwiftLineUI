@@ -137,7 +137,7 @@ export const SearchEvents = () => {
 
     navigator.clipboard
       .writeText(searchUrl)
-      .then(() => toast.success("Event link copied!"))
+      .then(() => showToast.success("Event link copied!"))
       .catch(() => {
         // Fallback for browsers without clipboard API
         const textArea = document.createElement("textarea");
