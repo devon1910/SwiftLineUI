@@ -48,8 +48,6 @@ API.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
 
-    
-
       if (!error.response) {
         // Network error or backend is unreachable
         if (error.message === "Network Error") {
@@ -57,13 +55,14 @@ API.interceptors.response.use(
           showToast.error("Oops! We couldn’t connect to the server. Please check your internet or try again later.");
         } else if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
           showToast.error("Server is unreachable. Please try again in a few minutes.");
+        }else{
+          showToast.error("An unexpected error occurred. Please try again later.");
         }
         return
       }
-
-      if (isPublicRoute().length > 0) {
-        return Promise.reject(error);
-      }
+      // if (isPublicRoute().length > 0 && ) {
+      //   return Promise.reject(error);
+      // }
       // If we receive a 401 and haven't retried yet, attempt to refresh the token.
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
