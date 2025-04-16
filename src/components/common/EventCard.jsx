@@ -81,6 +81,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
         <div className="grid grid-cols-2 gap-3">
           <StatItem label="Average Wait" value={`${event.averageTime} mins`} />
           <StatItem label="Users In Queue" value={event.usersInQueue} />
+          <StatItem label="Staff Serving" value={event.staffCount} />
           <StatItem
             label="Starts"
             value={format(
@@ -107,6 +108,8 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
             </p>
           </div>
         </div>
+
+        
 
         <button
           disabled={!event.hasStarted || isUserInQueue || !event.isActive}

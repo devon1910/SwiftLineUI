@@ -1,9 +1,8 @@
-import { FiClock, FiUsers, FiCalendar } from "react-icons/fi";
+import { FiClock, FiUsers, FiCalendar, FiUserCheck } from "react-icons/fi";
 
 const StatItem = ({ label, value }) => {
     let icon = null;
-
-    switch (label) {
+     switch (label) {
       case "Average Wait":
         icon = (
           <FiClock className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
@@ -12,6 +11,11 @@ const StatItem = ({ label, value }) => {
       case "Users In Queue":
         icon = (
           <FiUsers className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
+        );
+        break;
+      case "Staff Serving":
+        icon = (
+          <FiUserCheck className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
         break;
       case "Starts":

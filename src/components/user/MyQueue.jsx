@@ -26,7 +26,7 @@ export const MyQueue = () => {
     setIsLoading(false);
   }, []);
 
-  const showConfetti = myQueue.timeTillYourTurn === 0;
+  const showConfetti = myQueue.position ===1 ;
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
     width: window.innerWidth,

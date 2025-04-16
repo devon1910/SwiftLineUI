@@ -9,8 +9,7 @@ import {
   FiPlus,
   FiCheck,
   FiUsers,
-  FiUserPlus,
-  FiSliders,
+
 } from "react-icons/fi";
 import { LoaderCircle } from "lucide-react";
 
@@ -27,7 +26,6 @@ const EventForm = () => {
   const [averageTime, setAverageTime] = useState(
     editingEvent ? editingEvent.averageTime : ""
   );
-
   const [eventStartTime, setStartTime] = useState(
     editingEvent ? editingEvent.eventStartTime.slice(0, -3) : ""
   );
@@ -35,10 +33,8 @@ const EventForm = () => {
     editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
   );
 
-  const [staffCount, setStaffCount] = useState(0);
-  const [capacity, setCapacity] = useState(0);
-  const [minCapacity, setMinCapacity] = useState(0);
-  const [maxCapacity, setMaxCapacity] = useState(0);
+  const [staffCount, setStaffCount] = useState(editingEvent ? editingEvent.staffCount : 1);
+  const [capacity, setCapacity] = useState(editingEvent ? editingEvent.capacity : 50);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,6 +48,8 @@ const EventForm = () => {
         eventStartTime,
         eventEndTime,
         averageTime,
+        staffCount,
+        capacity,
       };
 
       if (editingEvent) {
