@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { createEvent } from "../../services/api/swiftlineService";
-import { updateEvent } from "../../services/api/swiftlineService";
+import { createEvent } from "../../services/api/SwiftlineService";
+import { updateEvent } from "../../services/api/SwiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import {

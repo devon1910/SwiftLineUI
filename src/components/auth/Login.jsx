@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { loginUser } from "../../services/api/swiftlineService";
+import { loginUser } from "../../services/api/SwiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
