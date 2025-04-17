@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
-import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn.js";
-import { GetUserLineInfo } from "../../services/api/swiftlineService.js";
+import {
+  connection,
+  useSignalRWithLoading,
+} from "../../services/api/SignalRConn.js";
+import { GetUserLineInfo } from "../../services/api/SwiftlineService.js";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
-import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
+import { FiArrowUp, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate } from "react-router-dom";
+import { LocateIcon, MapPin } from "lucide-react";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +30,7 @@ export const MyQueue = () => {
     setIsLoading(false);
   }, []);
 
-  const showConfetti = myQueue.position ===1 ;
+  const showConfetti = myQueue.position === 1;
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
     width: window.innerWidth,
@@ -147,7 +151,7 @@ export const MyQueue = () => {
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
         .then(() => {
           showToast.success("Exited Queue.");
-          navigate("/")
+          navigate("/");
         })
         .catch((err) => {
           console.error(err);
@@ -161,7 +165,7 @@ export const MyQueue = () => {
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>
         </div>
-      ) }
+      )}
       {myQueue.position > 0 && (
         <div className="border-2 border-sage-400 rounded-xl shadow-lg overflow-hidden relative">
           <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600 flex justify-between items-center">
@@ -199,34 +203,51 @@ export const MyQueue = () => {
               gravity={0.2}
             />
           )}
-          
-          {/* Body */}
+
           <div className="p-6 md:p-8">
             <div className="space-y-6 mb-6">
-              {/* Position Section */}
-              <div className="flex items-center gap-2">
-                <span className="text-sage-700 font-medium">
-                  Your Position:
-                </span>
-                <span className="text-2xl md:text-3xl font-bold">
-                  {myQueue.positionRank}
-                </span>
-                {showPositionArrow && (
-                  <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
-                )}
+              <div className="flex items-center gap-3 pb-3 border-b">
+                <MapPin className="text-emerald-600 h-6 w-6" />
+                <div className="flex flex-col">
+                  <span className="text-gray-600 text-sm">Your Position</span>
+                  <div className="flex items-center">
+                    <span className="text-3xl font-bold">
+                      {myQueue.positionRank}
+                    </span>
+                    {showPositionArrow && (
+                      <FiArrowUp className="text-emerald-500 h-5 w-5 ml-2 animate-bounce" />
+                    )}
+                  </div>
+                </div>
               </div>
 
-              {/* Wait Time Section */}
-              <div className="flex items-center gap-2">
-                <span className="text-sage-700 font-medium">
-                  Estimated Wait:
-                </span>
-                <span className="text-2xl md:text-3xl font-bold">
-                  {myQueue.timeTillYourTurn} minute(s)
-                </span>
-                {showWaitTimeArrow && (
-                  <FiArrowUp className="text-sage-500 h-6 w-6 animate-bounce" />
-                )}
+              {/* Secondary Information: Wait Time - Second most important */}
+              <div className="flex items-center gap-3 pb-3 border-b">
+                <FiPause className="text-amber-500 h-6 w-6" />
+                <div className="flex flex-col">
+                  <span className="text-gray-600 text-sm">Estimated Wait</span>
+                  <div className="flex items-center">
+                    <span className="text-2xl font-bold">
+                      {myQueue.timeTillYourTurn} minute
+                      {myQueue.timeTillYourTurn !== 1 ? "s" : ""}
+                    </span>
+                    {showWaitTimeArrow && (
+                      <FiArrowUp className="text-amber-500 h-5 w-5 ml-2 animate-bounce" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Tertiary Information: Staff Count - Informational but less actionable */}
+              <div className="flex items-center gap-3">
+                <FiUserCheck className="text-blue-500 h-6 w-6" />
+                <div className="flex flex-col">
+                  <span className="text-gray-600 text-sm">Staff Serving</span>
+                  <span className="text-lg font-medium">
+                    {myQueue.staffServing} staff member
+                    {myQueue.staffServing !== 1 ? "s" : ""}
+                  </span>
+                </div>
               </div>
 
               {myQueue.position !== 1 ? (

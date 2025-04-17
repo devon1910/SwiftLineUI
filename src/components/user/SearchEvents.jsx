@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import EventCard from "../common/EventCard.jsx";
 import { useDebounce } from "@uidotdev/usehooks";
-import { eventsList } from "../../services/api/swiftlineService.js";
+import { eventsList } from "../../services/api/SwiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { eventQueueInfo } from "../../services/api/swiftlineService";
+import { eventQueueInfo } from "../../services/api/SwiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { format } from "date-fns-tz";
 
@@ -10,6 +10,7 @@ import {
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn";
 import PaginationControls from "../common/PaginationControl";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
@@ -69,11 +70,11 @@ const ViewQueue = () => {
       event.id
     )
       .then(() => {
-        toast.success("Queue Activity updated.");
+        showToast.success("Queue Activity updated.");
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Error in updating queue. Please try again.");
+        showToast.error("Error in updating queue. Please try again.");
       });
   };
 
