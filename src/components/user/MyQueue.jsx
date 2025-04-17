@@ -113,9 +113,11 @@ export const MyQueue = () => {
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
-
         if (myQueue.position === -1) {
-          setQueueActivity(true);
+          setQueueActivity(true); 
+        }
+        else{
+          setQueueActivity(myQueue.IsNotPaused);
         }
       })
       .catch((error) => {
@@ -132,10 +134,10 @@ export const MyQueue = () => {
         toast.info("Connection lost. Attempting to reconnect...");
         try {
           await connection.start();
-          toast.success("Reconnected successfully.");
+          showToast.success("Reconnected successfully.");
         } catch (reconnectError) {
           console.error("Reconnection failed:", reconnectError);
-          toast.error("Unable to reconnect. Please check your network.");
+          showToast.error("Unable to reconnect. Please check your network.");
           return;
         }
       }
