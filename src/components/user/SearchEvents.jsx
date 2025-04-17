@@ -14,7 +14,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { eventsList } from "../../services/api/swiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
-import { showToast } from "../../services/utils/ToastHelper.js";
+import { showToast } from "../../services/utils/ToastHelper.jsx";
 
 export const SearchEvents = () => {
   const { userId } = useOutletContext();

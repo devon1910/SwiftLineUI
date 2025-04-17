@@ -7,7 +7,7 @@ import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import { FiArrowUp, FiPause, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
-import { showToast } from "../../services/utils/ToastHelper.js";
+import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate } from "react-router-dom";
 
 export const MyQueue = () => {
