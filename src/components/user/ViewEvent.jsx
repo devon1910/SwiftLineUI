@@ -8,7 +8,8 @@ import {
 } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { fetchEventById } from "../../services/api/swiftlineService";
+import { fetchEventById } from "../../services/api/SwiftlineService";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const ViewEvent = () => {
   const { eventId } = useParams();
@@ -24,7 +25,7 @@ const ViewEvent = () => {
         setEvent(response.data.data);
       } catch (err) {
         setError("Failed to load event details");
-        toast.error("Event not found");
+        showToast.error("Event not found");
       } finally {
         setLoading(false);
       }

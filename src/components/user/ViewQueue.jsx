@@ -25,7 +25,8 @@ const ViewQueue = () => {
 
   useEffect(() => {
     getEventQueues();
-  }, []);
+  }, [currentPage]);
+
 
   const getEventQueues = () => {
     eventQueueInfo(currentPage,lineMembersPerPage,event.id)
@@ -132,7 +133,6 @@ const ViewQueue = () => {
     }
   };
 
-  console.log("totalPages", totalPages);
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="rounded-xl shadow-lg border border-sage-100  overflow-hidden">
@@ -220,7 +220,7 @@ const ViewQueue = () => {
                         {user.lineMember.swiftLineUser.userName}
                       </td>
                       <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                        {format(new Date(user.createdAt), "hh:mm:ss a")}
+                        {format(new Date(user.createdAt), "dd/MM/yyyy hh:mm:ss a")}
                       </td>
                       <td className="px-4 py-3">
                         <button
