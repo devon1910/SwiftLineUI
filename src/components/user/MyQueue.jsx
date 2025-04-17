@@ -17,7 +17,7 @@ export const MyQueue = () => {
 
   const [myQueue, setMyQueue] = useState({});
 
-  const [queueActivity, setQueueActivity] = useState(true);
+  const [queueActivity, setQueueActivity] = useState(null);
 
   const { invokeWithLoading } = useSignalRWithLoading();
 
@@ -64,6 +64,12 @@ export const MyQueue = () => {
       // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
         setQueueActivity(isQueueActive);
+        console.log("Queue status updated:", isQueueActive);
+        if (!isQueueActive) {
+          showToast.error("Queue is paused. Please check back later.");
+        } else {
+          showToast.success("Queue is active. You're in line!");
+        }
       });
       // Clean up when component unmounts
       return () => {
@@ -113,12 +119,7 @@ export const MyQueue = () => {
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
-        if (myQueue.position === -1) {
-          setQueueActivity(true); 
-        }
-        else{
-          setQueueActivity(myQueue.IsNotPaused);
-        }
+        setQueueActivity(response.data.data.isNotPaused);
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
