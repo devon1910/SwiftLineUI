@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FiArrowLeft,
-  FiShare2,
   FiClock,
   FiMapPin,
   FiUsers,
