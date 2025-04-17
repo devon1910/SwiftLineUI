@@ -157,7 +157,7 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
               </div>
 
               <p className="text-sm text-gray-600 mb-4 text-center">
-                Scan this QR code to join <strong>{event.title}</strong>
+                Scan this QR code to join <strong>{event.title} queue</strong>
               </p>
 
               <button

@@ -104,7 +104,7 @@ export const SearchEvents = () => {
     }
 
     if (isUserInQueue) {
-      showToast.warning("You're already in a queue");
+      showToast.error("You're already in a queue");
       return;
     }
     try {
