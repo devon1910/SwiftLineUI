@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, CircleUserRound, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "../../services/api/SwiftlineService";
+import { LogOut } from "../../services/api/SwiftlineService.js";
 import { showToast } from "../../services/utils/ToastHelper";
 
 const Navigation = ({ darkMode, toggleDarkMode }) => {
