@@ -120,9 +120,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                 />
               </div>
               <span
-                className={`text-lg font-semibold ${
-                  darkMode ? "text-white" : "text-gray-900"
-                } hidden sm:block`}
+                className={`text-lg font-semibold text-white hidden sm:block`}
               >
                 SwiftLine
               </span>

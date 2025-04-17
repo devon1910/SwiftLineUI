@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { eventQueueInfo } from "../../services/api/swiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
-import { format} from "date-fns-tz"
+import { format } from "date-fns-tz";
 
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
 import { toast } from "react-toastify";
-import { connection, useSignalRWithLoading } from "../../services/api/SignalRConn";
+import {
+  connection,
+  useSignalRWithLoading,
+} from "../../services/api/SignalRConn";
+import PaginationControls from "../common/PaginationControl";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
@@ -14,16 +18,21 @@ const ViewQueue = () => {
   const event = location.state?.event;
   const navigate = useNavigate();
   const { invokeWithLoading } = useSignalRWithLoading();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const lineMembersPerPage = 10;
 
   useEffect(() => {
     getEventQueues();
   }, []);
 
   const getEventQueues = () => {
-    eventQueueInfo(event.id)
+    eventQueueInfo(currentPage,lineMembersPerPage,event.id)
       .then((response) => {
         setQueues(response.data.data.lines);
         setIsPaused(response.data.data.isEventPaused);
+        setTotalPages(response.data.data.pageCount);
+
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -32,7 +41,7 @@ const ViewQueue = () => {
 
   const ToggleQueueActivity = async () => {
     //check if user is logged In
-    const userId=localStorage.getItem('userId')
+    const userId = localStorage.getItem("userId");
 
     if (!userId) {
       toast.error("Please login or signup to join a queue.");
@@ -52,7 +61,13 @@ const ViewQueue = () => {
     }
 
     // Invoke SignalR method to join the queue
-    invokeWithLoading(connection,"ToggleQueueActivity", isPaused, userId, event.id) 
+    invokeWithLoading(
+      connection,
+      "ToggleQueueActivity",
+      isPaused,
+      userId,
+      event.id
+    )
       .then(() => {
         toast.success("Queue Activity updated.");
       })
@@ -71,7 +86,7 @@ const ViewQueue = () => {
           ? " resuming this queue assumes that the person who was first has already been served."
           : "")
     );
-  
+
     if (confirm) {
       // Implement pause logic here
       ToggleQueueActivity();
@@ -80,30 +95,43 @@ const ViewQueue = () => {
   };
 
   const onSkip = async (lineMemberId) => {
-      if (window.confirm("Are you sure you want to serve this line member before the end of their estimated wait time?")) {
-        if (connection.state !== "Connected") {
-          toast.info("Connection lost. Attempting to reconnect...");
-          try {
-            await connection.start();
-            toast.success("Reconnected successfully.");
-          } catch (reconnectError) {
-            console.error("Reconnection failed:", reconnectError);
-            toast.error("Unable to reconnect. Please check your network.");
-            return;
-          }
+    if (
+      window.confirm(
+        "Are you sure you want to serve this line member before the end of their estimated wait time?"
+      )
+    ) {
+      if (connection.state !== "Connected") {
+        toast.info("Connection lost. Attempting to reconnect...");
+        try {
+          await connection.start();
+          toast.success("Reconnected successfully.");
+        } catch (reconnectError) {
+          console.error("Reconnection failed:", reconnectError);
+          toast.error("Unable to reconnect. Please check your network.");
+          return;
         }
-        // Invoke SignalR method to join the queue
-        await invokeWithLoading(connection,"ExitQueue", "", lineMemberId, "")
-          .then(() => {
-            toast.success("Served Line Member.");
-            getEventQueues();
-          })
-          .catch((err) => {
-            console.error(err);
-            toast.error("Error in exiting queue. Please try again.");
-          });
       }
-    };
+      // Invoke SignalR method to join the queue
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
+        .then(() => {
+          toast.success("Served Line Member.");
+          getEventQueues();
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("Error in exiting queue. Please try again.");
+        });
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      //window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  console.log("totalPages", totalPages);
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="rounded-xl shadow-lg border border-sage-100  overflow-hidden">
@@ -114,38 +142,38 @@ const ViewQueue = () => {
               {event.title}
             </h2>
             <div className="flex gap-2">
-            {queue.length > 0 && (
-              <>
-              <button
-                onClick={togglePause}
-                className={`gap-2 ${
-                  isPaused
-                    ? "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
-                    : "bg-sage-100 dark:bg-gray-700 text-sage-700 dark:text-gray-200"
-                }`}
-              >
-                {isPaused ? (
-                  <>
-                    <FiPlay className="w-5 h-5" />
-                    Resume Queue
-                  </>
-                ) : (
-                  <>
-                    <FiPause className="w-5 h-5" />
-                    Pause Queue
-                  </>
-                )}
-              </button>
-              <button
-                onClick={getEventQueues}
-                variant="ghost"
-                className="bg-sage-100 dark:bg-gray-700 text-sage-700 dark:text-gray-200 gap-2"
-              >
-                <FiRefreshCw className="w-5 h-5" />
-                Refresh
-              </button>
-              </>
-            )}
+              {queue.length > 0 && (
+                <>
+                  <button
+                    onClick={togglePause}
+                    className={`gap-2 ${
+                      isPaused
+                        ? "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
+                        : "bg-sage-100 dark:bg-gray-700 text-sage-700 dark:text-gray-200"
+                    }`}
+                  >
+                    {isPaused ? (
+                      <>
+                        <FiPlay className="w-5 h-5" />
+                        Resume Queue
+                      </>
+                    ) : (
+                      <>
+                        <FiPause className="w-5 h-5" />
+                        Pause Queue
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={getEventQueues}
+                    variant="ghost"
+                    className="bg-sage-100 dark:bg-gray-700 text-sage-700 dark:text-gray-200 gap-2"
+                  >
+                    <FiRefreshCw className="w-5 h-5" />
+                    Refresh
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <p className="text-sage-600 dark:text-sage-400">
@@ -188,7 +216,7 @@ const ViewQueue = () => {
                         {index + 1}
                       </td>
                       <td className="px-4 py-3">
-                        {user.lineMember.swiftLineUser.email}
+                        {user.lineMember.swiftLineUser.userName}
                       </td>
                       <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
                         {format(new Date(user.createdAt), "hh:mm:ss a")}
@@ -212,6 +240,11 @@ const ViewQueue = () => {
                   ))}
                 </tbody>
               </table>
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

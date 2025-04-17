@@ -48,7 +48,7 @@ API.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
 
-      if (!error.response) {
+      if (error.response) {
         // Network error or backend is unreachable
         if (error.message === "Network Error") {
           // Show a friendly message
