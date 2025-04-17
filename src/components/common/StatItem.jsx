@@ -5,7 +5,7 @@ const StatItem = ({ label, value }) => {
      switch (label) {
       case "Average Wait":
         icon = (
-          <FiPause className="text-amber-500 h-4 w-4 mr-1" />
+          <FiPause className="text-sage-500 h-4 w-4 mr-1" />
         );
         break;
       case "Users In Queue":
@@ -15,7 +15,7 @@ const StatItem = ({ label, value }) => {
         break;
       case "Staff Serving":
         icon = (
-          <FiUserCheck className="w-4 h-4 text-blue-500 dark:text-sage-400 mr-1" />
+          <FiUserCheck className="w-4 h-4 text-sage-500 dark:text-sage-400 mr-1" />
         );
         break;
       case "Starts":
