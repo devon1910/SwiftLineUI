@@ -1,9 +1,19 @@
-import { FiDownload, FiShare2, FiUser, FiX } from "react-icons/fi";
 import StatItem from "./StatItem";
 import { format } from "date-fns";
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { QrCode } from "lucide-react";
+import { ArrowRight, Pause, QrCode } from "lucide-react";
+import {
+  FiShare2,
+  FiX,
+  FiDownload,
+  FiUser,
+  FiUsers,
+  FiUserCheck,
+  FiClock,
+  FiCalendar,
+  FiArrowRight,
+} from "react-icons/fi";
 
 const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
   const [showQRCode, setShowQRCode] = useState(false);
@@ -27,29 +37,30 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
     event.id
   }&search=${encodeURIComponent(event.title)}`;
 
-  return (
-    <div
-      className={`relative rounded-xl shadow-md border ${
-        event.isShared ? "border-2 border-sage-500" : "border-sage-200"
-      } dark:border-gray-700 hover:shadow-lg transition-shadow`}
-    >
-      {/* {event.isShared && (
-      <div className="absolute top-4 left-4 bg-sage-500 text-white px-2 py-1 rounded-full text-xs">
-        Shared Event
-      </div>
-    )}
- */}
-      {event.hasStarted && <div className="pulse-overlay" />}
+  // Format times
+  const startTime = format(
+    new Date(`1970-01-01T${event.eventStartTime}`),
+    "h:mm a"
+  );
+  const endTime = format(
+    new Date(`1970-01-01T${event.eventEndTime}`),
+    "h:mm a"
+  );
 
-      <div className="p-6 flex flex-col gap-4">
-        <div className="flex justify-between items-start">
-          <div className="flex flex-col">
-            <div className="flex items-center">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {event.title}
-              </h3>
-              {event.hasStarted && <span className="ongoing-badge">LIVE</span>}
-            </div>
+  return (
+    <div className="relative overflow-hidden rounded-xl shadow-md transition-all hover:shadow-lg border-l-4 border-transparent border">
+      {/* Top accent bar */}
+      <div
+        className={`h-1 w-full ${
+          event.hasStarted ? "bg-sage-500" : "bg-gray-200"
+        }`}
+      ></div>
+
+      <div className="p-5">
+        {/* Header with floating status */}
+        <div className="flex justify-between items-start mb-4 relative">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold">{event.title}</h3>
           </div>
 
           <div className="flex gap-2">
@@ -58,67 +69,128 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
                 e.stopPropagation();
                 setShowQRCode(true);
               }}
-              className="text-sage-500 hover:text-sage-600 p-1"
+              className="text-sage-500 hover:text-sage-600 bg-sage-50 p-2 rounded-full hover:bg-sage-100 transition-colors"
               title="Generate QR Code"
             >
-            <QrCode className="w-5 h-5" />
+              <QrCode className="w-4 h-4" />
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onShare(event.id, event.title);
               }}
-              className="text-sage-500 hover:text-sage-600 p-1"
+              className="text-sage-500 hover:text-sage-600 bg-sage-50 p-2 rounded-full hover:bg-sage-100 transition-colors"
               title="Share Event"
             >
-              <FiShare2 className="w-5 h-5" />
+              <FiShare2 className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        <p className="text-sm">{event.description}</p>
-
-        <div className="grid grid-cols-2 gap-3">
-          <StatItem label="Average Wait" value={`${event.averageTime} mins`} />
-          <StatItem label="Users In Queue" value={event.usersInQueue} />
-          <StatItem label="Staff Serving" value={event.staffCount} />
-          <StatItem
-            label="Starts"
-            value={format(
-              new Date(`1970-01-01T${event.eventStartTime}`),
-              "h:mm a"
-            )}
-          />
-          <StatItem
-            label="Ends"
-            value={format(
-              new Date(`1970-01-01T${event.eventEndTime}`),
-              "h:mm a"
-            )}
-          />
+        {/* Status indicators in a ribbon style */}
+        <div className="flex gap-2 mb-3">
+          {event.hasStarted && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
+              <span className="mr-1 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+              LIVE
+            </span>
+          )}
+          {!event.isActive && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 animate-pulse">
+              <Pause />
+              PAUSED
+            </span>
+          )}
+          {isUserInQueue && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+              <FiCheckCircle className="w-3 h-3 mr-1" />
+              IN QUEUE
+            </span>
+          )}
         </div>
-        <div className="flex items-start gap-3 bg-sage-50 p-3 rounded-lg">
-          <div className="text-sage-500 flex-shrink-0">
-            <FiUser className="w-5 h-5" />
+
+        {/* Description */}
+        <p className="text-sm mb-4 line-clamp-2">
+          {event.description}
+        </p>
+
+        {/* Time info in card format */}
+        <div className="flex gap-4 mb-4 p-3 rounded-lg">
+          <div className="flex-1">
+            <p className="text-xs mb-1">Starts</p>
+            <div className="flex items-center">
+              <FiCalendar className="w-4 h-4 mr-2" />
+              <span className="text-sm font-semibold">{startTime}</span>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium">Organized By</p>
-            <p className="text-sm font-semibold break-words overflow-hidden text-ellipsis whitespace-normal max-w-full">
+          
+          <div className="w-px"></div>
+          <div className="flex-1">
+            <p className="text-xs mb-1">Ends</p>
+            <div className="flex items-center">
+              <FiCalendar className="w-4 h-4 mr-2" />
+              <span className="text-sm font-semibold">{endTime}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats in two columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 border-t">
+          <div className="rounded-lg p-3 flex items-center">
+            <div className="p-2 rounded-full mr-3">
+              <FiClock className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs">Average Wait</p>
+              <p className="text-sm font-bold">{event.averageTime} mins</p>
+            </div>
+          </div>
+
+          <div className="rounded-lg p-3 flex items-center ">
+            <div className="p-2 rounded-full mr-3">
+              <FiUsers className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs">Users In Queue</p>
+              <p className="text-sm font-bold">{event.usersInQueue}</p>
+            </div>
+          </div>
+
+          <div className="rounded-lg p-3 flex items-center">
+            <div className="p-2 rounded-full mr-3">
+              <FiUserCheck className="w-4 h-4 text-sage-500" />
+            </div>
+            <div>
+              <p className="text-xs">Staff Serving</p>
+              <p className="text-sm font-bold">{event.staffCount}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Organizer Info as a footer */}
+        <div className="flex items-center gap-3 mb-4 p-3 border-t">
+          <div className="p-2 rounded-full bg-sage-100">
+            <FiUser className="w-4 h-4 text-sage-500" />
+          </div>
+          <div>
+            <p className="text-xs">Organized By</p>
+            <p className="text-sm font-semibold truncate">
               {event.organizer || "Unknown Organizer"}
             </p>
           </div>
         </div>
 
-        
-
+        {/* Join Button with conditional styles */}
         <button
           disabled={!event.hasStarted || isUserInQueue || !event.isActive}
           onClick={() => onJoin(event)}
-          className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
+          className={`w-full py-3 px-4 rounded-lg font-medium text-center flex items-center justify-center gap-2 transition-all ${
             !event.hasStarted
-              ? "bg-sage-200 text-sage-600 cursor-not-allowed"
+              ? "bg-gray-100 text-gray-500 cursor-not-allowed"
               : isUserInQueue
-              ? "bg-sage-200 text-sage-600 cursor-not-allowed"
+              ? "bg-blue-100 text-blue-700 cursor-not-allowed"
+              : !event.isActive
+              ? "bg-gray-100 text-gray-500 cursor-not-allowed"
               : "bg-sage-500 text-white hover:bg-sage-600"
           }`}
         >
@@ -132,39 +204,41 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
         </button>
       </div>
 
-      {/* QR Code Modal */}
+      {/* QR Code Modal with cleaner design */}
       {showQRCode && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Event QR Code</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Event QR Code
+              </h3>
               <button
                 onClick={() => setShowQRCode(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100"
               >
-                <FiX size={24} />
+                <FiX size={20} />
               </button>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="border border-gray-200 p-4 mb-4">
+              <div className="border-2 border-dashed border-gray-200 p-6 mb-4 rounded-lg">
                 <QRCodeCanvas
                   id={`qr-code-${event.id}`}
                   value={eventUrl}
-                  size={256}
+                  size={220}
                   level="H"
                 />
               </div>
 
-              <p className="text-sm text-gray-600 mb-4 text-center">
+              <p className="text-sm text-gray-600 mb-5 text-center">
                 Scan this QR code to join <strong>{event.title}</strong>
               </p>
 
               <button
                 onClick={handleDownloadQR}
-                className="bg-sage-500 hover:bg-sage-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                className="bg-sage-500 hover:bg-sage-600 text-white px-5 py-3 rounded-lg flex items-center justify-center gap-2 w-full transition-all shadow-sm"
               >
-                <FiDownload /> Download QR Code
+                <FiDownload size={16} /> Download QR Code
               </button>
             </div>
           </div>

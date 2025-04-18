@@ -1,4 +1,4 @@
-import { Ban, FastForward } from "lucide-react";
+import { Ban, CircleX, FastForward } from "lucide-react";
 import { toast } from "react-toastify";
 // Helper function to create stylized toasts
 export const showToast = {
@@ -18,7 +18,7 @@ export const showToast = {
   error: (message) => {
     toast.error(
       <div className="flex items-center gap-2">
-        <Ban className="w-auto h-auto text-red" />
+        <CircleX  className="w-auto h-auto text-red" />
         <span>{message}</span>
       </div>,
       {
