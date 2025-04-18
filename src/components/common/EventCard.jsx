@@ -13,6 +13,7 @@ import {
   FiClock,
   FiCalendar,
   FiArrowRight,
+  FiCheckCircle,
 } from "react-icons/fi";
 
 const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
