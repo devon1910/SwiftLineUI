@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { UserEvents } from "../../services/api/SwiftlineService";
+import { UserEvents } from "../../services/api/swiftlineService";
 import { FiTrash2 } from "react-icons/fi";
-import { deleteEvent } from "../../services/api/SwiftlineService";
+import { deleteEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { QrCode } from "lucide-react";

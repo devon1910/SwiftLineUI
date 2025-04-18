@@ -5,7 +5,7 @@ import {
   connection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
-import { GetUserLineInfo } from "../../services/api/SwiftlineService";
+import { GetUserLineInfo } from "../../services/api/swiftlineService";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import { FiArrowUp, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";

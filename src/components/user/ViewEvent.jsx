@@ -7,7 +7,7 @@ import {
 } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { fetchEventById } from "../../services/api/SwiftlineService";
+import { fetchEventById } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 
 const ViewEvent = () => {
