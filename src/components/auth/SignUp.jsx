@@ -21,6 +21,7 @@ const SignUp = () => {
 
   function handleSubmit(e) {
     setIsLoading(true)
+
     e.preventDefault();
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
@@ -53,7 +54,7 @@ const SignUp = () => {
           </p>
         </div>
       </div>
-    ):(
+    ):( 
       <div className="space-y-6">
       <div className="mt-6">
         <button
@@ -135,6 +136,7 @@ const SignUp = () => {
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
+          disabled={isLoading}
         >
           Create account
         </button>
@@ -142,7 +144,7 @@ const SignUp = () => {
     </div>
     )}
     </div>
-  )  
+  )
 };
 
 export default SignUp;

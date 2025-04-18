@@ -55,7 +55,11 @@ API.interceptors.response.use(
           showToast.error("Oops! We couldn’t connect to the server. Please check your internet or try again later.");
         } else if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
           showToast.error("Server is unreachable. Please try again in a few minutes.");
-        }else{
+        }else if (error.code === "ERR_BAD_REQUEST") 
+          {
+          showToast.error(error.response.data.data.message);
+          }
+        else{
           showToast.error("An unexpected error occurred. Please try again later.");
         }
         return
