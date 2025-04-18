@@ -113,34 +113,13 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
         <p className="text-sm mb-4 line-clamp-2">
           {event.description}
         </p>
-
-        {/* Time info in card format */}
-        <div className="flex gap-4 mb-4 p-3 rounded-lg">
-          <div className="flex-1">
-            <p className="text-xs mb-1">Starts</p>
-            <div className="flex items-center">
-              <FiCalendar className="w-4 h-4 mr-2" />
-              <span className="text-sm font-semibold">{startTime}</span>
-            </div>
-          </div>
-          
-          <div className="w-px"></div>
-          <div className="flex-1">
-            <p className="text-xs mb-1">Ends</p>
-            <div className="flex items-center">
-              <FiCalendar className="w-4 h-4 mr-2" />
-              <span className="text-sm font-semibold">{endTime}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats in two columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 border-t">
-          <div className="rounded-lg p-3 flex items-center">
-            <div className="p-2 rounded-full mr-3">
+         {/* Stats in two columns */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2 border-t">
+          <div className="rounded-lg p-3 items-center flex">
+            <div className="p-2 rounded-full mr-3 ">
               <FiClock className="w-4 h-4" />
             </div>
-            <div>
+            <div className="">
               <p className="text-xs">Average Wait</p>
               <p className="text-sm font-bold">{event.averageTime} mins</p>
             </div>
@@ -166,6 +145,28 @@ const EventCard = ({ event, isUserInQueue, onShare, onJoin }) => {
             </div>
           </div>
         </div>
+
+        {/* Time info in card format */}
+        <div className="flex gap-4 mb-4 p-3 border-t">
+          <div className="flex-1">
+            <p className="text-xs mb-1">Starts</p>
+            <div className="flex items-center">
+              <FiCalendar className="w-4 h-4 mr-2" />
+              <span className="text-sm font-semibold">{startTime}</span>
+            </div>
+          </div>
+          
+          <div className="w-px"></div>
+          <div className="flex-1">
+            <p className="text-xs mb-1">Ends</p>
+            <div className="flex items-center">
+              <FiCalendar className="w-4 h-4 mr-2" />
+              <span className="text-sm font-semibold">{endTime}</span>
+            </div>
+          </div>
+        </div>
+
+       
 
         {/* Organizer Info as a footer */}
         <div className="flex items-center gap-3 mb-4 p-3 border-t">
