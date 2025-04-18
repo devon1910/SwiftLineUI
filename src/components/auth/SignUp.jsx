@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 import { CheckCircle, Eye, EyeSlashFill } from "react-bootstrap-icons";
-import { SignUpUser } from "../../services/api/SwiftlineService";
+
 import { toast } from "react-toastify";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { motion } from "framer-motion";
+import { SignUpUser } from "../../services/api/swiftlineService";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const handleGoogleSignIn = async () => {
