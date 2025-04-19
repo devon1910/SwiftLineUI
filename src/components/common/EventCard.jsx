@@ -85,8 +85,9 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         {/* Header area with event title and action buttons */}
         <div className="flex justify-between items-start mb-3">
           <div className="flex-1 pr-2">
-            <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{event.title}</h3>
+            <h3 className="text-lg font-bold text-gray-900 word-wrap">{event.title}</h3>
           </div>
+          
 
           <div className="flex gap-1.5">
             <button
@@ -131,7 +132,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         </div>
 
         {/* Description with proper truncation */}
-        <p className="text-sm mb-4 line-clamp-3 min-h-12">
+        <p className="text-sm mb-4 word-wrap min-h-12">
           {event.description || "No description available for this event."}
         </p>
 
