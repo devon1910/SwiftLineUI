@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Navigate, Outlet, replace, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  replace,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "../layout/Navigation";
 import { FastForward, TrendingUpDown } from "lucide-react";
@@ -127,11 +133,11 @@ function LandingPage() {
                 }`}
               >
                 <span className="inline-block animate-pulse">
-                  Queue Smarter,
+                  Bypass the Wait,
                 </span>{" "}
-                <span className="inline-block">Not Harder –</span>{" "}
+                <span className="inline-block">Reclaim Your Day –</span>{" "}
                 <span className="inline-block font-semibold">
-                  Your Time, Optimized.
+                  Time Liberation, Delivered.
                 </span>
               </p>
             </div>
