@@ -21,6 +21,7 @@ export const SearchEvents = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
+  const [lastEventJoined, setLastEventJoined] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [events, setEvents] = useState([]);
@@ -39,6 +40,8 @@ export const SearchEvents = () => {
         setEvents(response.data.data.events);
         setTotalPages(response.data.data.totalPages);
         setIsUserInQueue(response.data.data.isUserInQueue);
+        setLastEventJoined(response.data.data.lastEventJoined);
+      
         setSelectedEventId(searchParams.get("eventId"));
       });
     } catch (error) {
@@ -181,6 +184,7 @@ export const SearchEvents = () => {
                 key={event.id}
                 event={event}
                 isUserInQueue={isUserInQueue}
+                lastEventJoined={lastEventJoined == event.id}
                 onShare={handleShare}
                 onJoin={joinQueue}
               />
