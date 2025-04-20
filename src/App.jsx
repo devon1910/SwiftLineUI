@@ -17,12 +17,14 @@ import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
 import CustomToast from "./components/common/CustomToast";
+import { ThemeProvider } from "./services/context/ThemeProvider";
 
 function App() {
   return (
     <>
       <BrowserRouter>
-        <LoadingProvider>
+       <ThemeProvider>
+       <LoadingProvider>
           <Routes>         
             <Route path="/*" element={<LandingPage />}>
               <Route index element={<Dashboard />} />
@@ -39,6 +41,7 @@ function App() {
             <Route path="/VerifyToken" element={<VerifyToken />} />
           </Routes>
         </LoadingProvider>
+       </ThemeProvider> 
       </BrowserRouter>
       <CustomToast/>
       <Footer />

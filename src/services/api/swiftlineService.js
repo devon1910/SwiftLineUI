@@ -12,8 +12,8 @@ export const LogOut = () => API.post(`${apiUrl}Auth/Revoke`);
 export const eventsList = (page, eventsPerPage, search = "") => 
     API.get(`${apiUrl}Event/SearchEvents?Page=${page}&Size=${eventsPerPage}&Query=${search}`);
 export const createEvent = (event) => API.post(`${apiUrl}Event/CreateEvent`, event);
-export const eventQueueInfo = (page, size, eventId) => 
-    API.get(`${apiUrl}Event/GetEventQueue?Page=${page}&Size=${size}&EventId=${eventId}&IsForPastMembers=true`);
+export const getQueueHistory = (page, size, eventId, isForPastMembers) => 
+    API.get(`${apiUrl}Event/GetEventQueue?Page=${page}&Size=${size}&EventId=${eventId}&IsForPastMembers=${isForPastMembers}`);
 export const UserEvents = () => API.get(`${apiUrl}Event/GetUserEvents`);
 export const updateEvent = (event) => API.put(`${apiUrl}Event/EditEvent`, event);
 export const deleteEvent = (id) => API.delete(`${apiUrl}Event/DeleteEvent/${id}`);

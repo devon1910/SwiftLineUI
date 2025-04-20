@@ -21,6 +21,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
   const [showQRCode, setShowQRCode] = useState(false);
   const savedTheme = localStorage.getItem("darkMode");
 
+  console.log("savedTheme 1", savedTheme);
   const MetricsContainerTheme= savedTheme === "true" ? 'bg-gray-800' : 'bg-gray-100';
   //const TextTheme = savedTheme === "true" ? 'text-gray-200' : 'text-gray-500';
   

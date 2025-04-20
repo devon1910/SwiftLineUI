@@ -41,7 +41,6 @@ export const SearchEvents = () => {
         setTotalPages(response.data.data.totalPages);
         setIsUserInQueue(response.data.data.isUserInQueue);
         setLastEventJoined(response.data.data.lastEventJoined);
-      
         setSelectedEventId(searchParams.get("eventId"));
       });
     } catch (error) {

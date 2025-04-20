@@ -10,9 +10,10 @@ import { motion } from "framer-motion";
 import Navigation from "../layout/Navigation";
 import { FastForward, TrendingUpDown } from "lucide-react";
 import { useNetworkStatus } from "../../services/utils/NetworkStatus";
+import { useTheme } from "../../services/utils/useTheme";
 
 function LandingPage() {
-  const [darkMode, setDarkMode] = useState(false);
+  //const [darkMode, setDarkMode] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,6 +27,12 @@ function LandingPage() {
   const from = location.state?.from || localStorage.getItem("from") || null;
   const [loaded, setLoaded] = useState(false);
 
+  // Load theme preference from local storage
+  const { darkMode, toggleDarkMode } = useTheme();
+  const handleToggleTheme = () => {
+    toggleDarkMode();
+  };
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -60,22 +67,9 @@ function LandingPage() {
       // You might also want to trigger any auth state updates in your app
       // setIsAuthenticated(true); // If you're using a state for auth
     }
-    // Load theme preference from local storage
-    const savedTheme = localStorage.getItem("darkMode");
-    if (savedTheme === "true") {
-      setDarkMode(true);
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
     setLoaded(true);
   }, []);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", !darkMode);
-  };
   useNetworkStatus();
   return (
     <div
@@ -84,7 +78,7 @@ function LandingPage() {
       }`}
     >
       {/* Navigation */}
-      <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Navigation darkMode={darkMode} toggleDarkMode={handleToggleTheme} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
@@ -137,7 +131,7 @@ function LandingPage() {
                 </span>{" "}
                 <span className="inline-block">Reclaim Your Day –</span>{" "}
                 <span className="inline-block font-semibold">
-                  Time Liberation, Delivered.
+                  Time Liberation, Guaranteed.
                 </span>
               </p>
             </div>
@@ -160,8 +154,8 @@ function LandingPage() {
             )}
           </p>
         </div>
-
         <Outlet context={{ email, userId }} />
+
       </main>
     </div>
   );
