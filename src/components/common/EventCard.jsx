@@ -16,14 +16,14 @@ import {
   FiCheckCircle,
   FiUserPlus,
 } from "react-icons/fi";
+import { useTheme } from "../../services/utils/useTheme";
 
 const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) => {
   const [showQRCode, setShowQRCode] = useState(false);
-  const savedTheme = localStorage.getItem("darkMode");
-
-  console.log("savedTheme 1", savedTheme);
-  const MetricsContainerTheme= savedTheme === "true" ? 'bg-gray-800' : 'bg-gray-100';
-  //const TextTheme = savedTheme === "true" ? 'text-gray-200' : 'text-gray-500';
+  const { darkMode, getThemeClass } = useTheme();
+  
+  // Use getThemeClass helper for styling based on theme
+  const MetricsContainerTheme = getThemeClass('bg-gray-800', 'bg-gray-100');
   
   const handleDownloadQR = () => {
     const canvas = document.getElementById(`qr-code-${event.id}`);
