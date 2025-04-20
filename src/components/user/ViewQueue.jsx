@@ -39,7 +39,6 @@ const ViewQueue = () => {
   const lineMembersPerPage = 10;
   const savedTheme = localStorage.getItem("darkMode") || "false";
   const MetricsContainerTheme = savedTheme === "true" ? 'bg-gray-800' : 'bg-gray-100';
-  console.log("savedTheme", savedTheme);  
   // State for history queue
   const [queueHistory, setQueueHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -194,13 +193,6 @@ const ViewQueue = () => {
     } else {
       fetchQueueHistory();
     }
-  };
-
-  const calculateServingTime = (joinTime, serveTime) => {
-    const start = new Date(joinTime);
-    const end = new Date(serveTime);
-    const diffInMinutes = Math.round((end - start) / (1000 * 60));
-    return diffInMinutes;
   };
 
   return (
@@ -443,8 +435,8 @@ const ViewQueue = () => {
                             : "-"}
                         </td>
                         <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                          {member?.dateCompletedBeingAttendedTo 
-                            ? `${calculateServingTime(member?.createdAt, member?.dateCompletedBeingAttendedTo)} min` 
+                          {member?.TimeWaited 
+                            ? `${member?.TimeWaited} min` 
                             : "-"}
                         </td>
                         <td className="px-4 py-3">
