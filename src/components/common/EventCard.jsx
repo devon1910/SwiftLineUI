@@ -19,6 +19,10 @@ import {
 
 const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) => {
   const [showQRCode, setShowQRCode] = useState(false);
+  const savedTheme = localStorage.getItem("darkMode");
+
+  const MetricsContainerTheme= savedTheme === "true" ? 'bg-gray-800' : 'bg-gray-100';
+  //const TextTheme = savedTheme === "true" ? 'text-gray-200' : 'text-gray-500';
   
   const handleDownloadQR = () => {
     const canvas = document.getElementById(`qr-code-${event.id}`);
@@ -156,8 +160,8 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         </div>
 
         {/* Stats grid - redesigned for better mobile display */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <div className="rounded-lg p-2.5 flex flex-col items-center">
+        <div className="grid grid-cols-3 gap-2 mb-4 ">
+          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
             <div className="flex items-center justify-center mb-1">
               <FiClock className="w-3.5 h-3.5 text-gray-500" />
             </div>
@@ -165,15 +169,15 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
             <p className="text-sm font-semibold text-center">{event.averageTime} mins</p>
           </div>
 
-          <div className="rounded-lg p-2.5 flex flex-col items-center">
+          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
             <div className="flex items-center justify-center mb-1">
               <FiUsers className="w-3.5 h-3.5 text-gray-500" />
             </div>
             <p className="text-xs text-gray-500 text-center">In Queue</p>
-            <p className="text-sm font-semibold text-center">{event.usersInQueue}</p>
+            <p className="text-sm font-semibold text-center ">{event.usersInQueue}</p>
           </div>
 
-          <div className="rounded-lg p-2.5 flex flex-col items-center">
+          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
             <div className="flex items-center justify-center mb-1">
               <FiUserCheck className="w-3.5 h-3.5 text-gray-500" />
             </div>

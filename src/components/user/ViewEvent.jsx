@@ -29,7 +29,6 @@ const ViewEvent = () => {
         setLoading(false);
       }
     };
-
     fetchEvent();
   }, [eventId]);
 
