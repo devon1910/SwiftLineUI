@@ -49,7 +49,7 @@ API.interceptors.response.use(
       const originalRequest = error.config;
 
       if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
-        showToast.error("Oops! Something went wrong. Please check your internet or try again later.");
+        showToast.error("Oops! cannot reach the server. Please check your internet or try again later.");
         return
       }
       if (error.code === "ERR_BAD_REQUEST") 
