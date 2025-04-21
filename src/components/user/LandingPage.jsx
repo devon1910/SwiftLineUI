@@ -32,7 +32,7 @@ function LandingPage() {
   const handleToggleTheme = () => {
     toggleDarkMode();
   };
-  
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -141,21 +141,14 @@ function LandingPage() {
         {/* Welcome Message */}
         <div className="mb-12 text-center md:text-left">
           <p className="text-lg md:text-xl">
-            {userName ? (
-              <span>
-                <span className="waving-hand">👋🏽</span> Hello,{" "}
-                <strong className="text-sage-500">{userName}</strong>
-              </span>
-            ) : (
-              <span>
-                <span className="waving-hand">👋🏽</span> Hello,{" "}
-                <strong className="text-sage-500">Guest</strong>
-              </span>
-            )}
+          <span>
+            <span className="waving-hand">👋🏽</span> Hello,{" "}
+            <strong className="text-sage-500">{userName || "Guest"}</strong>
+          </span>
           </p>
+          
         </div>
         <Outlet context={{ email, userId }} />
-
       </main>
     </div>
   );
