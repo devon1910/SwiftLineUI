@@ -146,7 +146,6 @@ function LandingPage() {
             <strong className="text-sage-500">{userName || "Guest"}</strong>
           </span>
           </p>
-          
         </div>
         <Outlet context={{ email, userId }} />
       </main>
