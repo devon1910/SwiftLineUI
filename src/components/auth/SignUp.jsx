@@ -8,9 +8,7 @@ import { motion } from "framer-motion";
 import { SignUpUser } from "../../services/api/swiftlineService";
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const handleGoogleSignIn = async () => {
-  window.location.href = apiUrl+ "Auth/LoginWithGoogle";
- };
+
 
 const SignUp = () => {
 
@@ -19,10 +17,20 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-
+  const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
+  const handleGoogleSignIn = async () => {
+    if (!isTurnstileVerified) {
+       alert("Please complete the Turnstile check.");
+       return;
+     }
+   window.location.href = apiUrl+ "Auth/LoginWithGoogle";
+  };
   function handleSubmit(e) {
     setIsLoading(true)
-
+    if (!isTurnstileVerified) {
+      alert("Please complete the Turnstile check.");
+      return;
+    }
     e.preventDefault();
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
@@ -134,6 +142,7 @@ const SignUp = () => {
             </button>
           </div>
         </div>
+        <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/>
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"

@@ -105,6 +105,8 @@ export const SearchEvents = () => {
       return;
     }
 
+    // turnstile verification later on plus rate limiting
+
     if (isUserInQueue) {
       showToast.error("You're already in a queue");
       return;

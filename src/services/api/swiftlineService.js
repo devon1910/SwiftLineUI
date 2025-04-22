@@ -6,6 +6,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
 export const loginUser = (loginRequest) => API.post(`${apiUrl}Auth/Login`, loginRequest);
 export const SignUpUser = (SignUpRequest) => API.post(`${apiUrl}Auth/SignUp`, SignUpRequest);
+export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);
 export const LogOut = () => API.post(`${apiUrl}Auth/Revoke`);
 
 // Events

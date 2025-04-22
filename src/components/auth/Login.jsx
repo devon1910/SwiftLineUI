@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { loginUser } from "../../services/api/swiftlineService";
+import { loginUser, VerifyTurnstileToken } from "../../services/api/swiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../../services/utils/ToastHelper";
+import TurnstileWidget from "../common/TurnstileWidget";
+
 
 const Login = ({ onResetPassword }) => {
   const [email, setEmail] = useState("");
@@ -12,26 +14,34 @@ const Login = ({ onResetPassword }) => {
   const navigator = useNavigate();
   const location = useLocation();
   const from = location.state?.from || null;
+  const [isTurnstileVerified, setIsTurnstileVerified] = useState(false); 
 
-  useEffect(() => {
-    if (window.turnstile) {
-      window.turnstile.render(
-        document.querySelector(".cf-turnstile"),
-        {
-          sitekey: "0x4AAAAAABQ5zE_ortY2Kehw",
-          theme: "light",
-        }
-      );
-    }
-  }, []);
+
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add your login logic here.
-    if (!email || !password) {
-      showToast.error("Please enter email and password.");
-      return;
-    }
+
+    // if (!turnstileToken) {
+    //   alert("Please complete the Turnstile check.");
+    //   return;
+    // }
+    // // Add your login logic here.
+    // if (!email || !password) {
+    //   showToast.error("Please enter email and password.");
+    //   return;
+    // }
+
+    // VerifyTurnstileToken({turnstileToken})
+    //   .then((response) => {
+    //     if (!response.data.data.success) {
+    //       showToast.error("Turnstile verification failed. Please try again.");
+    //     } 
+    //   })
+    //   .catch((error) => {
+    //     showToast.error(error.response.data.data.message);
+    //   });
+
+    if(!isTurnstileVerified){ alert("Please complete the Turnstile check."); return;}
 
     loginUser({ email, password })
       .then((response) => {
@@ -64,6 +74,10 @@ const Login = ({ onResetPassword }) => {
   };
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleGoogleSignIn = async () => {
+    if (!isTurnstileVerified) {
+      alert("Please complete the Turnstile check.");
+      return;
+    }
     window.location.href = apiUrl + "Auth/LoginWithGoogle";
   };
 
@@ -133,16 +147,9 @@ const Login = ({ onResetPassword }) => {
             autoComplete="current-password"
             className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
-          
-        </div>
-        <div className="checkbox mb-3">
-          <div
-            className="cf-turnstile"
-            data-sitekey="0x4AAAAAABQ5zE_ortY2Kehw"
-            data-theme="light"
-          ></div>
         </div>
        
+       <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button
