@@ -151,7 +151,7 @@ export const MyQueue = () => {
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
         .then(() => {
           showToast.success("Exited Queue.");
-          navigate("/");
+          navigate("/search");
         })
         .catch((err) => {
           console.error(err);
