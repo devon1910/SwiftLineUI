@@ -1,1 +1,1 @@
-export const BotCheck_Error_Message="Please complete the Cloudfare Turnstile check."
+export const BotCheck_Error_Message="Unable to verify the captcha. Please try again."

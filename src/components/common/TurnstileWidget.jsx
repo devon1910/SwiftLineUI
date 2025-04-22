@@ -2,6 +2,7 @@ import React from "react";
 import Turnstile, { useTurnstile } from "react-turnstile";
 import { VerifyTurnstileToken } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
+import { BotCheck_Error_Message } from "../../services/utils/constants";
 
 const TurnstileWidget = ({ setIsTurnstileVerified }) => {
   const turnstile = useTurnstile();
@@ -12,13 +13,13 @@ const TurnstileWidget = ({ setIsTurnstileVerified }) => {
       theme="auto"
       refreshExpired="auto"
       onError={(error) => {
-        showToast.error("Turnstile verification failed. Please try again.");
+        showToast.error(BotCheck_Error_Message);
         turnstile.reset();
       }}
       onVerify={(turnstileToken) => {
         VerifyTurnstileToken({ turnstileToken }).then((response) => {
           if (!response.data.data.success) {
-            showToast.error("Turnstile verification failed. Please try again.");
+            showToast.error(BotCheck_Error_Message);
             turnstile.reset();
           }else{
             setIsTurnstileVerified(true);
