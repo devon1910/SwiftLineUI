@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { motion } from "framer-motion";
 import { SignUpUser } from "../../services/api/swiftlineService";
+import TurnstileWidget from "../common/TurnstileWidget";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -26,12 +27,13 @@ const SignUp = () => {
    window.location.href = apiUrl+ "Auth/LoginWithGoogle";
   };
   function handleSubmit(e) {
+    e.preventDefault();
     setIsLoading(true)
     if (!isTurnstileVerified) {
       alert("Please complete the Turnstile check.");
       return;
     }
-    e.preventDefault();
+   
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
       .then((response) => {
