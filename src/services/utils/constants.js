@@ -1,0 +1,1 @@
+export const BotCheck_Error_Message="Please complete the Cloudfare Turnstile check."

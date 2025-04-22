@@ -7,6 +7,8 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import { motion } from "framer-motion";
 import { SignUpUser } from "../../services/api/swiftlineService";
 import TurnstileWidget from "../common/TurnstileWidget";
+import { Bot } from "lucide-react";
+import { BotCheck_Error_Message } from "../../services/utils/constants";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -21,7 +23,7 @@ const SignUp = () => {
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
   const handleGoogleSignIn = async () => {
     if (!isTurnstileVerified) {
-       alert("Please complete the Turnstile check.");
+       alert(BotCheck_Error_Message);
        return;
      }
    window.location.href = apiUrl+ "Auth/LoginWithGoogle";
@@ -30,7 +32,7 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true)
     if (!isTurnstileVerified) {
-      alert("Please complete the Turnstile check.");
+      alert(BotCheck_Error_Message);
       return;
     }
    

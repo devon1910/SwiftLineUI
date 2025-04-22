@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../../services/utils/ToastHelper";
 import TurnstileWidget from "../common/TurnstileWidget";
+import { BotCheck_Error_Message } from "../../services/utils/constants";
 
 
 const Login = ({ onResetPassword }) => {
@@ -41,7 +42,7 @@ const Login = ({ onResetPassword }) => {
     //     showToast.error(error.response.data.data.message);
     //   });
 
-    if(!isTurnstileVerified){ alert("Please complete the Turnstile check."); return;}
+    if(!isTurnstileVerified){ alert(BotCheck_Error_Message); return;}
 
     loginUser({ email, password })
       .then((response) => {
@@ -75,7 +76,7 @@ const Login = ({ onResetPassword }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleGoogleSignIn = async () => {
     if (!isTurnstileVerified) {
-      alert("Please complete the Turnstile check.");
+      alert(BotCheck_Error_Message);
       return;
     }
     window.location.href = apiUrl + "Auth/LoginWithGoogle";
