@@ -29,9 +29,21 @@ const SignUp = () => {
      }
    window.location.href = apiUrl+ "Auth/LoginWithGoogle";
   };
+
+  function validatePassword(password) {
+    const minLength = 6;
+    const hasNonAlphanumeric = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    return password.length >= minLength && hasNonAlphanumeric && hasDigit;
+  }
+   
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true)
+    if (!validatePassword(password)) {
+      showToast.error("Password must be at least 6 characters long and contain at least one non-alphanumeric character and one digit.");
+      return;
+    }
     if (!isTurnstileVerified) {
       alert(BotCheck_Error_Message);
       return;
@@ -55,14 +67,14 @@ const SignUp = () => {
   }
   return (
     <div className="space-y-6">
-    {isLoading && (
+    {/* {isLoading && (
         <motion.div
           // ... existing motion props
           className="fixed inset-0 bg-white/70 flex items-center justify-center z-50"
         >
           <LoadingSpinner message="Creating your account..." />
         </motion.div>
-      )}
+      )} */}
     {isFormSubmitted ? (
       <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
         <CheckCircle className="flex-shrink-0 text-black" />
@@ -168,6 +180,7 @@ const SignUp = () => {
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
           disabled={isLoading}
+          onClick={handleSubmit}
         >
           Create account
         </button>
