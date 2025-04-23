@@ -42,10 +42,12 @@ const SignUp = () => {
     setIsLoading(true)
     if (!validatePassword(password)) {
       showToast.error("Password must be at least 6 characters long and contain at least one non-alphanumeric character and one digit.");
+      setIsLoading(false)
       return;
     }
     if (!isTurnstileVerified) {
       alert(BotCheck_Error_Message);
+      setIsLoading(false)
       return;
     }
    
@@ -54,9 +56,11 @@ const SignUp = () => {
       .then((response) => {       
         if(!response.data.data.status){
           showToast.error(response.data.data.message);
+          setIsLoading(false)
         }
         else{
           setIsFormSubmitted(true);
+          setIsLoading(false)
         }
       })
       .catch((error) => {
