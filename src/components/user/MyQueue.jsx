@@ -148,7 +148,7 @@ export const MyQueue = () => {
       }
       const lineMemberId = myQueue.lineMemberId;
       // Invoke SignalR method to join the queue
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1")
         .then(() => {
           showToast.success("Exited Queue.");
           navigate("/search");

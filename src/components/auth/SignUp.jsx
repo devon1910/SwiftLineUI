@@ -9,6 +9,7 @@ import { SignUpUser } from "../../services/api/swiftlineService";
 import TurnstileWidget from "../common/TurnstileWidget";
 import { Bot } from "lucide-react";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -38,8 +39,13 @@ const SignUp = () => {
    
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
-      .then((response) => {
-        setIsFormSubmitted(true);
+      .then((response) => {       
+        if(!response.data.data.status){
+          showToast.error(response.data.data.message);
+        }
+        else{
+          setIsFormSubmitted(true);
+        }
       })
       .catch((error) => {
         toast.error(error.response.data.data.message);
@@ -135,6 +141,17 @@ const SignUp = () => {
             autoComplete="current-password"
             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
+          <ul className="text-sm text-red-500 mt-2 mr-2" id="password-requirements">
+            {password.length < 6 && (
+              <li>Passwords must be at least 6 characters.</li>
+            )}
+            {!/[!@#$%^&*(),.?":{}|<>]/.test(password) && (
+              <li>Passwords must have at least one non-alphanumeric character.</li>
+            )}
+            {!/[0-9]/.test(password) && (
+              <li>Passwords must have at least one digit ('0'-'9').</li>
+            )}
+          </ul>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
