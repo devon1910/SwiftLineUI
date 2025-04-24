@@ -73,7 +73,7 @@ API.interceptors.response.use(
           const accessToken =  JSON.parse(localStorage.getItem('user')) 
           
           // Call your refresh token endpoint. Adjust the endpoint and payload as needed.
-          const { data } = await axios.post(
+          const { data } = await API.post(
             apiUrl+"/Auth/RefreshToken", 
             { accessToken: accessToken, refreshToken: refreshToken  }
           );
@@ -83,11 +83,12 @@ API.interceptors.response.use(
         //   user.accessToken = data.accessToken;
           
           // Save the updated user object.
-          localStorage.setItem('user', JSON.stringify(data.accessToken));
+          localStorage.setItem('user', JSON.stringify(data.data.accessToken));
+          localStorage.setItem('refreshToken', JSON.stringify(data.data.refreshToken));
           
           // Update default headers and the original request's headers.
-          API.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-          originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
+          API.defaults.headers.common['Authorization'] = `Bearer ${data.data.accessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${data.data.accessToken}`;
           
           // Retry the original request with the new token.
           return API(originalRequest);

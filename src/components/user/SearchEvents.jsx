@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   connection,
+  startSignalRConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
 import { toast } from "react-toastify";
@@ -52,6 +53,7 @@ export const SearchEvents = () => {
   };
 
   useEffect(() => {
+
     const urlEventId = searchParams.get("eventId");
     const urlSearchTerm = searchParams.get("search");
     if (urlEventId && urlSearchTerm) {
@@ -60,6 +62,7 @@ export const SearchEvents = () => {
     } else {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
+    startSignalRConnection(navigate);
   }, [currentPage, debouncedSearchTerm]);
 
   // In your search page component
@@ -95,6 +98,7 @@ export const SearchEvents = () => {
       localStorage.getItem("user") === "undefined"
         ? null
         : localStorage.getItem("user");
+
     // Get token from localStorage
     const token = userToken ? JSON.parse(userToken) : null;
 
@@ -105,13 +109,14 @@ export const SearchEvents = () => {
       return;
     }
 
-    // turnstile verification later on plus rate limiting
-
     if (isUserInQueue) {
       showToast.error("You're already in a queue");
       return;
     }
     try {
+      if(connection.state !== "Connected"){
+        await connection.start();  
+      }
       const res = await invokeWithLoading(
         connection,
         "JoinQueueGroup",

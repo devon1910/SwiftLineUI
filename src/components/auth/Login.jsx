@@ -42,7 +42,7 @@ const Login = ({ onResetPassword }) => {
     //     showToast.error(error.response.data.data.message);
     //   });
 
-    if(!isTurnstileVerified){ alert(BotCheck_Error_Message); return;}
+    //if(!isTurnstileVerified){ alert(BotCheck_Error_Message); return;}
 
     loginUser({ email, password })
       .then((response) => {
@@ -55,6 +55,7 @@ const Login = ({ onResetPassword }) => {
           "userId",
           JSON.stringify(response.data.data.userId)
         );
+
         if (from) {
           window.location.href = from;
         } else {
@@ -150,7 +151,7 @@ const Login = ({ onResetPassword }) => {
           />
         </div>
        
-       <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/>
+       {/* <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/> */}
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button

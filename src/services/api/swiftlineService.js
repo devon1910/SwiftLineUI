@@ -4,6 +4,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 // Auth
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
+export const refreshToken = (refreshTokenRequest) => API.post(`${apiUrl}Auth/RefreshToken`,refreshTokenRequest);
 export const loginUser = (loginRequest) => API.post(`${apiUrl}Auth/Login`, loginRequest);
 export const SignUpUser = (SignUpRequest) => API.post(`${apiUrl}Auth/SignUp`, SignUpRequest);
 export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);

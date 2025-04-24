@@ -5,7 +5,7 @@ import {
   connection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
-import { GetUserLineInfo } from "../../services/api/swiftlineService";
+import { GetUserLineInfo, refreshToken } from "../../services/api/swiftlineService";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import { FiArrowUp, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
+import API from "../../services/api/APIService";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +30,6 @@ export const MyQueue = () => {
     getCurrentPosition();
     setIsLoading(false);
   }, []);
-
   const showConfetti = myQueue.position === 1;
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
@@ -46,8 +46,6 @@ export const MyQueue = () => {
   useEffect(() => {
     // Make sure connection is defined/initialized before using it
     if (connection) {
-      console.log("Setting up SignalR listener for queue updates");
-
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
@@ -63,12 +61,9 @@ export const MyQueue = () => {
   useEffect(() => {
     // Make sure connection is defined/initialized before using it
     if (connection) {
-      console.log("Setting up SignalR listener for queue updates");
-
       // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
         setQueueActivity(isQueueActive);
-        console.log("Queue status updated:", isQueueActive);
         if (!isQueueActive) {
           showToast.error("Queue is paused. Please check back later.");
         } else {
