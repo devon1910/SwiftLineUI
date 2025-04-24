@@ -23,10 +23,10 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
   const handleGoogleSignIn = async () => {
-    if (!isTurnstileVerified) {
-       alert(BotCheck_Error_Message);
-       return;
-     }
+    // if (!isTurnstileVerified) {
+    //    alert(BotCheck_Error_Message);
+    //    return;
+    //  }
    window.location.href = apiUrl+ "Auth/LoginWithGoogle";
   };
 
@@ -45,11 +45,11 @@ const SignUp = () => {
       setIsLoading(false)
       return;
     }
-    if (!isTurnstileVerified) {
-      alert(BotCheck_Error_Message);
-      setIsLoading(false)
-      return;
-    }
+    // if (!isTurnstileVerified) {
+    //   alert(BotCheck_Error_Message);
+    //   setIsLoading(false)
+    //   return;
+    // }
    
     const signUpRequest = { email, password };
     SignUpUser(signUpRequest)
@@ -179,7 +179,7 @@ const SignUp = () => {
             </button>
           </div>
         </div>
-        <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/>
+        {/* <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/> */}
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"

@@ -76,10 +76,10 @@ const Login = ({ onResetPassword }) => {
   };
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleGoogleSignIn = async () => {
-    if (!isTurnstileVerified) {
-      alert(BotCheck_Error_Message);
-      return;
-    }
+    // if (!isTurnstileVerified) {
+    //   alert(BotCheck_Error_Message);
+    //   return;
+    // }
     window.location.href = apiUrl + "Auth/LoginWithGoogle";
   };
 
