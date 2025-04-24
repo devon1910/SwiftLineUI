@@ -8,7 +8,7 @@ export const refreshToken = (refreshTokenRequest) => API.post(`${apiUrl}Auth/Ref
 export const loginUser = (loginRequest) => API.post(`${apiUrl}Auth/Login`, loginRequest);
 export const SignUpUser = (SignUpRequest) => API.post(`${apiUrl}Auth/SignUp`, SignUpRequest);
 export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);
-export const LogOut = () => API.post(`${apiUrl}Auth/Revoke`);
+export const LogOut = () => API.post(`${apiUrl}Auth/Logout`);
 
 // Events
 export const eventsList = (page, eventsPerPage, search = "") => 

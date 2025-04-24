@@ -10,6 +10,7 @@ import TurnstileWidget from "../common/TurnstileWidget";
 import { Bot } from "lucide-react";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
 import { showToast } from "../../services/utils/ToastHelper";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -22,6 +23,7 @@ const SignUp = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   const from = location.state?.from || null;
+  const navigate = useNavigate();
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
   const handleGoogleSignIn = async () => {
     // if (!isTurnstileVerified) {
@@ -61,10 +63,19 @@ const SignUp = () => {
         }
         else{
           //setIsFormSubmitted(true); to show instruction message for verification
+          const valueToken = JSON.stringify(response.data.data.accessToken);
+          const refreshToken = JSON.stringify(response.data.data.refreshToken);
+          localStorage.setItem("user", valueToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("userName", response.data.data.userName);
+          localStorage.setItem(
+            "userId",
+            JSON.stringify(response.data.data.userId)
+          );
           if (from) {
             window.location.href = from;
           } else {
-            navigator("/", {
+            navigate("/", {
               state: {
                 email: response.data.data.email,
                 isInLine: response.data.data.isInLine,
