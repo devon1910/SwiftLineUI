@@ -72,6 +72,7 @@ const SignUp = () => {
             "userId",
             JSON.stringify(response.data.data.userId)
           );
+          console.log("from Latest: ", from)
           if (from) {
             window.location.href = from;
           } else {
