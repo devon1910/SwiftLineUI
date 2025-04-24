@@ -18,7 +18,7 @@ import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 
 export const SearchEvents = () => {
-  const { userId } = localStorage.getItem("userId");
+  const  userId  = localStorage.getItem("userId");
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
@@ -53,16 +53,17 @@ export const SearchEvents = () => {
   };
 
   useEffect(() => {
-
-    const urlEventId = searchParams.get("eventId");
     const urlSearchTerm = searchParams.get("search");
-    if (urlEventId && urlSearchTerm) {
+    if (urlSearchTerm) {
       setSearchTerm(urlSearchTerm);
       fetchEvents(1, urlSearchTerm);
     } else {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
+
+    if(userId && localStorage.getItem("user")) {
     startSignalRConnection(navigate);
+    }
   }, [currentPage, debouncedSearchTerm]);
 
   // In your search page component
@@ -105,7 +106,6 @@ export const SearchEvents = () => {
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
       localStorage.setItem("from", location.href)
-      console.log("from: ", location.href)
       navigate("/auth", { state: { from: location.href } });
       return;
     }
@@ -140,10 +140,10 @@ export const SearchEvents = () => {
     }
   };
 
-  const handleShare = (eventId, eventTitle) => {
+  const handleShare = (eventTitle) => {
     const searchUrl = `${
       window.location.origin
-    }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
+    }/search?search=${encodeURIComponent(eventTitle)}`;
 
     navigator.clipboard
       .writeText(searchUrl)

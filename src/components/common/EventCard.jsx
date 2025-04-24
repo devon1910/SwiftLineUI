@@ -109,7 +109,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onShare(event.id, event.title);
+                onShare(event.title);
               }}
               className="text-gray-500 hover:text-sage-600 bg-gray-50 hover:bg-sage-50 p-2 rounded-lg transition-colors"
               title="Share Event"

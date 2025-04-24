@@ -67,6 +67,7 @@ export const connection = new HubConnectionBuilder()
   
   const redirectToLogin = (navigate) => {
     localStorage.clear();
+    localStorage.setItem("from", location.href)
     navigate("/auth");
   };
   
