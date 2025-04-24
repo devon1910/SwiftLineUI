@@ -18,7 +18,7 @@ import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 
 export const SearchEvents = () => {
-  const { userId } = useOutletContext();
+  const { userId } = localStorage.getItem("userId");
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
