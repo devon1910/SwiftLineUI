@@ -21,6 +21,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
+  const from = location.state?.from || null;
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
   const handleGoogleSignIn = async () => {
     // if (!isTurnstileVerified) {
@@ -59,7 +60,20 @@ const SignUp = () => {
           setIsLoading(false)
         }
         else{
-          setIsFormSubmitted(true);
+          //setIsFormSubmitted(true); to show instruction message for verification
+          if (from) {
+            window.location.href = from;
+          } else {
+            navigator("/", {
+              state: {
+                email: response.data.data.email,
+                isInLine: response.data.data.isInLine,
+                userId: response.data.data.userId,
+                userName: response.data.data.userName,
+              },
+              replace: true,
+            });
+          }
           setIsLoading(false)
         }
       })
