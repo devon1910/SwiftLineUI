@@ -14,7 +14,7 @@ const Login = ({ onResetPassword }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigator = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || null;
+  const from = location.state?.from || localStorage.getItem("from") || null;
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false); 
 
 

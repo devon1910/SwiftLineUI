@@ -22,7 +22,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const from = location.state?.from || null;
+  const from = location.state?.from || localStorage.getItem("from") ||null;
   const navigate = useNavigate();
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
   const handleGoogleSignIn = async () => {
