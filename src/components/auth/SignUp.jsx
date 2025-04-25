@@ -183,15 +183,15 @@ const SignUp = () => {
             autoComplete="current-password"
             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
-          <ul className="text-sm text-red-500 mt-2 mr-2" id="password-requirements">
+          <ul className="text-sm text-red-600 mt-2 mr-2 rounded-md p-2" id="password-requirements">
             {password.length < 6 && (
-              <li>Passwords must be at least 6 characters.</li>
+              <li className="mb-1">• Passwords must be at least 6 characters.</li>
             )}
             {!/[!@#$%^&*(),.?":{}|<>]/.test(password) && (
-              <li>Passwords must have at least one non-alphanumeric character.</li>
+              <li className="mb-1">• Passwords must have at least one non-alphanumeric character.</li>
             )}
             {!/[0-9]/.test(password) && (
-              <li>Passwords must have at least one digit ('0'-'9').</li>
+              <li>• Passwords must have at least one digit ('0'-'9').</li>
             )}
           </ul>
         </div>
