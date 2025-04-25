@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useFeedback } from "../../services/utils/useFeedback";
 import { showToast } from "../../services/utils/ToastHelper";
 import { useRef } from "react";
+import { createFeedback } from "../../services/api/swiftlineService";
 
 const FeedbackForm = () => {
   const { showFeedback, feedbackQueueId, handleClose } = useFeedback();
@@ -42,23 +43,22 @@ const FeedbackForm = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          queueId: feedbackQueueId,
-          rating,
-          comment,
-          tags: selectedTags,
-        }),
+      const feedbackData = {
+        rating: rating,
+        comment: comment,
+        tags: selectedTags,
+      };
+
+      createFeedback(feedbackData).then((response) => {
+        if (response.data.data) {
+          showToast.success("Thank you for your feedback!");
+        } else {
+          showToast.error(response.data.message);
+        }
       });
-
-      if (!response.ok) throw new Error("Submission failed");
-
-      toast.success("Thank you for your feedback!");
       handleClose();
     } catch (error) {
-      toast.error("Failed to submit. Please try again.");
+      showToast.error("Failed to submit. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,6 +94,7 @@ const FeedbackForm = () => {
           <div className="flex justify-center gap-1 mb-6">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
+                key={star}
                 className={`star-button ${
                   rating >= star ? "star-selected" : "star-unselected"
                 }`}

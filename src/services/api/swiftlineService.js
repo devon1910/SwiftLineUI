@@ -23,3 +23,6 @@ export const fetchEventById = (eventId) => API.get(`${apiUrl}Event/GetEvent/${ev
 
 // Lines
 export const GetUserLineInfo = () => API.get(`${apiUrl}Line/GetUserLineInfo`);
+
+//Feedback
+export const createFeedback = (feedback) => API.post(`${apiUrl}Feedback/SubmitFeedback`, feedback);
