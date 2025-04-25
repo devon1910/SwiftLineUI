@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useFeedback } from "../../services/utils/useFeedback";
+import { showToast } from "../../services/utils/ToastHelper";
+import { useRef } from "react";
 
 const FeedbackForm = () => {
   const { showFeedback, feedbackQueueId, handleClose } = useFeedback();
@@ -8,7 +10,7 @@ const FeedbackForm = () => {
   const [comment, setComment] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const submitButtonRef = useRef(null);
   // Reset form when reopening
   useEffect(() => {
     if (showFeedback) {
@@ -34,11 +36,9 @@ const FeedbackForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0) {
-      toast.warning("Please select a rating");
-      return;
-    }
 
+    // Only continue if the submit button triggered the submit
+    if (e.nativeEvent.submitter !== submitButtonRef.current) return;
     setIsSubmitting(true);
 
     try {
@@ -106,9 +106,7 @@ const FeedbackForm = () => {
 
           {/* Tags */}
           <div className="mb-6">
-            <p className="text-sm font-medium mb-3">
-              What stood out? (Optional)
-            </p>
+            <p className="text-sm font-medium mb-3">What stood out?</p>
             <div className="flex flex-wrap gap-2">
               {feedbackTags.map((tag) => (
                 <button
@@ -128,7 +126,7 @@ const FeedbackForm = () => {
           {/* Comment */}
           <div className="mb-6">
             <label htmlFor="comment" className="block text-sm font-medium mb-2">
-              Additional comments
+              Additional comments (optional)
             </label>
             <textarea
               id="comment"
@@ -142,6 +140,7 @@ const FeedbackForm = () => {
 
           {/* Submit */}
           <button
+            ref={submitButtonRef}
             type="submit"
             disabled={isSubmitting || rating === 0}
             className={`w-full py-2.5 rounded-lg font-medium transition-colors ${
