@@ -47,7 +47,6 @@ export const MyQueue = () => {
 
   useEffect(() => {
     getCurrentPosition();
-    triggerFeedback(2);
     setIsLoading(false);
   }, []);
 
@@ -57,8 +56,11 @@ export const MyQueue = () => {
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
-        if (lineInfo.position === -1 && showFeedbackForm===true) {
+        console.log("showFeedbackForm:", showFeedbackForm);
+        console.log("position:", lineInfo.position);
+        if (lineInfo.position === -1 && showFeedbackForm==="true") {
           triggerFeedback(2);
+          localStorage.removeItem("showFeedbackForm");
         }
       });
       // Clean up when component unmounts
@@ -70,7 +72,7 @@ export const MyQueue = () => {
   }, []); // Empty dependency array means it runs once on mount
 
   useEffect(() => {
-    // Make sure connection is defined/initialized before using it
+
     if (connection) {
       // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
@@ -130,8 +132,9 @@ export const MyQueue = () => {
       .then((response) => {
         setMyQueue(response.data.data);
         setQueueActivity(response.data.data.isNotPaused);
-        if (response.data.data.position === -1 && showFeedbackForm===true) {
+        if (response.data.data.position === -1 && showFeedbackForm==="true") {
           triggerFeedback(2);
+          localStorage.removeItem("showFeedbackForm");
         }
       })
       .catch((error) => {
@@ -145,7 +148,7 @@ export const MyQueue = () => {
   const handleLeaveQueue = async () => {
     if (window.confirm("Are you sure you want to leave the queue?")) {
       if (connection.state !== "Connected") {
-        toast.info("Connection lost. Attempting to reconnect...");
+        showToast.info("Connection lost. Attempting to reconnect...");
         try {
           await connection.start();
           showToast.success("Reconnected successfully.");
@@ -160,9 +163,6 @@ export const MyQueue = () => {
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1")
         .then(() => {
           showToast.success("Exited Queue.");
-          // if (showFeedbackForm===true) {
-          //   triggerFeedback(2);
-          // }
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
           navigate("/search");

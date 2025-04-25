@@ -75,7 +75,7 @@ const FeedbackForm = () => {
             <div>
               <h3 className="text-xl font-bold">Your Feedback</h3>
               <p className="text-gray-500 text-sm">
-                {feedbackQueueId
+              SwiftLine is built for you and me—those of us who hate waiting in pointless queues. We value your feedback, so please let us know your thoughts.<br></br> {feedbackQueueId
                   ? "How was your queue experience?"
                   : "General feedback"}
               </p>
