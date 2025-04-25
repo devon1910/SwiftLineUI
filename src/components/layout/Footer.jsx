@@ -7,8 +7,13 @@ export const Footer = () => {
       {/* Copyright - visible on all screen sizes */}
       <div className="bg-black text-white py-3">
         <div className="container mx-auto px-4 text-center text-xs">
-        <button onClick={() => triggerFeedback(null)}>Give Feedback</button>
-          <p>© {new Date().getFullYear()} Swiftline. All rights reserved.</p>
+          <button 
+            onClick={() => triggerFeedback(null)} 
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 animate-pulse transition duration-200 ease-in-out"
+          >
+            Give Feedback
+          </button>
+          <p className="mt-2">© {new Date().getFullYear()} <span className="font-bold">Swiftline</span>. All rights reserved.</p>
         </div>
       </div>
     </footer>
