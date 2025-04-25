@@ -1,10 +1,13 @@
-import React from 'react'
+import React  from "react";
+import { useFeedback } from "../../services/utils/useFeedback";
 export const Footer = () => {
+  const {triggerFeedback } = useFeedback();
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-auto">
       {/* Copyright - visible on all screen sizes */}
       <div className="bg-black text-white py-3">
         <div className="container mx-auto px-4 text-center text-xs">
+        <button onClick={() => triggerFeedback(null)}>Give Feedback</button>
           <p>© {new Date().getFullYear()} Swiftline. All rights reserved.</p>
         </div>
       </div>
@@ -12,8 +15,7 @@ export const Footer = () => {
   );
 };
 
-export default Footer
-
+export default Footer;
 
 // {/* Main Footer - only visible on larger screens */}
 // <div className="hidden md:block container mx-auto py-8 px-4">
@@ -26,7 +28,7 @@ export default Footer
 //       <li><Link to="/blog" className="text-sm text-gray-600 hover:text-green-700">Blog</Link></li>
 //     </ul>
 //   </div>
-  
+
 //   <div>
 //     <h3 className="text-sm font-semibold text-gray-900 mb-4">Support</h3>
 //     <ul className="space-y-2">
@@ -35,7 +37,7 @@ export default Footer
 //       <li><Link to="/faq" className="text-sm text-gray-600 hover:text-green-700">FAQ</Link></li>
 //     </ul>
 //   </div>
-  
+
 //   <div>
 //     <h3 className="text-sm font-semibold text-gray-900 mb-4">Legal</h3>
 //     <ul className="space-y-2">
@@ -44,7 +46,7 @@ export default Footer
 //       <li><Link to="/cookies" className="text-sm text-gray-600 hover:text-green-700">Cookie Policy</Link></li>
 //     </ul>
 //   </div>
-  
+
 //   <div>
 //     <h3 className="text-sm font-semibold text-gray-900 mb-4">Connect</h3>
 //     <div className="flex space-x-4">
@@ -77,13 +79,13 @@ export default Footer
 //       <span className="ml-2 text-lg font-semibold text-gray-900">Swiftline</span>
 //     </Link>
 //   </div>
-  
+
 //   <div className="w-1/2">
 //     <Link to="/about" className="text-xs text-gray-600 block mb-2">About Us</Link>
 //     <Link to="/help" className="text-xs text-gray-600 block mb-2">Help Center</Link>
 //     <Link to="/terms" className="text-xs text-gray-600 block">Terms</Link>
 //   </div>
-  
+
 //   <div className="w-1/2 text-right">
 //     <Link to="/privacy" className="text-xs text-gray-600 block mb-2">Privacy</Link>
 //     <Link to="/contact" className="text-xs text-gray-600 block mb-2">Contact</Link>

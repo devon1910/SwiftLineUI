@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
 import {
@@ -11,25 +11,19 @@ import { FiArrowUp, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
 import API from "../../services/api/APIService";
+import { useFeedback } from "../../services/utils/useFeedback.js";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
-
   const [myQueue, setMyQueue] = useState({});
 
   const [queueActivity, setQueueActivity] = useState(null);
 
-  const { invokeWithLoading } = useSignalRWithLoading();
-
-  useEffect(() => {
-    getCurrentPosition();
-    setIsLoading(false);
-  }, []);
   const showConfetti = myQueue.position === 1;
   // Track window dimensions for the Confetti component.
   const [windowDimension, setWindowDimension] = useState({
@@ -43,12 +37,29 @@ export const MyQueue = () => {
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
 
+  
+
+  const { invokeWithLoading } = useSignalRWithLoading();
+
+  const showFeedbackForm = localStorage.getItem("showFeedbackForm");
+
+  const { triggerFeedback } = useFeedback();
+
+  useEffect(() => {
+    getCurrentPosition();
+    triggerFeedback(2);
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
     // Make sure connection is defined/initialized before using it
     if (connection) {
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
+        if (lineInfo.position === -1 && showFeedbackForm===true) {
+          triggerFeedback(2);
+        }
       });
       // Clean up when component unmounts
       return () => {
@@ -67,7 +78,7 @@ export const MyQueue = () => {
         if (!isQueueActive) {
           showToast.error("Queue is paused. Please check back later.");
         } else {
-          showToast.success("Queue is active. You're in line!");
+          showToast.success("Queue is active. You're back in line!");
         }
       });
       // Clean up when component unmounts
@@ -119,6 +130,9 @@ export const MyQueue = () => {
       .then((response) => {
         setMyQueue(response.data.data);
         setQueueActivity(response.data.data.isNotPaused);
+        if (response.data.data.position === -1 && showFeedbackForm===true) {
+          triggerFeedback(2);
+        }
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
@@ -146,6 +160,11 @@ export const MyQueue = () => {
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1")
         .then(() => {
           showToast.success("Exited Queue.");
+          // if (showFeedbackForm===true) {
+          //   triggerFeedback(2);
+          // }
+          triggerFeedback(2);
+          localStorage.removeItem("showFeedbackForm");
           navigate("/search");
         })
         .catch((err) => {
@@ -153,6 +172,8 @@ export const MyQueue = () => {
         });
     }
   };
+
+
 
   return (
     <div className="max-w-2xl mx-auto p-4 font-sans">

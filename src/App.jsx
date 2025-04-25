@@ -18,33 +18,38 @@ import EventForm from "./components/user/EventForm";
 import ViewEvent from "./components/user/ViewEvent";
 import CustomToast from "./components/common/CustomToast";
 import { ThemeProvider } from "./services/context/ThemeProvider";
+import FeedbackForm from "./components/user/FeedbackForm";
+import { FeedbackProvider } from "./services/context/FeedbackProvider";
 
 function App() {
   return (
     <>
       <BrowserRouter>
-       <ThemeProvider>
-       <LoadingProvider>
-          <Routes>         
-            <Route path="/*" element={<LandingPage />}>
-              <Route index element={<Dashboard />} />
-              <Route path="search" element={<SearchEvents />} />
-              <Route path="myEvents" element={<MyEvents />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="newEvent" element={<EventForm />} />
-              </Route>
-              <Route path="myQueue" element={<MyQueue />} />
-              <Route path="queueManagement" element={<ViewQueue />} />   
-              <Route path="events/:eventId" element={<ViewEvent />} />      
-            </Route>
-            <Route path="/auth" element={<AuthForm />} />
-            <Route path="/VerifyToken" element={<VerifyToken />} />
-          </Routes>
-        </LoadingProvider>
-       </ThemeProvider> 
+        <ThemeProvider>
+          <LoadingProvider>
+            <FeedbackProvider>
+              <Routes>
+                <Route path="/*" element={<LandingPage />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="search" element={<SearchEvents />} />
+                  <Route path="myEvents" element={<MyEvents />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="newEvent" element={<EventForm />} />
+                  </Route>
+                  <Route path="myQueue" element={<MyQueue />} />
+                  <Route path="queueManagement" element={<ViewQueue />} />
+                  <Route path="events/:eventId" element={<ViewEvent />} />
+                </Route>
+                <Route path="/auth" element={<AuthForm />} />
+                <Route path="/VerifyToken" element={<VerifyToken />} />
+              </Routes>
+              <CustomToast />
+              <Footer />
+              <FeedbackForm />
+            </FeedbackProvider>
+          </LoadingProvider>
+        </ThemeProvider>
       </BrowserRouter>
-      <CustomToast/>
-      <Footer />
     </>
   );
 }

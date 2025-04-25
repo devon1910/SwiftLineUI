@@ -131,6 +131,7 @@ export const SearchEvents = () => {
         return;
       }
       showToast.success("Joined queue successfully");
+      localStorage.setItem("showFeedbackForm", true);
       navigate("/myQueue");
     } catch (error) {
       console.log(error);

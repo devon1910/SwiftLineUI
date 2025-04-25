@@ -517,3 +517,138 @@ option {
   background-color: #1A202C; /* Set this to your dark mode background color */
   color: white; /* Set this to your dark mode text color */
 }
+
+/* Feedback Form Specific Styles */
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.feedback-container {
+  background-color: white;
+  border-radius: 0.75rem;
+  max-width: 28rem;
+  width: 100%;
+  animation: feedback-fade-in 0.3s ease-out;
+}
+
+@keyframes feedback-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Star Rating Styles */
+.star-rating-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.star-button {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  transition: all 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.star-button:hover {
+  transform: scale(1.1);
+}
+
+.star-selected {
+  color: #f59e0b; /* Yellow-500 */
+}
+
+.star-unselected {
+  color: #e5e7eb; /* Gray-200 */
+}
+
+/* Tag Styles */
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tag-button {
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.tag-selected {
+  background-color: #698474; /* Your sage green */
+  color: white;
+}
+
+.tag-unselected {
+  background-color: #f3f4f6; /* Gray-100 */
+  color: #4b5563; /* Gray-600 */
+}
+
+.tag-unselected:hover {
+  background-color: #e5e7eb; /* Gray-200 */
+}
+
+/* Textarea Styles */
+.feedback-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db; /* Gray-300 */
+  margin-bottom: 1.5rem;
+  min-height: 6rem;
+}
+
+.feedback-textarea:focus {
+  border-color: #698474;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(105, 132, 116, 0.3);
+}
+
+/* Submit Button */
+.feedback-submit {
+  width: 100%;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.feedback-submit:enabled {
+  background-color: #698474;
+  color: white;
+}
+
+.feedback-submit:disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.feedback-submit:enabled:hover {
+  background-color: #556c60;
+}
