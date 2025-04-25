@@ -3,8 +3,6 @@ import Login from "./Login";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
 
-
-
 const AuthForm = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [resetPassword, setResetPassword] = useState(false);
@@ -21,33 +19,29 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="min-h-screen auth-container flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white auth-card rounded-xl overflow-hidden">
         {!resetPassword ? (
           <>
-            <div className="flex border-b border-sage-200">
+            <div className="auth-tabs">
               <button
                 onClick={() => setActiveTab("login")}
-                className={`flex-1 p-4 text-lg font-medium transition-colors ${
-                  activeTab === "login"
-                    ? "text-sage-600 border-b-2 border-sage-600"
-                    : "text-gray-500 hover:bg-sage-50"
+                className={`auth-tab-button login ${
+                  activeTab === "login" ? "active" : ""
                 }`}
               >
                 Login
               </button>
               <button
                 onClick={() => setActiveTab("signup")}
-                className={`flex-1 p-4 text-lg font-medium transition-colors ${
-                  activeTab === "signup"
-                    ? "text-sage-600 border-b-2 border-sage-600"
-                    : "text-gray-500 hover:bg-sage-50"
+                className={`auth-tab-button signup ${
+                  activeTab === "signup" ? "active" : ""
                 }`}
               >
                 Sign Up
               </button>
             </div>
-            <div className="p-6 md:p-8">
+            <div className="auth-content">
               {activeTab === "login" ? (
                 <Login onResetPassword={handleResetPassword} />
               ) : (
@@ -56,7 +50,7 @@ const AuthForm = () => {
             </div>
           </>
         ) : (
-          <div className="p-6 md:p-8">
+          <div className="auth-content">
             <PasswordReset onBackToLogin={handleBackToLogin} />
           </div>
         )}
@@ -64,6 +58,5 @@ const AuthForm = () => {
     </div>
   );
 };
-
 
 export default AuthForm;

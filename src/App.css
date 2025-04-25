@@ -40,6 +40,65 @@ input:focus, textarea:focus {
   box-shadow: 0 0 5px rgba(105, 132, 116, 0.3);
 }
 
+/* For authentication */
+.auth-container {
+  background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+}
+
+.auth-card {
+  border: 1px solid #e2e8e4;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
+              0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
+.auth-tabs {
+  display: flex;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.auth-tab-button {
+  flex: 1;
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-tab-button.login {
+  background-color: #f0f5f2;
+  color: #556c60;
+}
+
+.auth-tab-button.login.active {
+  background-color: #698474;
+  color: white;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+}
+
+.auth-tab-button.signup {
+  background-color: #e8f3ee;
+  color: #556c60;
+}
+
+.auth-tab-button.signup.active {
+  background-color: #698474;
+  color: white;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+}
+
+.auth-tab-button:hover:not(.active) {
+  transform: translateY(-2px);
+}
+
+.auth-content {
+  padding: 2rem;
+}
+
+
 .card {
   background: white;
   border-radius: 10px;
