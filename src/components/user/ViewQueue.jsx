@@ -286,28 +286,24 @@ const ViewQueue = () => {
           
           {/* Tab Navigation */}
           <div className="border-b border-sage-200 dark:border-gray-700">
-            <nav className="flex space-x-4">
+            <div className="auth-tabs">
               <button
                 onClick={() => setActiveTab("current")}
-                className={`py-2 px-3 text-sm font-medium ${
-                  activeTab === "current" 
-                    ? "border-b-2 border-sage-600 text-sage-700 dark:text-sage-300 dark:border-sage-400" 
-                    : "text-sage-500 hover:text-sage-700 dark:text-sage-400 dark:hover:text-sage-300"
+                className={`auth-tab-button login ${
+                  activeTab === "current" ? "active" : ""
                 }`}
               >
                 Current Queue
               </button>
               <button
                 onClick={() => setActiveTab("history")}
-                className={`py-2 px-3 text-sm font-medium ${
-                  activeTab === "history" 
-                    ? "border-b-2 border-sage-600 text-sage-700 dark:text-sage-300 dark:border-sage-400" 
-                    : "text-sage-500 hover:text-sage-700 dark:text-sage-400 dark:hover:text-sage-300"
+                className={`auth-tab-button signup ${
+                  activeTab === "history" ? "active" : ""
                 }`}
               >
                 Queue History
               </button>
-            </nav>
+            </div>
           </div>
         </div>
 
