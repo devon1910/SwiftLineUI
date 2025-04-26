@@ -13,7 +13,7 @@ export const Footer = () => {
           >
             Give Feedback
           </button>
-          <p className="mt-2">© {new Date().getFullYear()} <span className="font-bold">Swiftline</span>. All rights reserved.</p>
+          <p className="mt-2">© {new Date().getFullYear()} <span className="font-bold">Swiftline</span>. All rights reserved. Designed and Built by <a href="https://www.linkedin.com/in/davidson-ekpokpobe/" target="_blank">Davidson Ekpokpobe</a></p>
         </div>
       </div>
     </footer>
