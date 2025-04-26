@@ -98,10 +98,10 @@ export const SearchEvents = () => {
       localStorage.getItem("user") === "undefined"
         ? null
         : localStorage.getItem("user");
-
+  
     // Get token from localStorage
     const token = userToken ? JSON.parse(userToken) : null;
-
+  
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
       localStorage.setItem("from", location.href)
@@ -112,65 +112,59 @@ export const SearchEvents = () => {
       showToast.error("You're already in a queue");
       return;
     }
-
-    if(!isEventActive){
-      const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?")
-      if (confirmValue){
+  
+    // Function to ensure connection is established
+    const ensureConnection = async () => {
+      if (connection.state !== "Connected") {
         try {
-          if(connection.state !== "Connected"){
-            await connection.start();  
-          }
-          const res = await invokeWithLoading(
-            connection,
-            "JoinQueueGroup",
-            event.id,
-            JSON.parse(userId)
-          );
-          if (res === -1) {
-            showToast.error(
-              "Can't queue for an inactive event. Please check back later."
-            );
-            return;
-          }
-          showToast.success("Joined queue successfully");
-          localStorage.setItem("showFeedbackForm", true);
-          navigate("/myQueue");
-        } catch (error) {
-          console.log(error);
-          showToast.error(
-            "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:"+ error
-          );
+          await connection.start();
+          console.log("SignalR Connected successfully");
+        } catch (err) {
+          console.error("SignalR Connection Error:", err);
+          throw new Error("Failed to establish SignalR connection");
         }
       }
-    }else{
+    };
+  
+    const processJoinQueue = async () => {
       try {
-        if(connection.state !== "Connected"){
-          await connection.start();  
-        }
+        await ensureConnection();
+        
         const res = await invokeWithLoading(
           connection,
           "JoinQueueGroup",
           event.id,
           JSON.parse(userId)
         );
+        
         if (res === -1) {
           showToast.error(
             "Can't queue for an inactive event. Please check back later."
           );
           return;
         }
+        
         showToast.success("Joined queue successfully");
         localStorage.setItem("showFeedbackForm", true);
         navigate("/myQueue");
       } catch (error) {
         console.log(error);
         showToast.error(
-          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:"+ error
+          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error: " + error
         );
       }
-    }
+    };
 
-    
+    console.log("isEventActive: ", !isEventActive);
+  
+    if (!isEventActive) {
+      const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?");
+      if (confirmValue) {
+        await processJoinQueue();
+      }
+    } else {
+      await processJoinQueue();
+    }
   };
 
   const handleShare = (eventTitle) => {
