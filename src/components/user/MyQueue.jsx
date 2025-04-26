@@ -3,6 +3,7 @@ import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
 import {
   connection,
+  ensureConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo, refreshToken } from "../../services/api/swiftlineService";
@@ -15,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
 import API from "../../services/api/APIService";
 import { useFeedback } from "../../services/utils/useFeedback.js";
+import GlobalSpinner from "../common/GlobalSpinner.jsx";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -145,38 +147,42 @@ export const MyQueue = () => {
       });
   }
 
+  const [isReconnecting, setIsReconnecting] = useState(false);
+
+
   const handleLeaveQueue = async () => {
-    if (window.confirm("Are you sure you want to leave the queue?")) {
-      if (connection.state !== "Connected") {
-        showToast.error("Connection lost. Attempting to reconnect...");
-        try {
-          await connection.start();
-          showToast.success("Reconnected successfully.");
-        } catch (reconnectError) {
-          console.error("Reconnection failed:", reconnectError);
-          showToast.error("Unable to reconnect. Please check your network.");
-          return;
-        }
-      }
+    if (!window.confirm("Are you sure you want to leave the queue?")) {
+      return;
+    }
+
+    try {
+      setIsReconnecting(true);
+
+      // ensure the SignalR connection is ready
+      await ensureConnection();
+
+      // now safe to invoke ExitQueue
       const lineMemberId = myQueue.lineMemberId;
-      // Invoke SignalR method to join the queue
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1")
-        .then(() => {
-          showToast.success("Exited Queue.");
-          triggerFeedback(2);
-          localStorage.removeItem("showFeedbackForm");
-          navigate("/search");
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1");
+
+      showToast.success("Exited queue.");
+      triggerFeedback(2);
+      localStorage.removeItem("showFeedbackForm");
+      navigate("/search");
+    } catch (err) {
+      console.error("LeaveQueue error:", err);
+      showToast.error("Unable to leave queue. Please try again later.");
+    } finally {
+      setIsReconnecting(false);
     }
   };
 
 
 
   return (
-    <div className="max-w-2xl mx-auto p-4 font-sans">
+    
+    <div className={`max-w-2xl mx-auto p-4 font-sans ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
+      {isReconnecting && <GlobalSpinner />}
       {myQueue.position === -1 && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>

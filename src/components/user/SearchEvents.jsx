@@ -205,6 +205,7 @@ export const SearchEvents = () => {
   };
 
   return (
+    
     <div className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
       {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
