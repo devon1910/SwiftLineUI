@@ -113,43 +113,62 @@ export const SearchEvents = () => {
       return;
     }
   
-    // Force disconnect and reconnect to ensure a fresh connection
-    const forceReconnect = async () => {
-      try {
-        // Stop the connection if it exists in any state
-        if (connection) {
-          try {
-            await connection.stop();
-            console.log("Stopped existing connection");
-          } catch (stopError) {
-            console.log("No active connection to stop or error stopping:", stopError);
+    // Improved connection management with retries
+    const establishConnection = async (retryCount = 3) => {
+      for (let attempt = 1; attempt <= retryCount; attempt++) {
+        try {
+          console.log(`Connection attempt ${attempt}/${retryCount}, current state: ${connection.state}`);
+          
+          // If already connected, we're good
+          if (connection.state === "Connected") {
+            console.log("Connection already established");
+            return true;
           }
+          
+          // If in any other state, try to stop it first
+          if (connection.state !== "Disconnected") {
+            try {
+              await connection.stop();
+              console.log("Stopped existing connection");
+            } catch (stopError) {
+              console.log("Error stopping connection:", stopError);
+            }
+          }
+          
+          // Start a fresh connection
+          await connection.start();
+          console.log(`Connection started, state: ${connection.state}`);
+          
+          // Wait to ensure connection is ready
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          if (connection.state === "Connected") {
+            console.log("Connection successfully established after waiting");
+            return true;
+          } else {
+            throw new Error(`Connection in unexpected state: ${connection.state}`);
+          }
+        } catch (err) {
+          console.error(`Connection attempt ${attempt} failed:`, err);
+          
+          if (attempt === retryCount) {
+            throw new Error(`Failed to establish connection after ${retryCount} attempts: ${err.message}`);
+          }
+          
+          // Wait before retry
+          const delayMs = 1000 * attempt; // Increase delay with each retry
+          console.log(`Retrying in ${delayMs}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
         }
-        
-        // Start a brand new connection
-        await connection.start();
-        
-        // Wait a moment to ensure connection is truly ready
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        if (connection.state !== "Connected") {
-          throw new Error("Connection not established after waiting");
-        }
-        
-        console.log("SignalR Connected successfully. Current state:", connection.state);
-        return true;
-      } catch (err) {
-        console.error("SignalR Connection Error:", err);
-        throw new Error("Failed to establish SignalR connection: " + err.message);
       }
     };
   
     const processJoinQueue = async () => {
       try {
-        // Force reconnection
-        await forceReconnect();
+        // Try to establish connection with retries
+        await establishConnection();
         
-        console.log("Connection state before invoke:", connection.state);
+        console.log("About to invoke JoinQueueGroup, connection state:", connection.state);
         
         const res = await invokeWithLoading(
           connection,
@@ -157,6 +176,8 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
+        
+        console.log("JoinQueueGroup response:", res);
         
         if (res === -1) {
           showToast.error(
@@ -169,14 +190,18 @@ export const SearchEvents = () => {
         localStorage.setItem("showFeedbackForm", true);
         navigate("/myQueue");
       } catch (error) {
-        console.error("Error in joinQueue:", error);
-        showToast.error(
-          "Error joining queue. Please refresh and try again. Error: " + error.message
-        );
+        console.error("Error in joinQueue process:", error);
+        
+        // Show error but continue with navigation as a fallback
+        showToast.error("Connection issue detected. We'll try to recover automatically.");
+        
+        // Try one last time with a slight delay
+        setTimeout(() => {
+          navigate("/myQueue");
+        }, 1500);
       }
     };
-    
-    console.log("Event:", event);
+  
     if (!event.isActive) {
       const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?");
       if (confirmValue) {

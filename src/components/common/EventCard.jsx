@@ -203,7 +203,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         {/* Join button with improved states */}
         <button
           disabled={!event.hasStarted || isUserInQueue}
-          onClick={() => onJoin(event,event.isActive)}
+          onClick={() => onJoin(event)}
           className={`w-full py-3 px-4 rounded-lg font-medium text-center flex items-center justify-center gap-2 transition-all
             ${
               !event.hasStarted
