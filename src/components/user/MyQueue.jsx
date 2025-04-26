@@ -148,7 +148,7 @@ export const MyQueue = () => {
   const handleLeaveQueue = async () => {
     if (window.confirm("Are you sure you want to leave the queue?")) {
       if (connection.state !== "Connected") {
-        showToast.info("Connection lost. Attempting to reconnect...");
+        showToast.error("Connection lost. Attempting to reconnect...");
         try {
           await connection.start();
           showToast.success("Reconnected successfully.");
@@ -245,7 +245,7 @@ export const MyQueue = () => {
                   <div className="flex items-center">
                     <span className="text-2xl font-bold">
                       {myQueue.timeTillYourTurn} minute
-                      {myQueue.timeTillYourTurn !== 1 ? "s" : ""}
+                      {myQueue.timeTillYourTurn > 1 ? "s" : ""}
                     </span>
                     {showWaitTimeArrow && (
                       <FiArrowUp className="text-amber-500 h-5 w-5 ml-2 animate-bounce" />

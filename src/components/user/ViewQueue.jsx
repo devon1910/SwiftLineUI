@@ -435,8 +435,8 @@ const ViewQueue = () => {
                             : "-"}
                         </td>
                         <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                          {member?.TimeWaited 
-                            ? `${member?.TimeWaited} min` 
+                          {member?.timeWaited 
+                            ? `${member?.timeWaited} min` 
                             : "-"}
                         </td>
                         <td className="px-4 py-3">
