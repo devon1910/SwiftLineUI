@@ -202,15 +202,13 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
 
         {/* Join button with improved states */}
         <button
-          disabled={!event.hasStarted || isUserInQueue || !event.isActive}
-          onClick={() => onJoin(event)}
+          disabled={!event.hasStarted || isUserInQueue}
+          onClick={() => onJoin(event,event.isActive)}
           className={`w-full py-3 px-4 rounded-lg font-medium text-center flex items-center justify-center gap-2 transition-all
             ${
               !event.hasStarted
                 ? "bg-gray-100 text-gray-500 cursor-not-allowed"
                 : isUserInQueue
-                ? "bg-blue-100 text-blue-700 cursor-not-allowed"
-                : !event.isActive
                 ? "bg-amber-100 text-amber-700 cursor-not-allowed"
                 : "bg-sage-500 text-white hover:bg-sage-600 shadow-sm"
             }
@@ -225,11 +223,6 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
             <>
               <FiCheckCircle className="w-4 h-4" />
               Already in Another Queue
-            </>
-          ) : !event.isActive ? (
-            <>
-              <Pause className="w-4 h-4" />
-              Queue is Paused
             </>
           ) : (
             <>
