@@ -44,10 +44,10 @@ const MyEvents = () => {
     }
   }
 
-  const handleShare = (eventId, eventTitle) => {
+  const handleShare = (eventTitle) => {
     const searchUrl = `${
       window.location.origin
-    }/search?eventId=${eventId}&search=${encodeURIComponent(eventTitle)}`;
+    }/search?search=${encodeURIComponent(eventTitle)}`;
 
     navigator.clipboard
       .writeText(searchUrl)
@@ -128,7 +128,7 @@ const MyEvents = () => {
                     </button>
 
                     <button
-                      onClick={() => handleShare(event.id, event.title)}
+                      onClick={() => handleShare(event.title)}
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
                       Share Event

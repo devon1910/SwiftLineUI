@@ -145,6 +145,7 @@ const EventForm = () => {
             type="text"
             placeholder="Tech Conference 2024"
             value={title}
+            disabled={editingEvent ? true : false}
             maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
             required
