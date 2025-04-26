@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   connection,
-  startSignalRConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
 import { toast } from "react-toastify";
@@ -61,9 +60,9 @@ export const SearchEvents = () => {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
 
-    if(userId && localStorage.getItem("user")) {
-    startSignalRConnection(navigate);
-    }
+    // if(userId && localStorage.getItem("user")) {
+    // startSignalRConnection(navigate);
+    // }
   }, [currentPage, debouncedSearchTerm]);
 
   // In your search page component
