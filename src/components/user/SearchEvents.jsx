@@ -151,9 +151,7 @@ export const SearchEvents = () => {
     } else {
       try {
         setIsReconnecting(true); // Show loading indicator
-        if (connection.state !== "Connected") {
-          await connection.start();
-        }
+        await ensureConnection();
         const res = await invokeWithLoading(
           connection,
           "JoinQueueGroup",
