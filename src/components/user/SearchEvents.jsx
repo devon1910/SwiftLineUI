@@ -28,6 +28,7 @@ export const SearchEvents = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
+  const [isReconnecting, setIsReconnecting] = useState(false); // New state for reconnecting
   const eventsPerPage = 3;
 
   const [searchParams, updateSearchParams] = useSearchParams();
@@ -94,7 +95,7 @@ export const SearchEvents = () => {
   };
 
   // Optimized joinQueue function with loading state
-  const joinQueue = async (event, isEventActive) => {
+  const joinQueue = async (event) => {
     const userToken =
       localStorage.getItem("user") === "undefined"
         ? null
@@ -105,7 +106,7 @@ export const SearchEvents = () => {
 
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
-      localStorage.setItem("from", location.href)
+      localStorage.setItem("from", location.href);
       navigate("/auth", { state: { from: location.href } });
       return;
     }
@@ -114,14 +115,14 @@ export const SearchEvents = () => {
       return;
     }
 
-    console.log("isEventActive: ", !isEventActive);
-    if(!isEventActive){
-      const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?")
-      if (confirmValue){
+    if (!event.isActive) {
+      const confirmValue = confirm(
+        "This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
+      );
+      if (confirmValue) {
         try {
-          
+          setIsReconnecting(true); // Show loading indicator
           await ensureConnection();
-
           const res = await invokeWithLoading(
             connection,
             "JoinQueueGroup",
@@ -140,14 +141,18 @@ export const SearchEvents = () => {
         } catch (error) {
           console.log(error);
           showToast.error(
-            "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:"+ error
+            "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:" +
+              error
           );
+        } finally {
+          setIsReconnecting(false); // Hide loading indicator
         }
       }
-    }else{
+    } else {
       try {
-        if(connection.state !== "Connected"){
-          await connection.start();  
+        setIsReconnecting(true); // Show loading indicator
+        if (connection.state !== "Connected") {
+          await connection.start();
         }
         const res = await invokeWithLoading(
           connection,
@@ -167,16 +172,14 @@ export const SearchEvents = () => {
       } catch (error) {
         console.log(error);
         showToast.error(
-          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:"+ error
+          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:" +
+            error
         );
+      } finally {
+        setIsReconnecting(false); // Hide loading indicator
       }
     }
-
   };
-
-
-  
-
 
   const handleShare = (eventTitle) => {
     const searchUrl = `${
@@ -204,7 +207,8 @@ export const SearchEvents = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
+      {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold ">Search Events</h2>
 
