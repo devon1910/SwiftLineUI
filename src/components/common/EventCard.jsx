@@ -245,7 +245,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
           >
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-lg font-semibold text-gray-900">
-                Event QR Code
+              {event.title}
               </h3>
               <button
                 onClick={() => setShowQRCode(false)}
@@ -275,11 +275,9 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
                 />
               </div>
               
-              <p className="text-sm text-gray-600 mb-2 text-center font-medium">
-                {event.title}
-              </p>
-              <p className="text-xs text-gray-500 mb-5 text-center">
-                Scan to join this event queue
+              
+              <p className="text-xs text-gray-600 mb-5 text-center">
+                Scan to join this queue
               </p>
 
               <div className="grid grid-cols-2 gap-3 w-full">

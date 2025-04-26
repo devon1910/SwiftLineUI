@@ -59,6 +59,7 @@ const FeedbackForm = () => {
       handleClose();
     } catch (error) {
       showToast.error("Failed to submit. Please try again.");
+      console.log("Error submitting feedback:", error);
     } finally {
       setIsSubmitting(false);
     }
