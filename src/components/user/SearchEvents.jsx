@@ -93,7 +93,7 @@ export const SearchEvents = () => {
   };
 
   // Optimized joinQueue function with loading state
-  const joinQueue = async (event, isEventActive) => {
+  const joinQueue = async (event) => {
     const userToken =
       localStorage.getItem("user") === "undefined"
         ? null
@@ -113,22 +113,43 @@ export const SearchEvents = () => {
       return;
     }
   
-    // Function to ensure connection is established
-    const ensureConnection = async () => {
-      if (connection.state !== "Connected") {
-        try {
-          await connection.start();
-          console.log("SignalR Connected successfully");
-        } catch (err) {
-          console.error("SignalR Connection Error:", err);
-          throw new Error("Failed to establish SignalR connection");
+    // Force disconnect and reconnect to ensure a fresh connection
+    const forceReconnect = async () => {
+      try {
+        // Stop the connection if it exists in any state
+        if (connection) {
+          try {
+            await connection.stop();
+            console.log("Stopped existing connection");
+          } catch (stopError) {
+            console.log("No active connection to stop or error stopping:", stopError);
+          }
         }
+        
+        // Start a brand new connection
+        await connection.start();
+        
+        // Wait a moment to ensure connection is truly ready
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (connection.state !== "Connected") {
+          throw new Error("Connection not established after waiting");
+        }
+        
+        console.log("SignalR Connected successfully. Current state:", connection.state);
+        return true;
+      } catch (err) {
+        console.error("SignalR Connection Error:", err);
+        throw new Error("Failed to establish SignalR connection: " + err.message);
       }
     };
   
     const processJoinQueue = async () => {
       try {
-        await ensureConnection();
+        // Force reconnection
+        await forceReconnect();
+        
+        console.log("Connection state before invoke:", connection.state);
         
         const res = await invokeWithLoading(
           connection,
@@ -148,16 +169,15 @@ export const SearchEvents = () => {
         localStorage.setItem("showFeedbackForm", true);
         navigate("/myQueue");
       } catch (error) {
-        console.log(error);
+        console.error("Error in joinQueue:", error);
         showToast.error(
-          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error: " + error
+          "Error joining queue. Please refresh and try again. Error: " + error.message
         );
       }
     };
-
-    console.log("isEventActive: ", !isEventActive);
-  
-    if (!isEventActive) {
+    
+    console.log("Event:", event);
+    if (!event.isActive) {
       const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?");
       if (confirmValue) {
         await processJoinQueue();
