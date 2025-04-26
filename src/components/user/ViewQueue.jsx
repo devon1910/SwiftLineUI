@@ -61,6 +61,8 @@ const ViewQueue = () => {
         setQueues(response.data.data.lines);
         setIsPaused(response.data.data.isEventPaused);
         setTotalPages(response.data.data.pageCount);
+        setTotalServed(response.data.data.totalServed);
+        setAvgWaitTime(response.data.data.averageWaitTime);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -441,11 +443,11 @@ const ViewQueue = () => {
                         </td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            member.status === "Served" 
+                            member.status === "served" 
                               ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-                              : member.status === "Skipped"
+                              : member.status === "served by Admin"
                               ? "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
-                              : member.status === "Left"
+                              : member.status === "left"
                               ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
                               : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
                           }`}>

@@ -92,7 +92,8 @@ function LandingPage() {
             <img
               src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp"
               alt="SwiftLine Logo"
-              className="w-28 mx-auto mb-6"
+              className="w-28 mx-auto mb-6 rounded shadow-lg"
+              style={{ filter: "drop-shadow(0 0 5px rgba(0, 0, 0, 0.3))" }}
             />
             <div className="text-center py-12">
               <h1 className="text-4xl md:text-6xl font-bold leading-tight relative">
