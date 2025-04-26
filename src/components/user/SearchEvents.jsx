@@ -15,6 +15,7 @@ import { eventsList } from "../../services/api/swiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export const SearchEvents = () => {
   const  userId  = localStorage.getItem("userId");
@@ -104,7 +105,7 @@ export const SearchEvents = () => {
   
     if (!userId || !token) {
       showToast.error("Please login or sign up to join a queue");
-      localStorage.setItem("from", location.href)
+      localStorage.setItem("from", location.href);
       navigate("/auth", { state: { from: location.href } });
       return;
     }
@@ -113,97 +114,71 @@ export const SearchEvents = () => {
       return;
     }
   
-    // Improved connection management with retries
-    const establishConnection = async (retryCount = 3) => {
-      for (let attempt = 1; attempt <= retryCount; attempt++) {
-        try {
-          console.log(`Connection attempt ${attempt}/${retryCount}, current state: ${connection.state}`);
-          
-          // If already connected, we're good
-          if (connection.state === "Connected") {
-            console.log("Connection already established");
-            return true;
+    // Force disconnect and create a fresh connection
+    const forceReconnect = async () => {
+      try {
+        let oldConnection = connection;
+  
+        // Stop existing connection if present
+        if (oldConnection) {
+          try {
+            await oldConnection.stop();
+            console.log("Stopped existing connection");
+          } catch (stopError) {
+            console.log("Error stopping connection:", stopError);
           }
-          
-          // If in any other state, try to stop it first
-          if (connection.state !== "Disconnected") {
-            try {
-              await connection.stop();
-              console.log("Stopped existing connection");
-            } catch (stopError) {
-              console.log("Error stopping connection:", stopError);
-            }
-          }
-          
-          // Start a fresh connection
-          await connection.start();
-          console.log(`Connection started, state: ${connection.state}`);
-          
-          // Wait to ensure connection is ready
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          if (connection.state === "Connected") {
-            console.log("Connection successfully established after waiting");
-            return true;
-          } else {
-            throw new Error(`Connection in unexpected state: ${connection.state}`);
-          }
-        } catch (err) {
-          console.error(`Connection attempt ${attempt} failed:`, err);
-          
-          if (attempt === retryCount) {
-            throw new Error(`Failed to establish connection after ${retryCount} attempts: ${err.message}`);
-          }
-          
-          // Wait before retry
-          const delayMs = 1000 * attempt; // Increase delay with each retry
-          console.log(`Retrying in ${delayMs}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delayMs));
         }
+        
+        connection
+        .start()
+        .then(() => console.log("Connected to SignalR hub"))
+        .catch((err) => console.error("Error connecting to hub:", err));
+       
+        return true;
+      } catch (err) {
+        console.error("Connection failed:", err);
+        throw new Error("Failed to establish connection: " + err.message);
       }
     };
   
     const processJoinQueue = async () => {
       try {
-        // Try to establish connection with retries
-        await establishConnection();
-        
-        console.log("About to invoke JoinQueueGroup, connection state:", connection.state);
-        
+        // Force reconnection with new instance
+        await forceReconnect();
+  
+        // Use the latest connection reference
+        const currentConnection = connection; // Ensure this references the new connection
+        console.log("Connection state before invoke:", currentConnection.state);
+  
         const res = await invokeWithLoading(
-          connection,
+          currentConnection, // Use the new connection
           "JoinQueueGroup",
           event.id,
           JSON.parse(userId)
         );
-        
-        console.log("JoinQueueGroup response:", res);
-        
+  
         if (res === -1) {
           showToast.error(
             "Can't queue for an inactive event. Please check back later."
           );
           return;
         }
-        
+  
         showToast.success("Joined queue successfully");
-        localStorage.setItem("showFeedbackForm", true);
+        localStorage.setItem("showFeedbackForm", "true");
         navigate("/myQueue");
       } catch (error) {
-        console.error("Error in joinQueue process:", error);
-        
-        // Show error but continue with navigation as a fallback
-        showToast.error("Connection issue detected. We'll try to recover automatically.");
-        
-        // Try one last time with a slight delay
-        setTimeout(() => {
-          navigate("/myQueue");
-        }, 1500);
+        console.error("Error in joinQueue:", error);
+        showToast.error(
+          "Error joining queue. Please refresh and try again. Error: " + error.message
+        );
       }
     };
   
     if (!event.isActive) {
-      const confirmValue = confirm("This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?");
+      const confirmValue = confirm(
+        "This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
+      );
       if (confirmValue) {
         await processJoinQueue();
       }

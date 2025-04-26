@@ -22,10 +22,6 @@ export const connection = new HubConnectionBuilder()
   .withAutomaticReconnect()
   .build();
 
-  connection
-  .start()
-  .then(() => console.log("Connected to SignalR hub"))
-  .catch((err) => console.error("Error connecting to hub:", err));
   
   // export const startSignalRConnection = async (navigate) => {
   //   try {
