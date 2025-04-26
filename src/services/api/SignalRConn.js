@@ -5,13 +5,6 @@ import { HubConnectionBuilder, HubConnectionState,  LogLevel } from "@microsoft/
 import API from "./APIService";
 
 const apiUrl = import.meta.env.VITE_API_SIGNALR_URL;
-
-// {
-//   accessTokenFactory: () => {
-//     const token = localStorage.getItem("user");
-//     return token ? JSON.parse(token) : null;
-//   },
-// }
 export const connection = new HubConnectionBuilder()
   .withUrl(apiUrl + "queueHub")
   .configureLogging(
@@ -22,8 +15,61 @@ export const connection = new HubConnectionBuilder()
   .withAutomaticReconnect()
   .build();
 
-  
-  // export const startSignalRConnection = async (navigate) => {
+  export async function ensureConnection() {
+    switch (connection.state) {
+      case HubConnectionState.Disconnected:
+        await connection.start();
+        console.log("SignalR connected");
+        break;
+      case HubConnectionState.Connecting:
+        // wait until either connected or closed
+        await new Promise((resolve, reject) => {
+          const handleReconnect = () => {
+            connection.offreconnected(handleReconnect);
+            resolve(null);
+          };
+          const handleClose = (err) => {
+            connection.offclose(handleClose);
+            reject(err);
+          };
+          connection.onreconnected(handleReconnect);
+          connection.onclose(handleClose);
+        });
+        break;
+      // if Connected or Reconnecting, proceed
+      default:
+        break;
+    }
+  }
+export const useSignalRWithLoading = () => {
+  const { startOperation, endOperation } = useLoading();
+
+  const invokeWithLoading = async (connection, methodName, ...args) => {
+    startOperation();
+    try {
+      // Auto-reconnect if idle disconnected
+      if (connection.state ===  HubConnectionState.Disconnected) {
+        await connection.start();
+      }
+
+      return await connection.invoke(methodName, ...args);
+    } finally {
+      endOperation();
+    }
+  };
+
+  return { invokeWithLoading };
+};
+
+
+
+// {
+//   accessTokenFactory: () => {
+//     const token = localStorage.getItem("user");
+//     return token ? JSON.parse(token) : null;
+//   },
+// }
+// export const startSignalRConnection = async (navigate) => {
   //   try {
   //     await connection.start();
   //     console.log("✅ Connected to SignalR hub");
@@ -73,23 +119,3 @@ export const connection = new HubConnectionBuilder()
   //   navigate("/auth");
   // };
   
-
-export const useSignalRWithLoading = () => {
-  const { startOperation, endOperation } = useLoading();
-
-  const invokeWithLoading = async (connection, methodName, ...args) => {
-    startOperation();
-    try {
-      // Auto-reconnect if idle disconnected
-      if (connection.state ===  HubConnectionState.Disconnected) {
-        await connection.start();
-      }
-
-      return await connection.invoke(methodName, ...args);
-    } finally {
-      endOperation();
-    }
-  };
-
-  return { invokeWithLoading };
-};
