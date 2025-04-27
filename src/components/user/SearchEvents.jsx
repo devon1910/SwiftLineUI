@@ -12,13 +12,13 @@ import {
 } from "react-router-dom";
 import EventCard from "../common/EventCard.jsx";
 import { useDebounce } from "@uidotdev/usehooks";
-import { eventsList } from "../../services/api/swiftlineService.js";
+import { CreateAnonymousUser, eventsList } from "../../services/api/swiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 
 export const SearchEvents = () => {
-  const  userId  = localStorage.getItem("userId");
+  let  userId  = localStorage.getItem("userId");
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
@@ -29,6 +29,7 @@ export const SearchEvents = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [isReconnecting, setIsReconnecting] = useState(false); // New state for reconnecting
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false); // New state for creating account
   const eventsPerPage = 3;
 
   const [searchParams, updateSearchParams] = useSearchParams();
@@ -105,10 +106,32 @@ export const SearchEvents = () => {
     const token = userToken ? JSON.parse(userToken) : null;
 
     if (!userId || !token) {
-      showToast.error("Please login or sign up to join a queue");
-      localStorage.setItem("from", location.href);
-      navigate("/auth", { state: { from: location.href } });
-      return;
+      if(event.allowAnonymousJoining){
+        //create User
+        setIsCreatingAccount(true); // Show loading indicator
+        CreateAnonymousUser().then((response) => {
+          const valueToken = JSON.stringify(response.data.data.accessToken);
+          const refreshToken = JSON.stringify(response.data.data.refreshToken);
+          localStorage.setItem("user", valueToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("userName", response.data.data.userName);
+          localStorage.setItem(
+            "userId",
+            JSON.stringify(response.data.data.userId)
+          );
+          userId = response.data.data.userId;
+          setIsCreatingAccount(false); // Hide loading indicator
+        }).catch((error) => {
+          showToast.error(error.response.data.data.message);
+          setIsCreatingAccount(false); // Hide loading indicator
+        });
+      }else{
+        showToast.error("Please login or sign up to join a queue");
+        localStorage.setItem("from", location.href);
+        navigate("/auth", { state: { from: location.href } });
+        return;
+      }
+      
     }
     if (isUserInQueue) {
       showToast.error("You're already in a queue");
@@ -208,9 +231,9 @@ export const SearchEvents = () => {
     
     <div className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
       {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
+      {isCreatingAccount && <GlobalSpinner message="creating temporary account" />} {/* Show spinner during account creation */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold ">Search Events</h2>
-
         <div className="w-full md:max-w-xs">
           <input
             type="text"

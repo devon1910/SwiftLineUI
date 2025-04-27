@@ -9,6 +9,7 @@ export const loginUser = (loginRequest) => API.post(`${apiUrl}Auth/Login`, login
 export const SignUpUser = (SignUpRequest) => API.post(`${apiUrl}Auth/SignUp`, SignUpRequest);
 export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);
 export const LogOut = () => API.post(`${apiUrl}Auth/Logout`);
+export const CreateAnonymousUser = () => API.post(`${apiUrl}Auth/CreateAnonymousUser`);
 
 // Events
 export const eventsList = (page, eventsPerPage, search = "") => 
