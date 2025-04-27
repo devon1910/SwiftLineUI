@@ -109,7 +109,7 @@ export const SearchEvents = () => {
       if(event.allowAnonymousJoining){
         //create User
         setIsCreatingAccount(true); // Show loading indicator
-        CreateAnonymousUser().then((response) => {
+        await CreateAnonymousUser().then((response) => {
           const valueToken = JSON.stringify(response.data.data.accessToken);
           const refreshToken = JSON.stringify(response.data.data.refreshToken);
           localStorage.setItem("user", valueToken);
@@ -119,7 +119,7 @@ export const SearchEvents = () => {
             "userId",
             JSON.stringify(response.data.data.userId)
           );
-          userId = response.data.data.userId;
+          userId = localStorage.getItem("userId");
           setIsCreatingAccount(false); // Hide loading indicator
         }).catch((error) => {
           showToast.error(error.response.data.data.message);
@@ -231,7 +231,7 @@ export const SearchEvents = () => {
     
     <div className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
       {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
-      {isCreatingAccount && <GlobalSpinner message="creating temporary account" />} {/* Show spinner during account creation */}
+      {isCreatingAccount && <GlobalSpinner />} {/* Show spinner during account creation */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold ">Search Events</h2>
         <div className="w-full md:max-w-xs">
