@@ -8,7 +8,7 @@ import {
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo, refreshToken } from "../../services/api/swiftlineService";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
-import { FiArrowUp, FiPause, FiUserCheck, FiX } from "react-icons/fi";
+import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
@@ -245,7 +245,7 @@ export const MyQueue = () => {
 
               {/* Secondary Information: Wait Time - Second most important */}
               <div className="flex items-center gap-3 pb-3 border-b">
-                <FiPause className="text-amber-500 h-6 w-6" />
+                <FiClock className="text-amber-500 h-6 w-6" />
                 <div className="flex flex-col">
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
                   <div className="flex items-center">
