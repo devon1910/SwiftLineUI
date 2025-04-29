@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
+import sound from "../../sounds/audience-cheering-clapping.mp3";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +55,7 @@ export const MyQueue = () => {
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
-        if (lineInfo.position === -1 && showFeedbackForm==="true") {
+        if (lineInfo.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
         }
@@ -68,7 +69,6 @@ export const MyQueue = () => {
   }, []); // Empty dependency array means it runs once on mount
 
   useEffect(() => {
-
     if (connection) {
       // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
@@ -123,12 +123,51 @@ export const MyQueue = () => {
     }
     prevTimeRef.current = myQueue.timeTillYourTurn;
   }, [myQueue.timeTillYourTurn]);
+
+  const celebrationSoundRef = useRef(null);
+  // Initialize audio
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      celebrationSoundRef.current = new Audio(
+        sound
+      );
+      celebrationSoundRef.current.volume = 1;
+    }
+  }, []);
+
+  // Play sound when reaching first position
+  useEffect(() => {
+    if (
+      prevPositionRef.current !== null &&
+      myQueue.position < prevPositionRef.current
+    ) {
+      setShowPositionArrow(true);
+      setTimeout(() => setShowPositionArrow(false), 25000);
+    }
+
+    // Play sound repeatedly for 15 seconds
+    if (myQueue.position === 1) {
+      const playSound = () => {
+        celebrationSoundRef.current?.play().catch((error) => {
+          console.error("Audio playback failed:", error);
+        });
+      };
+
+      playSound();
+      const intervalId = setInterval(playSound, 2000); // Play every 3 seconds
+      setTimeout(() => {
+        clearInterval(intervalId); // Stop after 15 seconds
+      }, 30000);
+    }
+    prevPositionRef.current = myQueue.position;
+  }, [myQueue.position]);
+
   function getCurrentPosition() {
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
         setQueueActivity(response.data.data.isNotPaused);
-        if (response.data.data.position === -1 && showFeedbackForm==="true") {
+        if (response.data.data.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
         }
@@ -142,7 +181,6 @@ export const MyQueue = () => {
   }
 
   const [isReconnecting, setIsReconnecting] = useState(false);
-
 
   const handleLeaveQueue = async () => {
     if (!window.confirm("Are you sure you want to leave the queue?")) {
@@ -167,10 +205,12 @@ export const MyQueue = () => {
     }
   };
 
-
-
   return (
-    <div className={`max-w-2xl mx-auto p-4 font-sans ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
+    <div
+      className={`max-w-2xl mx-auto p-4 font-sans ${
+        isReconnecting ? "opacity-50 pointer-events-none" : ""
+      }`}
+    >
       {isReconnecting && <GlobalSpinner />}
       {myQueue.position === -1 && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
@@ -209,8 +249,8 @@ export const MyQueue = () => {
             <Confetti
               width={windowDimension.width}
               height={windowDimension.height}
-              recycle={false}
-              numberOfPieces={800}
+              recycle={true}
+              numberOfPieces={600}
               gravity={0.2}
             />
           )}
@@ -233,8 +273,14 @@ export const MyQueue = () => {
               </div>
 
               {/* Secondary Information: Wait Time - Second most important */}
+              {/* Updated Wait Time section with animation */}
               <div className="flex items-center gap-3 pb-3 border-b">
-                <FiClock className="text-amber-500 h-6 w-6" />
+                <div className="relative h-8 w-8 flex items-center justify-center">
+                  {queueActivity && (
+                    <div className="absolute top-0 left-0 w-full h-full border-2 border-amber-500/30 rounded-full animate-spin border-t-transparent" />
+                  )}
+                  <FiClock className="text-amber-500 h-6 w-6 relative z-10" />
+                </div>
                 <div className="flex flex-col">
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
                   <div className="flex items-center">
