@@ -6,7 +6,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { motion } from "framer-motion";
+
 import Navigation from "../layout/Navigation";
 import { FastForward, TrendingUpDown } from "lucide-react";
 import { useNetworkStatus } from "../../services/utils/NetworkStatus";
@@ -80,64 +80,7 @@ function LandingPage() {
       {/* Navigation */}
       <Navigation darkMode={darkMode} toggleDarkMode={handleToggleTheme} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
-        <section className="text-center py-12 md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <img
-              src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp"
-              alt="SwiftLine Logo"
-              className="w-28 mx-auto mb-6 rounded shadow-lg"
-              style={{ filter: "drop-shadow(0 0 5px rgba(0, 0, 0, 0.3))" }}
-            />
-            <div className="text-center py-12">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight relative">
-                <span
-                  className={`inline-block transition-all duration-700 ${
-                    loaded ? "opacity-100" : "opacity-0 -translate-x-8"
-                  }`}
-                >
-                  Welcome to Swift
-                </span>
-                <span
-                  className={`inline-block transition-all duration-700 delay-300 ${
-                    loaded ? "opacity-100" : "opacity-0 translate-y-8"
-                  }`}
-                >
-                  Line
-                </span>
-                <span
-                  className={`text-sage-500 ml-2 inline-block transition-all duration-500 delay-500 ${
-                    loaded ? "opacity-100 rotate-0" : "opacity-0 rotate-180"
-                  }`}
-                >
-                  <FastForward className="fast-forward-icon" />
-                </span>
-              </h1>
-
-              <p
-                className={`text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto transition-all duration-1000 delay-700 ${
-                  loaded
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4"
-                }`}
-              >
-                <span className="inline-block animate-pulse">
-                  Bypass the Wait,
-                </span>{" "}
-                <span className="inline-block">Reclaim Your Day –</span>{" "}
-                <span className="inline-block font-semibold">
-                  Time Liberation, Guaranteed.
-                </span>
-              </p>
-            </div>
-          </motion.div>
-        </section>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        
 
         {/* Welcome Message */}
         <div className="mb-12 text-center md:text-left">
@@ -148,7 +91,7 @@ function LandingPage() {
           </span>
           </p>
         </div>
-        <Outlet context={{ email, userId }} />
+        <Outlet context={{ email, userId, loaded }} />
       </main>
     </div>
   );
