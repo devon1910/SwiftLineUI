@@ -24,13 +24,13 @@ API.interceptors.request.use(
       ? JSON.parse(userToken) 
       : null;
 
-      if (isPublicRoute().length > 0 && !token) {
-        return config;
-      }
-      if (!token) {
-        window.location.href = '/auth'; 
-        return Promise.reject(new Error("No access token available"));
-      }
+      // if (isPublicRoute().length > 0 && !token) {
+      //   return config;
+      // }
+      // if (!token) {
+      //   window.location.href = '/auth'; 
+      //   return Promise.reject(new Error("No access token available"));
+      // }
     // If token exists, add it to the header
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -52,19 +52,12 @@ API.interceptors.response.use(
         showToast.error("Oops! cannot reach the server. Please check your internet or try again later.");
         return
       }
-      if (error.code === "ERR_BAD_REQUEST") 
+      if (error.status === 400) 
       {
         showToast.error(error.response.data.data.message);
         return
       }
-      if (error.response) {
-        showToast.error("An unexpected error occurred. Please try again later.");
-        return
-      }
-      // if (isPublicRoute().length > 0 && ) {
-      //   return Promise.reject(error);
-      // }
-      // If we receive a 401 and haven't retried yet, attempt to refresh the token.
+
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
@@ -101,6 +94,11 @@ API.interceptors.response.use(
           return Promise.reject(refreshError);
         }
       }
+      if (error.response) {
+        showToast.error("An unexpected error occurred. Please try again later.");
+        return
+      }
+     
       return Promise.reject(error);
     }
 );

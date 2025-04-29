@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, use } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
 import {
@@ -6,15 +6,13 @@ import {
   ensureConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
-import { GetUserLineInfo, refreshToken } from "../../services/api/swiftlineService";
-import LoadingSpinner from "../common/LoadingSpinner.jsx";
+import { GetUserLineInfo } from "../../services/api/swiftlineService";
+
 import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
-import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
-import API from "../../services/api/APIService";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 
@@ -39,8 +37,6 @@ export const MyQueue = () => {
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
 
-  
-
   const { invokeWithLoading } = useSignalRWithLoading();
 
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
@@ -58,8 +54,6 @@ export const MyQueue = () => {
       // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
-        console.log("showFeedbackForm:", showFeedbackForm);
-        console.log("position:", lineInfo.position);
         if (lineInfo.position === -1 && showFeedbackForm==="true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
@@ -157,11 +151,7 @@ export const MyQueue = () => {
 
     try {
       setIsReconnecting(true);
-
-      // ensure the SignalR connection is ready
       await ensureConnection();
-
-      // now safe to invoke ExitQueue
       const lineMemberId = myQueue.lineMemberId;
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1");
 
@@ -180,7 +170,6 @@ export const MyQueue = () => {
 
 
   return (
-    
     <div className={`max-w-2xl mx-auto p-4 font-sans ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
       {isReconnecting && <GlobalSpinner />}
       {myQueue.position === -1 && (

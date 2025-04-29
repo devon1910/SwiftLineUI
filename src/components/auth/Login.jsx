@@ -19,19 +19,13 @@ const Login = ({ onResetPassword }) => {
 
 
 
-  const handleLogin = (e) => {
+  const  handleLogin = async (e) => {
     e.preventDefault();
 
     // if (!turnstileToken) {
     //   alert("Please complete the Turnstile check.");
     //   return;
     // }
-    // // Add your login logic here.
-    // if (!email || !password) {
-    //   showToast.error("Please enter email and password.");
-    //   return;
-    // }
-
     // VerifyTurnstileToken({turnstileToken})
     //   .then((response) => {
     //     if (!response.data.data.success) {
@@ -44,7 +38,7 @@ const Login = ({ onResetPassword }) => {
 
     //if(!isTurnstileVerified){ alert(BotCheck_Error_Message); return;}
 
-    loginUser({ email, password })
+    await loginUser({ email, password })
       .then((response) => {
         const valueToken = JSON.stringify(response.data.data.accessToken);
         const refreshToken = JSON.stringify(response.data.data.refreshToken);
