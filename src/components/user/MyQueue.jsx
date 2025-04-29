@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
-import sound from "../../sounds/audience-cheering-clapping.mp3";
+import sound from "../../sounds/tv-talk-show-intro.mp3";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -156,8 +156,8 @@ export const MyQueue = () => {
       playSound();
       const intervalId = setInterval(playSound, 2000); // Play every 3 seconds
       setTimeout(() => {
-        clearInterval(intervalId); // Stop after 15 seconds
-      }, 30000);
+        clearInterval(intervalId); // Stop after 40 seconds
+      }, 40000);
     }
     prevPositionRef.current = myQueue.position;
   }, [myQueue.position]);
@@ -249,8 +249,8 @@ export const MyQueue = () => {
             <Confetti
               width={windowDimension.width}
               height={windowDimension.height}
-              recycle={true}
-              numberOfPieces={600}
+              recycle={false}
+              numberOfPieces={1000}
               gravity={0.2}
             />
           )}
