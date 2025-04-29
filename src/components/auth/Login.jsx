@@ -8,7 +8,7 @@ import TurnstileWidget from "../common/TurnstileWidget";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
 
 
-const Login = ({ onResetPassword }) => {
+const Login = ({ onResetPassword,setShowAuthModal }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,8 +16,6 @@ const Login = ({ onResetPassword }) => {
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false); 
-
-
 
   const  handleLogin = async (e) => {
     e.preventDefault();
@@ -67,6 +65,7 @@ const Login = ({ onResetPassword }) => {
       .catch((error) => {
         showToast.error(error.response.data.data.message);
       });
+      setShowAuthModal(null);
   };
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleGoogleSignIn = async () => {
@@ -79,7 +78,7 @@ const Login = ({ onResetPassword }) => {
 
   return (
     <div className="space-y-6">
-      <div className="mt-6">
+      <div className="mt-12">
         <button
           type="button"
           className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700  hover:bg-gray-50"
