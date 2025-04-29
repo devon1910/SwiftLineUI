@@ -11,6 +11,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem("user");
   const profileRef = useRef(null);
+  const userName = localStorage.getItem("userName");
 
   const navItems = [
     { label: "Dashboard", path: "" },
@@ -70,7 +71,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   const currentPath = window.location.pathname.split("/")[1] || "dashboard";
 
   const handleAuthAction = () => {
-    if (isAuthenticated && isAuthenticated !== "undefined") {
+    if (isAuthenticated && isAuthenticated !== "undefined" && userName !="Anonymous") {
       const confirmAction = window.confirm(
         "Are you sure you want to log out?"
       );
@@ -194,7 +195,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
               >
                 <CircleUserRound size={20} />
                 <span className="hidden sm:block text-sm font-medium">
-                  {isAuthenticated && isAuthenticated !== "undefined" ? "Account" : "Sign In"}
+                  {isAuthenticated && isAuthenticated !== "undefined" && userName !="Anonymous" ? "Account" : "Sign In"}
                 </span>
                 <ChevronDown
                   size={16}
@@ -237,7 +238,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                         : "text-gray-700 hover:bg-gray-50"
                     }`}
                   >
-                    {isAuthenticated && isAuthenticated !== "undefined" ? "Log Out" : "Log In"}
+                    {isAuthenticated && isAuthenticated !== "undefined" && userName !="Anonymous" ? "Log Out" : "Log In"}
                   </button>
                 </div>
               )}
