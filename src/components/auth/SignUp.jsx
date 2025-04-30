@@ -19,6 +19,7 @@ const SignUp = ({setShowAuthModal}) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
@@ -54,7 +55,7 @@ const SignUp = ({setShowAuthModal}) => {
     //   return;
     // }
    
-    const signUpRequest = { email, password };
+    const signUpRequest = { email, password, fullName };
     SignUpUser(signUpRequest)
       .then((response) => {       
         if(!response.data.data.status){
@@ -131,7 +132,7 @@ const SignUp = ({setShowAuthModal}) => {
             id="fname"
             name="fname"
             type="name"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setFullName(e.target.value)}
             required
             autoComplete="fname"
             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
