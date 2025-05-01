@@ -197,7 +197,7 @@ const SignUp = ({ setShowAuthModal }) => {
                         : "invisible"
                     }`}
                   />
-                  <span>Special char</span>
+                  <span>Special char (e.g $)</span>
                 </div>
                 <div
                   className={`flex items-center ${
