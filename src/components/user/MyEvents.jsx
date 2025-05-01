@@ -6,23 +6,25 @@ import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { QrCode } from "lucide-react";
 import EventQRCode from "../common/EventQRCode";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     getUserEvents();
   }, []);
 
   
-  const { userId } = useOutletContext();
+  const { userId, userName } = useOutletContext();
 
   const [showQRCode, setShowQRCode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   function handleNavigation() {
-    if (!userId) {
-      toast.error("Please login or signup to create an event.");
-      navigate("/auth");
+    if (!userId || userName=="" || userName==null || userName==undefined || userName=="Anonymous") {
+      showToast.error("Please login or signup to create an event.");
+      //navigate("/auth");
       return;
     }
     navigate("/newEvent");
@@ -56,6 +58,10 @@ const MyEvents = () => {
   };
 
   function getUserEvents() {
+
+    if(!userId ||userName=="" || userName==null || userName==undefined || userName=="Anonymous"){
+      return;
+    }
     UserEvents()
       .then((response) => {
         setUserEvents(response.data.data);
@@ -83,10 +89,12 @@ const MyEvents = () => {
         {/* Events Grid */}
         {userEvents.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
               No events created yet. Start by creating your first event!
             </p>
           </div>
+
+         
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (

@@ -189,7 +189,7 @@ export const MyQueue = () => {
       localStorage.removeItem("showFeedbackForm");
       navigate("/search");
     } catch (err) {
-      console.error("LeaveQueue error:", err);
+      console.error("Leave Queue error:", err);
       showToast.error("Unable to leave queue. Please try again later.");
     } finally {
       setIsReconnecting(false);

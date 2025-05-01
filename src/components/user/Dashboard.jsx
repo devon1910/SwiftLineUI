@@ -3,12 +3,18 @@ import { FiPlus } from "react-icons/fi";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FastForward } from "lucide-react";
+import { showToast } from "../../services/utils/ToastHelper";
 const Dashboard = () => {
   const navigate = useNavigate();
+  const {loaded, userName} = useOutletContext();
   const handleNavigation = (path) => {
+    if ((userName ==="" || userName === "Anonymous") &&  path === "newEvent") {
+      showToast.error("Please create an account to continue.");
+      return;
+    }
     navigate(`/${path}`);
   };
-  const {loaded} = useOutletContext();
+  
 
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -169,12 +175,7 @@ const Dashboard = () => {
           aria-label="Create new event"
         >
           <FiPlus className="w-8 h-8 md:w-10 md:h-10 transition-transform group-hover:rotate-90" />
-
-          {/* Optional Tooltip */}
-          <span className="absolute right-20 -top-2 bg-gray-900 text-white text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-            Create Event
-            <span className="absolute right-0 top-1/2 w-2 h-2 bg-gray-900 transform -translate-y-1/2 translate-x-1 rotate-45"></span>
-          </span>
+          
         </button>
       </div>
     </div>

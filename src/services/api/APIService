@@ -6,13 +6,6 @@ const API = axios.create({
   baseURL:  apiUrl
 });
 
-const PUBLIC_ROUTES = ['/auth', '/signup', '/search','/','/myQueue','/VerifyToken']; // Add your public paths here
-
-// Helper function to check if current path is public
-const isPublicRoute = () => {
-  const currentPath = window.location.pathname;
-  return PUBLIC_ROUTES.filter(route => currentPath == route);
-};
 let isRefreshing = false;
 let refreshSubscribers = [];
 

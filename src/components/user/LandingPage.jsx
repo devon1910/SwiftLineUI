@@ -86,12 +86,12 @@ function LandingPage() {
         <div className="mb-12 text-center md:text-left">
           <p className="text-lg md:text-xl">
           <span>
-            <span className="waving-hand">👋🏽</span> Hello,{" "}
+            <span className="waving-hand">👋🏽</span>,{" "}
             <strong className="text-sage-500">{userName || "Guest"}</strong>
           </span>
           </p>
         </div>
-        <Outlet context={{ email, userId, loaded }} />
+        <Outlet context={{ email, userId, loaded, userName }} />
       </main>
     </div>
   );
