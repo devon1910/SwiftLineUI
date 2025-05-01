@@ -45,14 +45,10 @@ export const MyQueue = () => {
   const { triggerFeedback } = useFeedback();
 
   useEffect(() => {
+    // Ensure getCurrentPosition is only called once on mount
     getCurrentPosition();
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    // Make sure connection is defined/initialized before using it
+    // Register SignalR listeners
     if (connection) {
-      // Register for position updates
       connection.on("ReceivePositionUpdate", (lineInfo) => {
         setMyQueue(lineInfo);
         if (lineInfo.position === -1 && showFeedbackForm === "true") {
@@ -60,17 +56,7 @@ export const MyQueue = () => {
           localStorage.removeItem("showFeedbackForm");
         }
       });
-      // Clean up when component unmounts
-      return () => {
-        console.log("Cleaning up SignalR listener");
-        connection.off("ReceivePositionUpdate");
-      };
-    }
-  }, []); // Empty dependency array means it runs once on mount
 
-  useEffect(() => {
-    if (connection) {
-      // Register for position updates
       connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
         setQueueActivity(isQueueActive);
         if (!isQueueActive) {
@@ -79,13 +65,14 @@ export const MyQueue = () => {
           showToast.success("Queue is active. You're back in line!");
         }
       });
-      // Clean up when component unmounts
+
+      // Clean up listeners on unmount
       return () => {
-        console.log("Cleaning up SignalR listener");
+        connection.off("ReceivePositionUpdate");
         connection.off("ReceiveQueueStatusUpdate");
       };
     }
-  }, []);
+  }, []); // Ensure this runs only once on mount
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
@@ -163,6 +150,7 @@ export const MyQueue = () => {
   }, [myQueue.position]);
 
   function getCurrentPosition() {
+    setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
@@ -177,6 +165,9 @@ export const MyQueue = () => {
           window.location.href = "/";
         }
         console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false); // Ensure loading state is updated after the call
       });
   }
 

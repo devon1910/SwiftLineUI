@@ -13,6 +13,8 @@ const isPublicRoute = () => {
   const currentPath = window.location.pathname;
   return PUBLIC_ROUTES.filter(route => currentPath == route);
 };
+let isRefreshing = false;
+let refreshSubscribers = [];
 
 API.interceptors.request.use(
 
@@ -43,66 +45,69 @@ API.interceptors.request.use(
   }
 );
 
+// Response interceptor
 API.interceptors.response.use(
-    response => response,
-    async error => {
-      const originalRequest = error.config;
+  response => response,
+  async error => {
+    const originalRequest = error.config;
 
-      if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
-        showToast.error("Oops! cannot reach the server. Please check your internet or try again later.");
-        return
-      }
-      if (error.status === 400) 
-      {
-        showToast.error(error.response.data.data.message);
-        return
-      }
-
-      if (error.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-        try {
-          // Retrieve your refresh token (ideally stored separately or in a secure HTTP-only cookie).
-          const refreshToken =  JSON.parse(localStorage.getItem('refreshToken')) 
-          const accessToken =  JSON.parse(localStorage.getItem('user')) 
-          
-          // Call your refresh token endpoint. Adjust the endpoint and payload as needed.
-          const { data } = await API.post(
-            apiUrl+"/Auth/RefreshToken", 
-            { accessToken: accessToken, refreshToken: refreshToken  }
-          );
-          
-          // Assume data.accessToken is your new token.
-         //   const user = JSON.parse(localStorage.getItem('user')) || {};
-        //   user.accessToken = data.accessToken;
-          
-          // Save the updated user object.
-          localStorage.setItem('user', JSON.stringify(data.data.accessToken));
-          localStorage.setItem('refreshToken', JSON.stringify(data.data.refreshToken));
-          
-          // Update default headers and the original request's headers.
-          API.defaults.headers.common['Authorization'] = `Bearer ${data.data.accessToken}`;
-          originalRequest.headers['Authorization'] = `Bearer ${data.data.accessToken}`;
-          
-          // Retry the original request with the new token.
-          return API(originalRequest);
-        } catch (refreshError) {
-          // If refresh fails, clear stored tokens and redirect to login.
-          localStorage.removeItem('user');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('userName');
-          localStorage.removeItem('userId');
-          window.location.href = '/';
-          console.log(refreshError)
-          return Promise.reject(refreshError);
-        }
-      }
-      if (error.response) {
-        showToast.error("An unexpected error occurred. Please try again later.");
-        return
-      }
-     
+    // Handle network errors
+    if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
+      showToast.error("Cannot reach the server. Check your internet.");
       return Promise.reject(error);
     }
+
+    // Handle 400 errors
+    if (error.response?.status === 400) {
+      showToast.error(error.response.data.data?.message || "Bad request.");
+      return Promise.reject(error);
+    }
+
+    // Handle 401 Unauthorized (token refresh logic)
+    if (error.response?.status === 401) {
+      if (!isRefreshing) {
+        isRefreshing = true; // Block other requests until refresh completes
+
+        try {
+          const refreshToken = JSON.parse(localStorage.getItem('refreshToken'));
+          const currentAccessToken = JSON.parse(localStorage.getItem('user'));
+
+          // Refresh token
+          const { data } = await axios.post(`${apiUrl}Auth/RefreshToken`, {
+            accessToken: currentAccessToken,
+            refreshToken: refreshToken
+          });
+
+          // Update tokens
+          localStorage.setItem('user', JSON.stringify(data.data.accessToken));
+          localStorage.setItem('refreshToken', JSON.stringify(data.data.refreshToken));
+
+          // Process queued requests with the new token
+          refreshSubscribers.forEach(subscriber => subscriber(data.data.accessToken));
+          refreshSubscribers = [];
+        } catch (refreshError) {
+          // Clear tokens on failure
+          localStorage.clear();
+          window.location.href = '/';
+          return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
+        }
+      }
+
+      // Return a promise that retries the original request after refresh
+      return new Promise((resolve) => {
+        refreshSubscribers.push((newToken) => {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          resolve(API(originalRequest));
+        });
+      });
+    }
+
+    // Handle other errors
+    if (error.response) showToast.error("An unexpected error occurred.");
+    return Promise.reject(error);
+  }
 );
 
 export default API;
