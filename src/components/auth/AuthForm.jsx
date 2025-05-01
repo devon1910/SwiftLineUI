@@ -19,11 +19,11 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="min-h-screen auth-container flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white auth-card rounded-xl overflow-hidden">
-        {!resetPassword ? (
+    <div className="w-full max-w-md bg-white auth-card rounded-xl overflow-hidden">
+      <div className="p-4 md:p-6">
+      {!resetPassword ? (
           <>
-            <div className="auth-tabs">
+            <div className="auth-tabs flex">
               <button
                 onClick={() => setActiveTab("login")}
                 className={`auth-tab-button login ${
@@ -55,7 +55,7 @@ const AuthForm = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
   );
 };
 

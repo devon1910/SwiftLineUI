@@ -77,8 +77,8 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mt-12">
+    <div className="space-y-3">
+      <div className="mt-6">
         <button
           type="button"
           className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700  hover:bg-gray-50"
@@ -97,7 +97,7 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
           Sign in with Google
         </button>
       </div>
-      <div className="mt-6">
+      <div className>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
@@ -109,8 +109,7 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
           </div>
         </div>
       </div>
-      <h2 className="text-2xl font-bold text-black">Welcome back</h2>
-      <form className="space-y-4" onSubmit={handleLogin}>
+      <form className="space-y-2" onSubmit={handleLogin}>
         <div>
           <label
             htmlFor="email"

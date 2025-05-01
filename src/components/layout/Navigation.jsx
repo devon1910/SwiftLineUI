@@ -5,6 +5,7 @@ import { LogOut } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
+import AuthForm from "../auth/AuthForm";
 
 const Navigation = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,8 +36,9 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   // Handle click outside to close profile dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
+      console.log("clicked outside", event);
       if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileOpen(false);
+        setShowAuthModal(null);
       }
     };
 
@@ -77,16 +79,18 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "py-2" : "py-4"
         } ${
-          darkMode 
-            ? `bg-gray-900 ${scrolled ? "shadow-md shadow-gray-800/20" : ""}` 
+          darkMode
+            ? `bg-gray-900 ${scrolled ? "shadow-md shadow-gray-800/20" : ""}`
             : `bg-white ${scrolled ? "shadow-md shadow-gray-200/60" : ""}`
-        } border-b ${darkMode ? "border-gray-800" : "border-gray-100"} backdrop-blur-sm bg-opacity-95`}
+        } border-b ${
+          darkMode ? "border-gray-800" : "border-gray-100"
+        } backdrop-blur-sm bg-opacity-95`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <button 
+              <button
                 onClick={() => navigate("/")}
                 className="flex items-center gap-2 focus:outline-none"
               >
@@ -139,10 +143,22 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                     ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
-                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={
+                  darkMode ? "Switch to light mode" : "Switch to dark mode"
+                }
               >
                 {darkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
                     <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -154,16 +170,26 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                   </svg>
                 )}
               </button>
 
               {/* Profile Menu */}
-              <div ref={profileRef} className="relative">
-                <button         
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+              <div className="relative">
+                <button
+                  onClick={() => handleAuthAction("login")}
                   className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
                     darkMode
                       ? "text-gray-200 hover:bg-gray-800"
@@ -172,65 +198,11 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                 >
                   <CircleUserRound size={20} />
                   <span className="hidden sm:block text-sm font-medium">
-                    Account
+                    {!isAuthenticated || userName === "Anonymous"
+                      ? "Login"
+                      : "Log out"}
                   </span>
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform ${isProfileOpen ? "rotate-180" : ""}`}
-                  />
                 </button>
-
-                {/* Profile Dropdown */}
-                {isProfileOpen && (
-                  <div
-                    className={`absolute right-0 mt-2 w-48 rounded-lg overflow-hidden shadow-lg py-1 ${
-                      darkMode
-                        ? "bg-gray-800 border border-gray-700"
-                        : "bg-white border border-gray-100"
-                    }`}
-                  >
-                    {(!isAuthenticated || userName === "Anonymous") ? (
-                      <>
-                        <button
-                          onClick={() => handleAuthAction("login")}
-                          className={`block w-full px-4 py-2 text-sm text-left ${
-                            darkMode
-                              ? "text-gray-300 hover:bg-gray-700"
-                              : "text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          Log In
-                        </button>
-                        <button
-                          onClick={() => handleAuthAction("signup")}
-                          className={`block w-full px-4 py-2 text-sm text-left ${
-                            darkMode
-                              ? "text-gray-300 hover:bg-gray-700"
-                              : "text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          Sign Up
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          localStorage.removeItem("user");
-                          localStorage.removeItem("userName");
-                          showToast.success("Logged out successfully");
-                          navigate("/");
-                        }}
-                        className={`block w-full px-4 py-2 text-sm text-left ${
-                          darkMode
-                            ? "text-gray-300 hover:bg-gray-700"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        Log Out
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Mobile Menu Button */}
@@ -238,7 +210,7 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className={`md:hidden p-2 rounded-full ${
                   darkMode
-                    ? "text-gray-200 hover:bg-gray-800" 
+                    ? "text-gray-200 hover:bg-gray-800"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
                 aria-label="Toggle menu"
@@ -250,9 +222,11 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
 
           {/* Mobile Menu */}
           {isOpen && (
-            <div className={`md:hidden mt-4 pb-4 rounded-lg ${
-              darkMode ? "bg-gray-800" : "bg-white"
-            }`}>
+            <div
+              className={`md:hidden mt-4 pb-4 rounded-lg ${
+                darkMode ? "bg-gray-800" : "bg-white"
+              }`}
+            >
               <div className="flex flex-col gap-1">
                 {navItems.map((item) => {
                   const isActive = currentPath === item.path;
@@ -282,15 +256,17 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-            <button
-              onClick={() => setShowAuthModal(null)}
-              className="absolute top-3 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 "
-            >
-              <X size={20} />
-            </button>
-            {showAuthModal === "login" ? <Login setShowAuthModal={setShowAuthModal} /> : <SignUp setShowAuthModal={setShowAuthModal} />}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          onClick={(e) => {
+            // Close modal only if clicking on the backdrop
+            if (e.target === e.currentTarget) {
+              setShowAuthModal(false);
+            }
+          }}
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md relative">
+            <AuthForm />
           </div>
         </div>
       )}

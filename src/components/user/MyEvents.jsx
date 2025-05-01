@@ -58,7 +58,6 @@ const MyEvents = () => {
   };
 
   function getUserEvents() {
-
     if(!userId ||userName=="" || userName==null || userName==undefined || userName=="Anonymous"){
       return;
     }
