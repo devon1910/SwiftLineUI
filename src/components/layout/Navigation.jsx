@@ -14,7 +14,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   const [showAuthModal, setShowAuthModal] = useState(null); // New state for modal
   const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem("user");
-  const profileRef = useRef(null);
   const userName = localStorage.getItem("userName");
 
   const navItems = [
@@ -34,19 +33,19 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   }, []);
 
   // Handle click outside to close profile dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      console.log("clicked outside", event);
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setShowAuthModal(null);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     console.log("clicked outside", event);
+  //     if (profileRef.current && !profileRef.current.contains(event.target)) {
+  //       setShowAuthModal(null);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   // Listen for route changes to close the profile dropdown
   useEffect(() => {

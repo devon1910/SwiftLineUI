@@ -170,25 +170,48 @@ const SignUp = ({ setShowAuthModal }) => {
                 autoComplete="current-password"
                 className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
               />
-              <ul
-                className="text-sm text-red-600 mt-2 mr-2 rounded-md p-2"
-                id="password-requirements"
-              >
-                {password.length < 6 && (
-                  <li className="mb-1">
-                    • Passwords must be at least 6 characters.
-                  </li>
-                )}
-                {!/[!@#$%^&*(),.?":{}|<>]/.test(password) && (
-                  <li className="mb-1">
-                    • Passwords must have at least one non-alphanumeric
-                    character.
-                  </li>
-                )}
-                {!/[0-9]/.test(password) && (
-                  <li>• Passwords must have at least one digit ('0'-'9').</li>
-                )}
-              </ul>
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                <div
+                  className={`flex items-center ${
+                    password.length >= 6 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  <CheckCircle
+                    className={`w-4 h-4 mr-1 ${
+                      password.length >= 6 ? "visible" : "invisible"
+                    }`}
+                  />
+                  <span>6+ characters</span>
+                </div>
+                <div
+                  className={`flex items-center  ${
+                    /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  <CheckCircle
+                    className={`w-4 h-4 mr-1 ${
+                      /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                        ? "visible"
+                        : "invisible"
+                    }`}
+                  />
+                  <span>Special char</span>
+                </div>
+                <div
+                  className={`flex items-center ${
+                    /[0-9]/.test(password) ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  <CheckCircle
+                    className={`w-4 h-4 mr-1 ${
+                      /[0-9]/.test(password) ? "visible" : "invisible"
+                    }`}
+                  />
+                  <span>Number</span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
