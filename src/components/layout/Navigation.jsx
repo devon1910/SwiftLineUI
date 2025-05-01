@@ -264,8 +264,9 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
             }
           }}
         >
+          
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md relative">
-            <AuthForm />
+            <AuthForm setShowAuthModal={setShowAuthModal}/>
           </div>
         </div>
       )}

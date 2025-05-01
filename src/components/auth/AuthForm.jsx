@@ -3,7 +3,7 @@ import Login from "./Login";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
 
-const AuthForm = () => {
+const AuthForm = ({setShowAuthModal}) => {
   const [activeTab, setActiveTab] = useState("login");
   const [resetPassword, setResetPassword] = useState(false);
 
@@ -21,7 +21,7 @@ const AuthForm = () => {
   return (
     <div className="w-full max-w-md bg-white auth-card rounded-xl overflow-hidden">
       <div className="p-4 md:p-6">
-      {!resetPassword ? (
+        {!resetPassword ? (
           <>
             <div className="auth-tabs flex">
               <button
@@ -40,6 +40,12 @@ const AuthForm = () => {
               >
                 Sign Up
               </button>
+              <button
+                onClick={() => setShowAuthModal(null)}     
+                className="absolute top-[-8px] right-[-8px] md:top-[-12px] md:right-[-12px] rounded-full px-3 py-1 text-sm shadow-md hover:shadow-lg transition-shadow"
+              >
+                ×
+              </button>
             </div>
             <div className="auth-content">
               {activeTab === "login" ? (
@@ -55,7 +61,7 @@ const AuthForm = () => {
           </div>
         )}
       </div>
-      </div>
+    </div>
   );
 };
 
