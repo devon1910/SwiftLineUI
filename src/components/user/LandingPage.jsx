@@ -26,6 +26,7 @@ function LandingPage() {
   const userId = location.state?.userId || localStorage.getItem("userId") || "";
   const from = location.state?.from || localStorage.getItem("from") || null;
   const [loaded, setLoaded] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(null);
 
   // Load theme preference from local storage
   const { darkMode, toggleDarkMode } = useTheme();
@@ -78,7 +79,7 @@ function LandingPage() {
       }`}
     >
       {/* Navigation */}
-      <Navigation darkMode={darkMode} toggleDarkMode={handleToggleTheme} />
+      <Navigation darkMode={darkMode} toggleDarkMode={handleToggleTheme} setShowAuthModal={setShowAuthModal} showAuthModal={showAuthModal} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        
 
@@ -91,7 +92,7 @@ function LandingPage() {
           </span>
           </p>
         </div>
-        <Outlet context={{ email, userId, loaded, userName }} />
+        <Outlet context={{ email, userId, loaded, userName, setShowAuthModal,showAuthModal }} />
       </main>
     </div>
   );

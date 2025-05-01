@@ -7,11 +7,10 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import AuthForm from "../auth/AuthForm";
 
-const Navigation = ({ darkMode, toggleDarkMode }) => {
+const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(null); // New state for modal
+  const [scrolled, setScrolled] = useState(false); 
   const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem("user");
   const userName = localStorage.getItem("userName");

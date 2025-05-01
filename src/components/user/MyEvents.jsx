@@ -17,7 +17,7 @@ const MyEvents = () => {
   }, []);
 
   
-  const { userId, userName } = useOutletContext();
+  const { userId, userName, setShowAuthModal } = useOutletContext();
 
   const [showQRCode, setShowQRCode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -25,6 +25,7 @@ const MyEvents = () => {
     if (!userId || userName=="" || userName==null || userName==undefined || userName=="Anonymous") {
       showToast.error("Please login or signup to create an event.");
       //navigate("/auth");
+      setShowAuthModal("login");
       return;
     }
     navigate("/newEvent");
