@@ -159,7 +159,7 @@ export const MyQueue = () => {
       : localStorage.getItem("user");
 
     if (!userToken) {
-      showToast.error("Please log in to view your queue.");
+      showToast.error("Please Join a queue or log in to view your queue.");
       setShowAuthModal("login");
       return;
     }
