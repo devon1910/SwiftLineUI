@@ -11,7 +11,7 @@ import { GetUserLineInfo } from "../../services/api/swiftlineService";
 import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
@@ -43,6 +43,7 @@ export const MyQueue = () => {
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
 
   const { triggerFeedback } = useFeedback();
+  const {  setShowAuthModal } = useOutletContext();
 
   useEffect(() => {
     // Ensure getCurrentPosition is only called once on mount
@@ -151,6 +152,17 @@ export const MyQueue = () => {
 
   function getCurrentPosition() {
     setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
+
+    const userToken =
+    localStorage.getItem("user") === "undefined"
+      ? null
+      : localStorage.getItem("user");
+
+    if (!userToken) {
+      showToast.error("Please log in to view your queue.");
+      setShowAuthModal("login");
+      return;
+    }
     GetUserLineInfo()
       .then((response) => {
         setMyQueue(response.data.data);
