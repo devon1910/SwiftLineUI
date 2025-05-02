@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronDown, CircleUserRound, Menu, X } from "lucide-react";
+import {
+  Calendar,
+  ChevronDown,
+  CircleUserRound,
+  Clock,
+  Home,
+  Menu,
+  Search,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
@@ -7,20 +16,26 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import AuthForm from "../auth/AuthForm";
 import { set } from "date-fns";
+import { FiMoon, FiSun } from "react-icons/fi";
 
-const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal }) => {
+const Navigation = ({
+  darkMode,
+  toggleDarkMode,
+  setShowAuthModal,
+  showAuthModal,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false); 
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem("user");
   const userName = localStorage.getItem("userName");
 
   const navItems = [
-    { label: "Dashboard", path: "" },
-    { label: "Search Events", path: "search" },
-    { label: "My Events", path: "myEvents" },
-    { label: "My Queue", path: "myQueue" },
+    { label: "Dashboard", path: "", icon: <Home size={18} /> },
+    { label: "Search Events", path: "search", icon: <Search size={18} /> },
+    { label: "My Events", path: "myEvents", icon: <Calendar size={18} /> },
+    { label: "My Queue", path: "myQueue", icon: <Clock size={18} /> },
   ];
 
   // Handle scroll effect for navbar
@@ -69,24 +84,33 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
   const currentPath = window.location.pathname.split("/")[1] || "dashboard";
 
   const handleAuthAction = () => {
-
-    if ( isAuthenticated !== null && isAuthenticated !== "" && userName !== "Anonymous") {
-      const confirmLogout = window.confirm("Are you sure you want to log out? Why would you wanna do that though?!🥲")
-      if (confirmLogout){
-        LogOut().then((response) => {
-          if (response.data.status) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("userName");
-            localStorage.removeItem("userId");
-            localStorage.removeItem("refreshToken");
-            showToast.success(response.data.message);
-            navigate("/", { replace: true });
-          } else {
-            showToast.error(response.data.message);
-          }
-        }).catch((error) => { console.error("Error logging out:", error); });
-      } 
-    }else{
+    if (
+      isAuthenticated !== null &&
+      isAuthenticated !== "" &&
+      userName !== "Anonymous"
+    ) {
+      const confirmLogout = window.confirm(
+        "Are you sure you want to log out? Why would you wanna do that though?!🥲"
+      );
+      if (confirmLogout) {
+        LogOut()
+          .then((response) => {
+            if (response.data.status) {
+              localStorage.removeItem("user");
+              localStorage.removeItem("userName");
+              localStorage.removeItem("userId");
+              localStorage.removeItem("refreshToken");
+              showToast.success(response.data.message);
+              navigate("/", { replace: true });
+            } else {
+              showToast.error(response.data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error logging out:", error);
+          });
+      }
+    } else {
       setShowAuthModal("login");
     }
     //setShowAuthModal(action); // Show login or sign-up modal
@@ -139,14 +163,17 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                       isActive
                         ? darkMode
-                          ? "bg-sage-700 text-white"
-                          : "bg-sage-600 text-white"
+                          ? "bg-sage-700 text-white ring-2 ring-sage-500"
+                          : "bg-sage-600 text-white ring-2 ring-black"
                         : darkMode
-                        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+                        ? "text-white-300 hover:bg-gray-800 hover:text-white"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
+                    aria-current={isActive ? "page" : undefined}
                   >
-                    {item.label}
+                    <span className="flex items-center gap-1">
+                      {item.icon} {item.label}
+                    </span>
                   </button>
                 );
               })}
@@ -167,41 +194,9 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
                 }
               >
                 {darkMode ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                  </svg>
+                 <FiSun className="w-5 h-5"/>
                 ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                  </svg>
+                  <FiMoon className="w-5 h-5"/>
                 )}
               </button>
 
@@ -263,7 +258,9 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
-                      {item.label}
+                      <span className="flex items-center gap-1">
+                        {item.icon} {item.label}
+                      </span>
                     </button>
                   );
                 })}
@@ -284,9 +281,8 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
             }
           }}
         >
-          
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md relative">
-            <AuthForm setShowAuthModal={setShowAuthModal}/>
+            <AuthForm setShowAuthModal={setShowAuthModal} />
           </div>
         </div>
       )}

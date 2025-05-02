@@ -1,4 +1,4 @@
-import StatItem from "./StatItem";
+
 import { format } from "date-fns";
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
@@ -11,7 +11,6 @@ import {
   FiUsers,
   FiUserCheck,
   FiClock,
-
   FiCheckCircle,
   FiUserPlus,
   FiMapPin,
@@ -84,6 +83,7 @@ const EventCard = ({
   };
 
   const status = getStatusIndicator();
+
   return (
     <div className="group relative overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-sage-200">
       {/* Status bar - changes based on event status */}
@@ -150,11 +150,11 @@ const EventCard = ({
           )}
           {event.allowAnonymousJoining ? (
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-              ANONYMOUS JOINING
+              ANONYMOUS
             </span>
           ) : (
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-              USERS ONLY
+              USERS
             </span>
           )}
         </div>
@@ -164,7 +164,7 @@ const EventCard = ({
           {event.description || "No description available for this event."}
         </p>
 
-        {/* Time info in an elegant format */}
+        {/* Time info */}
         <div className="flex mb-4  rounded-lg divide-x divide-gray-200">
           <div className="flex-1 p-3">
             <p className="text-xs text-gray-500 mb-1">Starts</p>
@@ -183,7 +183,7 @@ const EventCard = ({
           </div>
         </div>
 
-        {/* Stats grid - redesigned for better mobile display */}
+        {/* Stats grid */}
         <div className="grid grid-cols-3 gap-2 mb-4 ">
           <div
             className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}
@@ -273,7 +273,7 @@ const EventCard = ({
         </button>
       </div>
 
-      {/* QR Code Modal with improved UX */}
+      {/* QR Code Modal */}
       {showQRCode && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"

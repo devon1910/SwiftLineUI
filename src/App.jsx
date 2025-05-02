@@ -3,9 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AuthForm from "./components/auth/AuthForm";
 import LandingPage from "./components/user/LandingPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./components/layout/ProtectedRoute";
-
-import { ToastContainer } from "react-toastify";
 import Footer from "./components/layout/Footer";
 import VerifyToken from "./components/auth/VerifyToken";
 import { LoadingProvider } from "./components/common/LoadingContextProvider";
@@ -20,6 +17,7 @@ import CustomToast from "./components/common/CustomToast";
 import { ThemeProvider } from "./services/context/ThemeProvider";
 import FeedbackForm from "./components/user/FeedbackForm";
 import { FeedbackProvider } from "./services/context/FeedbackProvider";
+import { Header } from "./components/layout/Header";
 
 function App() {
   return (
@@ -27,7 +25,7 @@ function App() {
       <BrowserRouter>
         <ThemeProvider>
           <LoadingProvider>
-            <FeedbackProvider>
+            <FeedbackProvider>        
               <Routes>
                 <Route path="/*" element={<LandingPage />}>
                   <Route index element={<Dashboard />} />

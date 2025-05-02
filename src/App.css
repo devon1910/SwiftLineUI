@@ -8,14 +8,14 @@ button {
   padding: 12px 18px;
   border: none;
   border-radius: 6px;
-  background-color: #698474; /* Sage Green */
+  background-color: #698474; 
   color: white;
   font-weight: 500;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
 button:hover {
-  background-color: #556c60; /* Slightly darker Sage Green */
+  background-color: #556c60; 
   transform: scale(1.05);
 }
 button.secondary {
