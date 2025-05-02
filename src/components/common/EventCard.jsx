@@ -284,7 +284,7 @@ const EventCard = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-black">
                 {event.title}
               </h3>
               <button
