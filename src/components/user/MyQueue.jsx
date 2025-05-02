@@ -12,7 +12,7 @@ import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
-import { LocateIcon, MapPin } from "lucide-react";
+import { FastForward, LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import sound from "../../sounds/tv-talk-show-intro.mp3";
@@ -249,7 +249,7 @@ export const MyQueue = () => {
               width={windowDimension.width}
               height={windowDimension.height}
               recycle={false}
-              numberOfPieces={1000}
+              numberOfPieces={1200}
               gravity={0.2}
             />
           )}
@@ -311,7 +311,7 @@ export const MyQueue = () => {
               ) : (
                 <div className="bg-sage-500 p-4 rounded-lg flex items-center gap-3">
                   <span className="text-2xl">🎉</span>
-                  <p>You're next in line! Thanks for using SwiftLine ⚡</p>
+                  <p>You're next in line! Thanks for using SwiftLine <FastForward className="fast-forward-icon"/></p>
                 </div>
               )}
             </div>
