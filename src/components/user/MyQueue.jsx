@@ -150,17 +150,14 @@ export const MyQueue = () => {
     prevPositionRef.current = myQueue.position;
   }, [myQueue.position]);
 
-  function getCurrentPosition() {
-    setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
-
-    const userToken =
+  const userToken =
     localStorage.getItem("user") === "undefined"
       ? null
       : localStorage.getItem("user");
+  function getCurrentPosition() {
+    setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
 
     if (!userToken) {
-      showToast.error("Please Join a queue or log in to view your queue.");
-      setShowAuthModal("login");
       return;
     }
     GetUserLineInfo()
@@ -215,7 +212,7 @@ export const MyQueue = () => {
       }`}
     >
       {isReconnecting && <GlobalSpinner />}
-      {myQueue.position === -1 && (
+      {myQueue.position === -1 || !userToken && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>
         </div>

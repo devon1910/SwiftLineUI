@@ -6,6 +6,7 @@ import { showToast } from "../../services/utils/ToastHelper";
 import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import AuthForm from "../auth/AuthForm";
+import { set } from "date-fns";
 
 const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,8 +68,28 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
 
   const currentPath = window.location.pathname.split("/")[1] || "dashboard";
 
-  const handleAuthAction = (action) => {
-    setShowAuthModal(action); // Show login or sign-up modal
+  const handleAuthAction = () => {
+
+    if ( isAuthenticated !== null && isAuthenticated !== "" && userName !== "Anonymous") {
+      const confirmLogout = window.confirm("Are you sure you want to log out? Why would you wanna do that though?!🥲")
+      if (confirmLogout){
+        LogOut().then((response) => {
+          if (response.data.status) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("refreshToken");
+            showToast.success(response.data.message);
+            navigate("/", { replace: true });
+          } else {
+            showToast.error(response.data.message);
+          }
+        }).catch((error) => { console.error("Error logging out:", error); });
+      } 
+    }else{
+      setShowAuthModal("login");
+    }
+    //setShowAuthModal(action); // Show login or sign-up modal
   };
 
   return (
@@ -187,7 +208,7 @@ const Navigation = ({ darkMode, toggleDarkMode, setShowAuthModal, showAuthModal 
               {/* Profile Menu */}
               <div className="relative">
                 <button
-                  onClick={() => handleAuthAction("login")}
+                  onClick={() => handleAuthAction()}
                   className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
                     darkMode
                       ? "text-gray-200 hover:bg-gray-800"
