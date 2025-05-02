@@ -4,14 +4,8 @@ import { createEvent } from "../../services/api/swiftlineService";
 import { updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  FiClock,
-  FiPlus,
-  FiCheck,
-  FiUsers,
-
-} from "react-icons/fi";
-import { LoaderCircle } from "lucide-react";
+import { FiClock, FiPlus, FiCheck, FiUsers, FiUnlock, FiInfo, FiLock } from "react-icons/fi";
+import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 
 const EventForm = () => {
   const location = useLocation();
@@ -33,9 +27,14 @@ const EventForm = () => {
     editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
   );
 
-  const [staffCount, setStaffCount] = useState(editingEvent ? editingEvent.staffCount : 1);
-  const [capacity, setCapacity] = useState(editingEvent ? editingEvent.capacity : 50);
-
+  const [staffCount, setStaffCount] = useState(
+    editingEvent ? editingEvent.staffCount : 1
+  );
+  const [capacity, setCapacity] = useState(
+    editingEvent ? editingEvent.capacity : 50
+  );
+  const [allowAnonymous, setAllowAnonymous] = useState(
+    editingEvent ? editingEvent.allowAnonymousJoining : false);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -50,6 +49,7 @@ const EventForm = () => {
         averageTime,
         staffCount,
         capacity,
+        allowAnonymousJoining: allowAnonymous,
       };
 
       if (editingEvent) {
@@ -130,7 +130,6 @@ const EventForm = () => {
           </>
         )}
       </h3>
-
       {/* Title Input */}
       <div className="mb-6 relative">
         <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
@@ -150,7 +149,6 @@ const EventForm = () => {
           />
         </div>
       </div>
-
       {/* Description Input */}
       <div className="mb-6 relative">
         <label
@@ -172,7 +170,6 @@ const EventForm = () => {
           />
         </div>
       </div>
-
       {/* Input Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Average Wait Time */}
@@ -247,7 +244,6 @@ const EventForm = () => {
           </div>
         </div>
       </div>
-
       {/* Time Selection Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {/* Start Time */}
@@ -300,7 +296,56 @@ const EventForm = () => {
           </div>
         </div>
       </div>
+      {/* Allow Anonymous Joining */}
 
+      <div className="mb-6">
+        <div className="flex items-center justify-between p-4 rounded-lg transition-all duration-300 ">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setAllowAnonymous(!allowAnonymous)}
+                className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                  allowAnonymous ? "bg-emerald-600" : "bg-gray-300"
+                }`}
+              >
+                <div
+                  className={` w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
+                    allowAnonymous ? "translate-x-6" : "translate-x-0"
+                  }`}
+                >
+                  {allowAnonymous ? (
+                    <LockKeyholeOpen  className="w-full h-full p-1" />
+                  ) : (
+                    <FiLock className="w-full h-full p-1" />
+                  )}
+                </div>
+              </button>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">
+                Allow Anonymous Joining
+              </span>
+              <span className="text-xs">
+                {allowAnonymous
+                  ? "Guests can join without an account"
+                  : "Requires account to join"}
+              </span>
+            </div>
+          </div>
+          <div
+            className="relative group"
+            data-tip="Anonymous joining allows participants to enter the event without creating an account using a temporary guest access"
+          >
+            <FiInfo className="w-5 h-5 text-gray-400 hover:text-emerald-600 cursor-pointer transition-colors" />
+            <div className="absolute hidden group-hover:block w-48 p-2 text-sm bg-gray-800 text-white rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2">
+              Allows participants to join using temporary guest access without
+              requiring account creation
+              <div className="absolute w-3 h-3 bg-gray-800 rotate-45 -bottom-1 left-1/2 -translate-x-1/2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Submit Button */}
       <button
         type="submit"

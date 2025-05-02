@@ -2,7 +2,6 @@ import API from "./APIService";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-console.log("API URL:", API);    
 // Auth
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
 export const refreshToken = (refreshTokenRequest) => API.post(`${apiUrl}Auth/RefreshToken`,refreshTokenRequest);

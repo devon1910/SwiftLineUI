@@ -144,8 +144,8 @@ export const MyQueue = () => {
       playSound();
       const intervalId = setInterval(playSound, 2000); // Play every 3 seconds
       setTimeout(() => {
-        clearInterval(intervalId); // Stop after 40 seconds
-      }, 40000);
+        clearInterval(intervalId); // Stop after 30 seconds
+      }, 30000);
     }
     prevPositionRef.current = myQueue.position;
   }, [myQueue.position]);

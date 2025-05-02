@@ -2,7 +2,7 @@ import StatItem from "./StatItem";
 import { format } from "date-fns";
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { ArrowRight, Pause, QrCode } from "lucide-react";
+import { ArrowRight, LockKeyholeOpen, Pause, QrCode } from "lucide-react";
 import {
   FiShare2,
   FiX,
@@ -16,16 +16,23 @@ import {
   FiCheckCircle,
   FiUserPlus,
   FiMapPin,
+  FiLock,
 } from "react-icons/fi";
 import { useTheme } from "../../services/utils/useTheme";
 
-const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) => {
+const EventCard = ({
+  event,
+  isUserInQueue,
+  lastEventJoined,
+  onShare,
+  onJoin,
+}) => {
   const [showQRCode, setShowQRCode] = useState(false);
-  const { darkMode, getThemeClass } = useTheme();
-  
+  const { getThemeClass } = useTheme();
+
   // Use getThemeClass helper for styling based on theme
-  const MetricsContainerTheme = getThemeClass('bg-gray-800', 'bg-gray-100');
-  
+  const MetricsContainerTheme = getThemeClass("bg-gray-800", "bg-gray-100");
+
   const handleDownloadQR = () => {
     const canvas = document.getElementById(`qr-code-${event.id}`);
     if (canvas) {
@@ -63,7 +70,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         label: "PAUSED",
         bgColor: "bg-amber-100",
         textColor: "text-amber-700",
-        animate: "animate-pulse"
+        animate: "animate-pulse",
       };
     } else if (event.hasStarted) {
       return {
@@ -71,7 +78,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         label: "LIVE",
         bgColor: "bg-green-100",
         textColor: "text-green-700",
-        animate: "animate-pulse"
+        animate: "animate-pulse",
       };
     }
     return null;
@@ -83,7 +90,11 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
       {/* Status bar - changes based on event status */}
       <div
         className={`h-1.5 w-full ${
-          event.hasStarted ? "bg-sage-500" : !event.isActive ? "bg-amber-400" : "bg-gray-200"
+          event.hasStarted
+            ? "bg-sage-500"
+            : !event.isActive
+            ? "bg-amber-400"
+            : "bg-gray-200"
         }`}
       ></div>
 
@@ -91,9 +102,10 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         {/* Header area with event title and action buttons */}
         <div className="flex justify-between items-start mb-3">
           <div className="flex-1 pr-2">
-            <h3 className="text-lg font-bold text-gray-900 word-wrap">{event.title}</h3>
+            <h3 className="text-lg font-bold text-gray-900 word-wrap">
+              {event.title}
+            </h3>
           </div>
-          
 
           <div className="flex gap-1.5">
             <button
@@ -124,7 +136,9 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
         {/* Status badges row */}
         <div className="flex flex-wrap gap-2 mb-3 min-h-6">
           {status && (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor} ${status.animate}`}>
+            <span
+              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor} ${status.animate}`}
+            >
               {status.icon}
               {status.label}
             </span>
@@ -133,6 +147,15 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
               <FiCheckCircle className="w-3 h-3 mr-1" />
               IN QUEUE
+            </span>
+          )}
+          {event.allowAnonymousJoining ? (
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+              ANONYMOUS JOINING
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+              USERS ONLY
             </span>
           )}
         </div>
@@ -151,7 +174,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
               <span className="text-sm font-medium">{startTime}</span>
             </div>
           </div>
-          
+
           <div className="flex-1 p-3">
             <p className="text-xs text-gray-500 mb-1">Ends</p>
             <div className="flex items-center">
@@ -163,28 +186,40 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
 
         {/* Stats grid - redesigned for better mobile display */}
         <div className="grid grid-cols-3 gap-2 mb-4 ">
-          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
+          <div
+            className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}
+          >
             <div className="flex items-center justify-center mb-1">
               <FiClock className="w-3.5 h-3.5 text-gray-500" />
             </div>
             <p className="text-xs text-gray-500 text-center">Avg Wait</p>
-            <p className="text-sm font-semibold text-center">{event.averageTime} mins</p>
+            <p className="text-sm font-semibold text-center">
+              {event.averageTime} mins
+            </p>
           </div>
 
-          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
+          <div
+            className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}
+          >
             <div className="flex items-center justify-center mb-1">
               <FiUsers className="w-3.5 h-3.5 text-gray-500" />
             </div>
             <p className="text-xs text-gray-500 text-center">In Queue</p>
-            <p className="text-sm font-semibold text-center ">{event.usersInQueue}</p>
+            <p className="text-sm font-semibold text-center ">
+              {event.usersInQueue}
+            </p>
           </div>
 
-          <div className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}>
+          <div
+            className={`rounded-lg p-2.5 flex flex-col items-center ${MetricsContainerTheme}`}
+          >
             <div className="flex items-center justify-center mb-1">
               <FiUserCheck className="w-3.5 h-3.5 text-gray-500" />
             </div>
             <p className="text-xs text-gray-500 text-center">Staff Serving</p>
-            <p className="text-sm font-semibold text-center">{event.staffCount}</p>
+            <p className="text-sm font-semibold text-center">
+              {event.staffCount}
+            </p>
           </div>
         </div>
 
@@ -241,17 +276,17 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
 
       {/* QR Code Modal with improved UX */}
       {showQRCode && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
           onClick={() => setShowQRCode(false)}
         >
-          <div 
+          <div
             className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl animate-fadeIn"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-lg font-semibold text-gray-900">
-              {event.title}
+                {event.title}
               </h3>
               <button
                 onClick={() => setShowQRCode(false)}
@@ -280,8 +315,7 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
                   }}
                 />
               </div>
-              
-              
+
               <p className="text-xs text-gray-600 mb-5 text-center">
                 Scan to join this queue
               </p>

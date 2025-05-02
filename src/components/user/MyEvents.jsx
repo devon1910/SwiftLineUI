@@ -87,15 +87,14 @@ const MyEvents = () => {
         </div>
 
         {/* Events Grid */}
-        {userEvents.length === 0 ? (
+        {userEvents.length === 0 && (
           <div className="text-center py-12">
             <p className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
               No events created yet. Start by creating your first event!
             </p>
-          </div>
-
+          </div>)}
          
-        ) : (
+        {userEvents.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
               <div
@@ -167,6 +166,7 @@ const MyEvents = () => {
             ))}
           </div>
         )}
+
       </div>
       {showQRCode && selectedEvent && (
         <EventQRCode 
