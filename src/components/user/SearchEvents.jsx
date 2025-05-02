@@ -19,6 +19,7 @@ import { showToast } from "../../services/utils/ToastHelper.jsx";
 
 export const SearchEvents = () => {
   let  userId  = localStorage.getItem("userId");
+  const { userName, setShowAuthModal } = useOutletContext();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isUserInQueue, setIsUserInQueue] = useState(true);
@@ -126,7 +127,7 @@ export const SearchEvents = () => {
       }else{
         showToast.error("Please login or sign up to join a queue");
         localStorage.setItem("from", location.href);
-        navigate("/auth", { state: { from: location.href } });
+        setShowAuthModal("login");
         return;
       }
       
