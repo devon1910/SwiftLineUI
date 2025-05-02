@@ -203,7 +203,7 @@ export const MyQueue = () => {
       setIsReconnecting(false);
     }
   };
-
+    
   return (
     <div
       className={`max-w-2xl mx-auto p-4 font-sans ${
@@ -211,7 +211,7 @@ export const MyQueue = () => {
       }`}
     >
       {isReconnecting && <GlobalSpinner />}
-      {myQueue.position === -1 || !userToken && (
+      {(myQueue.position === -1 || userToken===null) && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>
         </div>

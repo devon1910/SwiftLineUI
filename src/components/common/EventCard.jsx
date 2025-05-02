@@ -11,8 +11,7 @@ import {
   FiUsers,
   FiUserCheck,
   FiClock,
-  FiCalendar,
-  FiArrowRight,
+
   FiCheckCircle,
   FiUserPlus,
   FiMapPin,
