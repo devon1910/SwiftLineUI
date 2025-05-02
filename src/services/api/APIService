@@ -46,7 +46,7 @@ API.interceptors.response.use(
 
     // Handle network errors
     if (error.code === "ERR_NETWORK" || error.message.includes("ERR_CONNECTION_REFUSED")) {
-      showToast.error("Cannot reach the server. Check your internet.");
+      showToast.error("Cannot reach the server at the moment. Please try again later.");
       return Promise.reject(error);
     }
 

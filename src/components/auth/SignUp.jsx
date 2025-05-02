@@ -24,13 +24,6 @@ const SignUp = ({ setShowAuthModal }) => {
   const from = location.state?.from || localStorage.getItem("from") || null;
   const navigate = useNavigate();
   const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
-  const handleGoogleSignIn = async () => {
-    // if (!isTurnstileVerified) {
-    //    alert(BotCheck_Error_Message);
-    //    return;
-    //  }
-    window.location.href = apiUrl + "Auth/LoginWithGoogle";
-  };
 
   function validatePassword(password) {
     const minLength = 6;

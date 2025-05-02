@@ -49,9 +49,9 @@ const AuthForm = ({setShowAuthModal}) => {
             </div>
             <div className="auth-content">
               {activeTab === "login" ? (
-                <Login onResetPassword={handleResetPassword} />
+                <Login onResetPassword={handleResetPassword} setShowAuthModal={setShowAuthModal} />
               ) : (
-                <SignUp />
+                <SignUp setShowAuthModal={setShowAuthModal}/>
               )}
             </div>
           </>
