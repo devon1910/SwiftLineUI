@@ -1,7 +1,9 @@
 import { useState } from "react";
+import FormInput from "./FormInput";
 
 const PasswordReset = ({ onBackToLogin }) => {
   const [emailSent, setEmailSent] = useState(false);
+  const [email, setEmail] = useState("");
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,18 +19,14 @@ const PasswordReset = ({ onBackToLogin }) => {
             Enter your email address and we'll send you a link to reset your password.
           </p>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="reset-email"
-                name="email"
-                type="email"
-                required
-                className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-              />
-            </div>
+            <FormInput
+              id="reset-email"
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+            />
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
@@ -63,4 +61,4 @@ const PasswordReset = ({ onBackToLogin }) => {
   );
 };
 
-export default PasswordReset
+export default PasswordReset;

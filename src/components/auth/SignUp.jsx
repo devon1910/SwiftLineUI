@@ -1,18 +1,11 @@
 import React, { useState } from "react";
-
-import { CheckCircle, Eye, EyeSlashFill } from "react-bootstrap-icons";
-
-import { toast } from "react-toastify";
-import LoadingSpinner from "../common/LoadingSpinner";
-import { motion } from "framer-motion";
+import { CheckCircle } from "react-bootstrap-icons";
 import { SignUpUser } from "../../services/api/swiftlineService";
-import TurnstileWidget from "../common/TurnstileWidget";
-import { Bot } from "lucide-react";
-import { BotCheck_Error_Message } from "../../services/utils/constants";
 import { showToast } from "../../services/utils/ToastHelper";
 import { useNavigate } from "react-router-dom";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import FormInput from "./FormInput";
+import PasswordRequirements from "./PasswordRequirements";
+import { validatePassword, saveAuthTokens, handleAuthSuccess } from "../../services/utils/authUtils";
 
 const SignUp = ({ setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -21,20 +14,13 @@ const SignUp = ({ setShowAuthModal }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const from = location.state?.from || localStorage.getItem("from") || null;
   const navigate = useNavigate();
-  const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
+  const from = location.state?.from || localStorage.getItem("from") || null;
 
-  function validatePassword(password) {
-    const minLength = 6;
-    const hasNonAlphanumeric = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const hasDigit = /[0-9]/.test(password);
-    return password.length >= minLength && hasNonAlphanumeric && hasDigit;
-  }
-
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     if (!validatePassword(password)) {
       showToast.error(
         "Password must be at least 6 characters long and contain at least one non-alphanumeric character and one digit."
@@ -42,62 +28,27 @@ const SignUp = ({ setShowAuthModal }) => {
       setIsLoading(false);
       return;
     }
-    // if (!isTurnstileVerified) {
-    //   alert(BotCheck_Error_Message);
-    //   setIsLoading(false)
-    //   return;
-    // }
 
-    const signUpRequest = { email, password, fullName };
-    SignUpUser(signUpRequest)
-      .then((response) => {
-        if (!response.data.data.status) {
-          showToast.error(response.data.data.message);
-          setIsLoading(false);
-        } else {
-          //setIsFormSubmitted(true); to show instruction message for verification
-          const valueToken = JSON.stringify(response.data.data.accessToken);
-          const refreshToken = JSON.stringify(response.data.data.refreshToken);
-          localStorage.setItem("user", valueToken);
-          localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("userName", response.data.data.userName);
-          localStorage.setItem(
-            "userId",
-            JSON.stringify(response.data.data.userId)
-          );
-          if (from) {
-            window.location.href = from;
-          } else {
-            navigate("/", {
-              state: {
-                email: response.data.data.email,
-                isInLine: response.data.data.isInLine,
-                userId: response.data.data.userId,
-                userName: response.data.data.userName,
-              },
-              replace: true,
-            });
-          }
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.response.data.data.message);
-        console.log("err: ", error);
-      });
-    setIsLoading(false);
-    setShowAuthModal(null);
-  }
+    try {
+      const signUpRequest = { email, password, fullName };
+      const response = await SignUpUser(signUpRequest);
+      
+      if (!response.data.data.status) {
+        showToast.error(response.data.data.message);
+      } else {
+        saveAuthTokens(response);
+        handleAuthSuccess(response, navigate, from);
+        setShowAuthModal(null);
+      }
+    } catch (error) {
+      showToast.error(error.response?.data?.data?.message || "Sign up failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
-      {/* {isLoading && (
-        <motion.div
-          // ... existing motion props
-          className="fixed inset-0 bg-white/70 flex items-center justify-center z-50"
-        >
-          <LoadingSpinner message="Creating your account..." />
-        </motion.div>
-      )} */}
       {isFormSubmitted ? (
         <div className="bg-sage-100 p-4 rounded-lg border border-sage-200 flex items-center gap-3">
           <CheckCircle className="flex-shrink-0 text-black" />
@@ -113,117 +64,44 @@ const SignUp = ({ setShowAuthModal }) => {
       ) : (
         <div className="space-y-3">
           <form className="space-y-2" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
-              </label>
-              <input
-                id="fname"
-                name="fname"
-                type="name"
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                autoComplete="fname"
-                className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="username"
-                className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-              />
-              <div className="grid grid-cols-3 gap-2 text-sm">
-                <div
-                  className={`flex items-center ${
-                    password.length >= 6 ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  <CheckCircle
-                    className={`w-4 h-4 mr-1 ${
-                      password.length >= 6 ? "visible" : "invisible"
-                    }`}
-                  />
-                  <span>6+ characters</span>
-                </div>
-                <div
-                  className={`flex items-center  ${
-                    /[!@#$%^&*(),.?":{}|<>]/.test(password)
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  <CheckCircle
-                    className={`w-4 h-4 mr-1 ${
-                      /[!@#$%^&*(),.?":{}|<>]/.test(password)
-                        ? "visible"
-                        : "invisible"
-                    }`}
-                  />
-                  <span>Special char (e.g $)</span>
-                </div>
-                <div
-                  className={`flex items-center ${
-                    /[0-9]/.test(password) ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  <CheckCircle
-                    className={`w-4 h-4 mr-1 ${
-                      /[0-9]/.test(password) ? "visible" : "invisible"
-                    }`}
-                  />
-                  <span>Number</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <Eye /> : <EyeSlashFill />}
-                </button>
-              </div>
-            </div>
-            {/* <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/> */}
+            <FormInput
+              id="fname"
+              label="Full Name"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              autoComplete="name"
+            />
+
+            <FormInput
+              id="email"
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+            />
+
+            <FormInput
+              id="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              showPasswordToggle
+              showPassword={showPassword}
+              onTogglePassword={() => setShowPassword(!showPassword)}
+            />
+
+            <PasswordRequirements password={password} />
+
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
               disabled={isLoading}
-              onClick={handleSubmit}
             >
-              Create account
+              {isLoading ? "Creating account..." : "Create account"}
             </button>
           </form>
         </div>
