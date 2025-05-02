@@ -1,79 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { loginUser, VerifyTurnstileToken } from "../../services/api/swiftlineService";
+import React, { useState } from "react";
+import { loginUser } from "../../services/api/swiftlineService";
 import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { showToast } from "../../services/utils/ToastHelper";
-import TurnstileWidget from "../common/TurnstileWidget";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
+import { handleAuthSuccess, saveAuthTokens } from "../../services/utils/authUtils";
 
-
-const Login = ({ onResetPassword,setShowAuthModal }) => {
+const Login = ({ onResetPassword, setShowAuthModal }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigator = useNavigate();
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
-  const [isTurnstileVerified, setIsTurnstileVerified] = useState(false); 
 
-  const  handleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // if (!turnstileToken) {
-    //   alert("Please complete the Turnstile check.");
-    //   return;
-    // }
-    // VerifyTurnstileToken({turnstileToken})
-    //   .then((response) => {
-    //     if (!response.data.data.success) {
-    //       showToast.error("Turnstile verification failed. Please try again.");
-    //     } 
-    //   })
-    //   .catch((error) => {
-    //     showToast.error(error.response.data.data.message);
-    //   });
-
-    //if(!isTurnstileVerified){ alert(BotCheck_Error_Message); return;}
-
-    await loginUser({ email, password })
-      .then((response) => {
-        const valueToken = JSON.stringify(response.data.data.accessToken);
-        const refreshToken = JSON.stringify(response.data.data.refreshToken);
-        localStorage.setItem("user", valueToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("userName", response.data.data.userName);
-        localStorage.setItem(
-          "userId",
-          JSON.stringify(response.data.data.userId)
-        );
-
-        if (from) {
-          window.location.href = from;
-        } else {
-          navigator("/", {
-            state: {
-              email: response.data.data.email,
-              isInLine: response.data.data.isInLine,
-              userId: response.data.data.userId,
-              userName: response.data.data.userName,
-            },
-            replace: true,
-          });
-        }
-      })
-      .catch((error) => {
-        showToast.error(error.response.data.data.message);
-      });
+    try {
+      const response = await loginUser({ email, password });
+      const { userName, userId, email: userEmail, isInLine } = response.data.data;
+      saveAuthTokens(response);
+      handleAuthSuccess(response, navigator, from);
+      
+      if (from) {
+        window.location.href = from;
+      } else {
+        navigator("/", {
+          state: { email: userEmail, isInLine, userId, userName },
+          replace: true,
+        });
+      }
       setShowAuthModal(null);
+    } catch (error) {
+      showToast.error(error.response.data.data.message);
+    }
   };
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const handleGoogleSignIn = async () => {
-    // if (!isTurnstileVerified) {
-    //   alert(BotCheck_Error_Message);
-    //   return;
-    // }
-    window.location.href = apiUrl + "Auth/LoginWithGoogle";
+
+  const handleGoogleSignIn = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    window.location.href = `${apiUrl}Auth/LoginWithGoogle`;
   };
 
   return (
@@ -81,7 +47,7 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
       <div className="mt-6">
         <button
           type="button"
-          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700  hover:bg-gray-50"
+          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
           onClick={handleGoogleSignIn}
         >
           <svg
@@ -97,29 +63,25 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
           Sign in with Google
         </button>
       </div>
-      <div className>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
-              Or continue with email and password
-            </span>
-          </div>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">
+            Or continue with email and password
+          </span>
         </div>
       </div>
       <form className="space-y-2" onSubmit={handleLogin}>
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email address
           </label>
           <input
             id="email"
             type="email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
@@ -127,39 +89,23 @@ const Login = ({ onResetPassword,setShowAuthModal }) => {
           />
         </div>
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
           <input
             id="password"
             type={showPassword ? "text" : "password"}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
             className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
           />
         </div>
-       
-       {/* <TurnstileWidget setIsTurnstileVerified={setIsTurnstileVerified}/> */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <Eye /> : <EyeSlashFill />}
-            </button>
-          </div>
-          {/* <button
-            type="button"
-            onClick={onResetPassword}
-            className="text-sm font-medium text-sage-600 hover:text-sage-700"
-          >
-            Forgot password?
-          </button> */}
+          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <Eye /> : <EyeSlashFill />}
+          </button>
         </div>
         <button
           type="submit"
