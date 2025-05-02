@@ -199,7 +199,6 @@ export const MyQueue = () => {
       navigate("/search");
     } catch (err) {
       console.error("Leave Queue error:", err);
-      showToast.error("Unable to leave queue. Please try again later.");
     } finally {
       setIsReconnecting(false);
     }

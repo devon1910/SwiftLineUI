@@ -70,9 +70,6 @@ const EventForm = () => {
           })
           .catch((error) => {
             console.log(error);
-            toast.error(
-              "There was an error in creating event. Please try again later."
-            );
           });
       }
     }

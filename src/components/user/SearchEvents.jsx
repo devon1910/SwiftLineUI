@@ -47,7 +47,6 @@ export const SearchEvents = () => {
         setSelectedEventId(searchParams.get("eventId"));
       });
     } catch (error) {
-      showToast.error("Failed to load events");
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -122,7 +121,6 @@ export const SearchEvents = () => {
           userId = localStorage.getItem("userId");
           setIsCreatingAccount(false); // Hide loading indicator
         }).catch((error) => {
-          showToast.error(error.response.data.data.message);
           setIsCreatingAccount(false); // Hide loading indicator
         });
       }else{
@@ -163,10 +161,6 @@ export const SearchEvents = () => {
           navigate("/myQueue");
         } catch (error) {
           console.log(error);
-          showToast.error(
-            "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:" +
-              error
-          );
         } finally {
           setIsReconnecting(false); // Hide loading indicator
         }
@@ -192,10 +186,6 @@ export const SearchEvents = () => {
         navigate("/myQueue");
       } catch (error) {
         console.log(error);
-        showToast.error(
-          "Error joining queue, kindly refresh this page. If this error persists, please try again later. Error:" +
-            error
-        );
       } finally {
         setIsReconnecting(false); // Hide loading indicator
       }
@@ -221,7 +211,6 @@ export const SearchEvents = () => {
           showToast.success("Link copied!");
         } catch (err) {
           console.log(err);
-          showToast.error("Failed to copy link");
         }
         document.body.removeChild(textArea);
       });

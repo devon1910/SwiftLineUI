@@ -15,6 +15,7 @@ import {
   FiArrowRight,
   FiCheckCircle,
   FiUserPlus,
+  FiMapPin,
 } from "react-icons/fi";
 import { useTheme } from "../../services/utils/useTheme";
 
@@ -219,7 +220,12 @@ const EventCard = ({ event, isUserInQueue, lastEventJoined, onShare, onJoin }) =
               <FiClock className="w-4 h-4" />
               Event Not Started
             </>
-          ) : isUserInQueue ? (
+          ) : isUserInQueue && lastEventJoined ? (
+            <>
+              <FiMapPin className="w-4 h-4" />
+              Already in this Queue
+            </>
+          ) : isUserInQueue && !lastEventJoined ? (
             <>
               <FiCheckCircle className="w-4 h-4" />
               Already in Another Queue
