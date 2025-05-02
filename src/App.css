@@ -498,24 +498,11 @@ input[type="range"]::-ms-thumb {
 }
 
 
-select {
-  background-color: transparent; /* Makes the background inherit the parent color */
-  color: inherit; /* Ensures text color matches the parent */
-}
 
-option {
-  background-color: white; /* Set this to your light mode background color */
-  color: black; /* Set this to your light mode text color */
-}
 
-.dark-mode select {
+.dark-mode select, select {
   background-color: transparent;
   color: inherit;
-}
-
-.dark-mode option {
-  background-color: #1A202C; /* Set this to your dark mode background color */
-  color: white; /* Set this to your dark mode text color */
 }
 
 /* Feedback Form Specific Styles */

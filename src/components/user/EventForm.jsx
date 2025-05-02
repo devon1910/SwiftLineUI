@@ -6,10 +6,16 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiClock, FiPlus, FiCheck, FiUsers, FiUnlock, FiInfo, FiLock } from "react-icons/fi";
 import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
+import { useTheme } from "../../services/utils/useTheme";
 
 const EventForm = () => {
   const location = useLocation();
   const navigator = useNavigate();
+
+  const {darkMode} = useTheme();
+
+  const optionsbgColor = darkMode ? "#1f2937" : "#f3f4f6";
+  const optionsTextColor = darkMode ? "#f3f4f6" : "#4b5563";
 
   const editingEvent = location.state?.editingEvent;
 
@@ -257,10 +263,11 @@ const EventForm = () => {
               id="startTime"
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition "
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
             >
               {timeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value} 
+                style={{ background: option.value === eventStartTime ? "#698474" : optionsbgColor, color: option.value === eventStartTime ? "white" : optionsTextColor, padding: "0.5rem" }}>
                   {option.label}
                 </option>
               ))}
@@ -282,10 +289,11 @@ const EventForm = () => {
               id="endTime"
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
             >
               {timeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value}
+                style={{ background: option.value === eventEndTime ? "#698474" : optionsbgColor, color: option.value === eventEndTime ? "white" : optionsTextColor, padding: "0.5rem" }}>
                   {option.label}
                 </option>
               ))}
@@ -297,7 +305,6 @@ const EventForm = () => {
         </div>
       </div>
       {/* Allow Anonymous Joining */}
-
       <div className="mb-6">
         <div className="flex items-center justify-between p-4 rounded-lg transition-all duration-300 ">
           <div className="flex items-center gap-3">
