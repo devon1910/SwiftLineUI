@@ -84,7 +84,7 @@ function LandingPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        
 
         {/* Welcome Message */}
-        <div className="mb-12 text-center md:text-left">
+        <div className="mb-12 mt-8 text-center md:text-left">
           <p className="text-lg md:text-xl">
           <span>
             <span className="waving-hand">👋🏽</span>,{" "}
