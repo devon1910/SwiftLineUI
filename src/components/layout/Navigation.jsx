@@ -87,7 +87,7 @@ const Navigation = ({
     if (
       isAuthenticated !== null &&
       isAuthenticated !== "" &&
-      userName !== "Anonymous"
+      !userName.includes("Anonymous") 
     ) {
       const confirmLogout = window.confirm(
         "Are you sure you want to log out? Why would you wanna do that though?!🥲"
@@ -212,7 +212,7 @@ const Navigation = ({
                 >
                   <CircleUserRound size={20} />
                   <span className="hidden sm:block text-sm font-medium">
-                    {!isAuthenticated || userName === "Anonymous"
+                    {!isAuthenticated || userName.includes("Anonymous")
                       ? "Login"
                       : "Log out"}
                   </span>
