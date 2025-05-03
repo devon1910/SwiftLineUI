@@ -87,7 +87,7 @@ export const MyQueue = () => {
       // if you want to wait on cleanupPromise to unregister, you can:
       cleanupPromise.then(cleanup => cleanup && cleanup());
     };
-  }, [conn, showFeedbackForm, getCurrentPosition, triggerFeedback]);
+  }, [conn, showFeedbackForm]);
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
