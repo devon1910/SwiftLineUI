@@ -67,6 +67,7 @@ const MyEvents = () => {
         setUserEvents(response.data.data);
       })
       .catch((error) => {
+        setShowAuthModal("login")
         console.log(error);
       });
   }

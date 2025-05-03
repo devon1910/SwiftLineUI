@@ -33,7 +33,6 @@ function LandingPage() {
   const handleToggleTheme = () => {
     toggleDarkMode();
   };
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
 
