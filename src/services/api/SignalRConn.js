@@ -1,8 +1,7 @@
-
-import axios from "axios";
 import { useLoading } from "../utils/useLoader";
 import { HubConnectionBuilder, HubConnectionState,  LogLevel } from "@microsoft/signalr";
 import API from "./APIService";
+import { useEffect, useState } from "react";
 
 const apiUrl = import.meta.env.VITE_API_SIGNALR_URL;
 export const connection = new HubConnectionBuilder()
@@ -61,6 +60,18 @@ export const useSignalRWithLoading = () => {
   return { invokeWithLoading };
 };
 
+// new—lift the existing `connection` into React state so you can safely
+// list it in a useEffect dependency array:
+export function useSignalRConnection() {
+  const [conn, setConn] = useState(null);
+
+  useEffect(() => {
+    // on mount, initialize conn to the module‑scope object
+    setConn(connection);
+  }, []);
+
+  return conn;
+}
 
 
 // {

@@ -43,37 +43,51 @@ export const MyQueue = () => {
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
 
   const { triggerFeedback } = useFeedback();
-  const {  setShowAuthModal } = useOutletContext();
+  const conn = useSignalRWithLoading();
 
   useEffect(() => {
-    // Ensure getCurrentPosition is only called once on mount
     getCurrentPosition();
-    // Register SignalR listeners
-    if (connection) {
-      connection.on("ReceivePositionUpdate", (lineInfo) => {
+    if (!conn) return;  // Ensure conn is available before proceeding
+    // Ensure getCurrentPosition is only called once on mount
+  
+    let isMounted = true;
+    const setup = async () => {
+      await ensureConnection();                // now you know conn.start() has run
+      if (!isMounted) return;
+
+      const onPosChange = (lineInfo) => {
         setMyQueue(lineInfo);
         if (lineInfo.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
         }
-      });
-
-      connection.on("ReceiveQueueStatusUpdate", (isQueueActive) => {
+      };
+      const onLineStatusChange = (isQueueActive) => {
         setQueueActivity(isQueueActive);
         if (!isQueueActive) {
           showToast.error("Queue is paused. Please check back later.");
         } else {
           showToast.success("Queue is active. You're back in line!");
         }
-      });
-
-      // Clean up listeners on unmount
-      return () => {
-        connection.off("ReceivePositionUpdate");
-        connection.off("ReceiveQueueStatusUpdate");
       };
-    }
-  }, []); // Ensure this runs only once on mount
+
+      conn.on("ReceivePositionUpdate", onPosChange);
+      conn.on("ReceiveQueueStatusUpdate", onLineStatusChange);
+
+      // cleanup registrations
+      return () => {
+        conn.off("ReceivePositionUpdate", onPosChange);
+        conn.off("ReceiveQueueStatusUpdate", onLineStatusChange);
+      };
+    };
+    
+    const cleanupPromise = setup();
+    return () => {
+      isMounted = false;
+      // if you want to wait on cleanupPromise to unregister, you can:
+      cleanupPromise.then(cleanup => cleanup && cleanup());
+    };
+  }, [conn, showFeedbackForm, getCurrentPosition, triggerFeedback]);
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
