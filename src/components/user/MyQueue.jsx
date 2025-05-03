@@ -4,6 +4,7 @@ import DidYouKnowSlider from "./DidYouKnowSlider.jsx";
 import {
   connection,
   ensureConnection,
+  useSignalRConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/api/swiftlineService";
@@ -43,7 +44,7 @@ export const MyQueue = () => {
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
 
   const { triggerFeedback } = useFeedback();
-  const conn = useSignalRWithLoading();
+  const conn = useSignalRConnection();
 
   useEffect(() => {
     getCurrentPosition();
@@ -87,7 +88,7 @@ export const MyQueue = () => {
       // if you want to wait on cleanupPromise to unregister, you can:
       cleanupPromise.then(cleanup => cleanup && cleanup());
     };
-  });
+  }, [conn, showFeedbackForm]);
 
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
