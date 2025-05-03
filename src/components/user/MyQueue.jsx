@@ -114,7 +114,7 @@ export const MyQueue = () => {
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
-      setTimeout(() => setShowPositionArrow(false), 25000);
+      setTimeout(() => setShowPositionArrow(false), 30000);
     }
   
     prevPositionRef.current = myQueue.position;
@@ -129,7 +129,7 @@ export const MyQueue = () => {
       myQueue.timeTillYourTurn < prevTimeRef.current
     ) {
       setShowWaitTimeArrow(true);
-      setTimeout(() => setShowWaitTimeArrow(false), 25000);
+      setTimeout(() => setShowWaitTimeArrow(false), 30000);
     }
   
     prevTimeRef.current = myQueue.timeTillYourTurn;
@@ -153,7 +153,7 @@ export const MyQueue = () => {
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
-      setTimeout(() => setShowPositionArrow(false), 25000);
+      setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
     // Play sound repeatedly for 15 seconds
