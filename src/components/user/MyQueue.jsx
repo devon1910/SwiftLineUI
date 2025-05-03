@@ -38,6 +38,8 @@ export const MyQueue = () => {
   // useRef to store previous values.
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
+  const isFirstPositionUpdate = useRef(true);
+  const isFirstTimeUpdate = useRef(true);
 
   const { invokeWithLoading } = useSignalRWithLoading();
 
@@ -105,25 +107,31 @@ export const MyQueue = () => {
 
   // Compare position changes for arrow indicators
   useEffect(() => {
-    if (
+    if (isFirstPositionUpdate.current) {
+      isFirstPositionUpdate.current = false; // skip first update
+    } else if (
       prevPositionRef.current !== null &&
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 25000);
     }
+  
     prevPositionRef.current = myQueue.position;
   }, [myQueue.position]);
 
   // Compare time changes for arrow indicators
   useEffect(() => {
-    if (
+    if (isFirstTimeUpdate.current) {
+      isFirstTimeUpdate.current = false; // skip first update
+    } else if (
       prevTimeRef.current !== null &&
       myQueue.timeTillYourTurn < prevTimeRef.current
     ) {
       setShowWaitTimeArrow(true);
       setTimeout(() => setShowWaitTimeArrow(false), 25000);
     }
+  
     prevTimeRef.current = myQueue.timeTillYourTurn;
   }, [myQueue.timeTillYourTurn]);
 
@@ -155,7 +163,6 @@ export const MyQueue = () => {
           console.error("Audio playback failed:", error);
         });
       };
-
       playSound();
       const intervalId = setInterval(playSound, 2000); // Play every 3 seconds
       setTimeout(() => {
