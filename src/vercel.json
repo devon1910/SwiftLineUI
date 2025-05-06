@@ -3,5 +3,29 @@
       { "source": "/VerifyToken", "destination": "/VerifyToken" },
       { "source": "/VerifyToken/", "destination": "/VerifyToken" },
       { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "header": [
+      {
+      "source": "/(.*)",
+      "headers": [
+          {
+          "key": "Referrer-Policy",
+          "value": "no-referrer-when-downgrade"
+          },
+          {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+          },
+          {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+          },
+          {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+          }
+        ]
+      }
     ]
+    
 }
