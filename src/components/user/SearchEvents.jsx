@@ -11,13 +11,14 @@ import {
 } from "react-router-dom";
 import EventCard from "../common/EventCard.jsx";
 import { useDebounce } from "@uidotdev/usehooks";
-import { CreateAnonymousUser, eventsList } from "../../services/api/swiftlineService.js";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
+import {  saveAuthTokensFromSignalR } from "../../services/utils/authUtils.js";
+import { eventsList } from "../../services/api/swiftlineService.js";
 
 export const SearchEvents = () => {
-  let  userId  = localStorage.getItem("userId");
+  let  userId  = localStorage.getItem("userId") || null;
   const { userName, setShowAuthModal } = useOutletContext();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -96,76 +97,35 @@ export const SearchEvents = () => {
 
   // Optimized joinQueue function with loading state
   const joinQueue = async (event) => {
-    const userToken =
-      localStorage.getItem("user") === "undefined"
-        ? null
-        : localStorage.getItem("user");
 
-    // Get token from localStorage
-    const token = userToken ? JSON.parse(userToken) : null;
-
-    if (!userId || !token) {
-      if(event.allowAnonymousJoining){
-        //create User
-        setIsCreatingAccount(true); // Show loading indicator
-        await CreateAnonymousUser().then((response) => {
-          const valueToken = JSON.stringify(response.data.data.accessToken);
-          const refreshToken = JSON.stringify(response.data.data.refreshToken);
-          localStorage.setItem("user", valueToken);
-          localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("userName", response.data.data.userName);
-          localStorage.setItem(
-            "userId",
-            JSON.stringify(response.data.data.userId)
-          );
-          userId = localStorage.getItem("userId");
-          setIsCreatingAccount(false); // Hide loading indicator
-        }).catch(() => {
-          setIsCreatingAccount(false); // Hide loading indicator
-        });
-      }else{
-        showToast.error("Please login or sign up to join a queue");
-        localStorage.setItem("from", location.href);
-        setShowAuthModal("login");
-        return;
-      }
+    // if (!userId || !token) {
+    //   if(event.allowAnonymousJoining){
+    //     //create User
+    //     setIsCreatingAccount(true); // Show loading indicator
+    //     await CreateAnonymousUser().then((response) => {
+    //       saveAuthTokens(response);
+    //       setIsCreatingAccount(false); // Hide loading indicator
+    //     }).catch(() => {
+    //       setIsCreatingAccount(false); // Hide loading indicator
+    //     });
+    //   }else{
+    //     showToast.error("Please login or sign up to join a queue");
+    //     localStorage.setItem("from", location.href);
+    //     setShowAuthModal("login");
+    //     return;
+    //   }
       
+    // }
+    if(!userId && !event.allowAnonymousJoining){
+      showToast.error("The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue");
+      setShowAuthModal("login");
+      return;
     }
     if (isUserInQueue) {
       showToast.error("You're already in a queue");
       return;
     }
-
-    if (!event.isActive) {
-      const confirmValue = confirm(
-        "This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
-      );
-      if (confirmValue) {
-        try {
-          setIsReconnecting(true); // Show loading indicator
-          await ensureConnection();
-          const res = await invokeWithLoading(
-            connection,
-            "JoinQueueGroup",
-            event.id,
-            JSON.parse(userId)
-          );
-          if (res === -1) {
-            showToast.error(
-              "Can't queue for an inactive event. Please check back later."
-            );
-            return;
-          }
-          showToast.success("Joined queue successfully");
-          localStorage.setItem("showFeedbackForm", true);
-          navigate("/myQueue");
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsReconnecting(false); // Hide loading indicator
-        }
-      }
-    } else {
+    const joinQueueLogic = async () => {
       try {
         setIsReconnecting(true); // Show loading indicator
         await ensureConnection();
@@ -175,11 +135,11 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
-        if (res === -1) {
-          showToast.error(
-            "Can't queue for an inactive event. Please check back later."
-          );
-          return;
+        saveAuthTokensFromSignalR(res);
+
+        if(!res.status){
+          showToast.error(res.message);
+          return
         }
         showToast.success("Joined queue successfully");
         localStorage.setItem("showFeedbackForm", true);
@@ -189,6 +149,18 @@ export const SearchEvents = () => {
       } finally {
         setIsReconnecting(false); // Hide loading indicator
       }
+    }
+
+    if (!event.isActive) {
+      const confirmValue = confirm(
+        "This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
+      );
+      if (confirmValue) {
+        joinQueueLogic();
+      }
+    } 
+    else {
+      joinQueueLogic();
     }
   };
 

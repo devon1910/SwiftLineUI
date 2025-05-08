@@ -12,7 +12,7 @@ import { GetUserLineInfo } from "../../services/api/swiftlineService";
 import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import {  useNavigate } from "react-router-dom";
+import {  useNavigate, useOutletContext } from "react-router-dom";
 import { FastForward, LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
@@ -306,6 +306,8 @@ export const MyQueue = () => {
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
                   <div className="flex items-center">
                     <span className="text-2xl font-bold">
+                      {myQueue.timeTillYourTurn > 0 && ( myQueue.timeTillYourTurn -2)} 
+                      {" - "}
                       {myQueue.timeTillYourTurn} minute
                       {myQueue.timeTillYourTurn > 1 ? "s" : ""}
                     </span>
