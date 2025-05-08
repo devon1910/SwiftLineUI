@@ -36,7 +36,7 @@ const MyEvents = () => {
     const answer = confirm("Are you sure you want to delete this event?");
     if (answer) {
       deleteEvent(eventId)
-        .then((response) => {
+        .then(() => {
           toast.success("Event deleted successfully.");
           getUserEvents();
         })

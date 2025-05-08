@@ -60,7 +60,7 @@ const EventForm = () => {
 
       if (editingEvent) {
         updateEvent(newEvent)
-          .then((response) => {})
+          .then(() => {})
           .catch((error) => {
             console.log(error);
             toast.error(
@@ -71,7 +71,7 @@ const EventForm = () => {
         //setEvents(updatedEvents);
       } else {
         createEvent(newEvent)
-          .then((response) => {
+          .then(() => {
             navigator("/myEvents");
           })
           .catch((error) => {

@@ -26,7 +26,7 @@ const ViewQueue = () => {
   const [activeTab, setActiveTab] = useState("current"); // "current" or "history"
   const location = useLocation();
   const event = location.state?.event;
-  const { darkMode, getThemeClass } = useTheme();
+  const {  getThemeClass } = useTheme();
   
   // Use getThemeClass helper for styling based on theme
   const containerClass = getThemeClass('bg-gray-800', 'bg-gray-100');

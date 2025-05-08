@@ -22,7 +22,7 @@ const ViewEvent = () => {
       try {
         const response = await fetchEventById(eventId);
         setEvent(response.data.data);
-      } catch (err) {
+      } catch (error) {
         setError("Failed to load event details");
         showToast.error("Event not found");
       } finally {

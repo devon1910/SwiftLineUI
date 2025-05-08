@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  Navigate,
   Outlet,
-  replace,
   useLocation,
   useNavigate,
 } from "react-router-dom";
@@ -11,6 +9,7 @@ import Navigation from "../layout/Navigation";
 import { FastForward, TrendingUpDown } from "lucide-react";
 import { useNetworkStatus } from "../../services/utils/NetworkStatus";
 import { useTheme } from "../../services/utils/useTheme";
+import { saveAuthTokens } from "../../services/utils/authUtils";
 
 function LandingPage() {
   //const [darkMode, setDarkMode] = useState(false);
@@ -29,10 +28,8 @@ function LandingPage() {
   const [showAuthModal, setShowAuthModal] = useState(null);
 
   // Load theme preference from local storage
-  const { darkMode, toggleDarkMode } = useTheme();
-  const handleToggleTheme = () => {
-    toggleDarkMode();
-  };
+  const { darkMode } = useTheme();
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -44,13 +41,7 @@ function LandingPage() {
 
     // If we have the access token, store everything in localStorage
     if (accessToken) {
-      localStorage.setItem("user", JSON.stringify(accessToken));
-      localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
-      localStorage.setItem("userName", username);
-      localStorage.setItem("userId", JSON.stringify(userId));
-
-      // // Clean up the URL to remove the tokens
-      // navigate('/', { replace: true }); // Redirect to dashboard or home page
+      saveAuthTokens({ accessToken, refreshToken, username, userId });
 
       if (from) {
         localStorage.removeItem("from");
@@ -60,12 +51,6 @@ function LandingPage() {
           replace: true,
         });
       }
-
-      // Or if you want to stay on the same page but clean the URL:
-      // window.history.replaceState({}, document.title, window.location.pathname);
-
-      // You might also want to trigger any auth state updates in your app
-      // setIsAuthenticated(true); // If you're using a state for auth
     }
     setLoaded(true);
   }, []);
@@ -78,7 +63,7 @@ function LandingPage() {
       }`}
     >
       {/* Navigation */}
-      <Navigation darkMode={darkMode} toggleDarkMode={handleToggleTheme} setShowAuthModal={setShowAuthModal} showAuthModal={showAuthModal} />
+      <Navigation setShowAuthModal={setShowAuthModal} showAuthModal={showAuthModal} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        
         {/* Guest Banner - only shown when user is not logged in */}

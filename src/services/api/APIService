@@ -18,15 +18,7 @@ API.interceptors.request.use(
     const token = userToken 
       ? JSON.parse(userToken) 
       : null;
-
-      // if (isPublicRoute().length > 0 && !token) {
-      //   return config;
-      // }
-      // if (!token) {
-      //   window.location.href = '/auth'; 
-      //   return Promise.reject(new Error("No access token available"));
-      // }
-    // If token exists, add it to the header
+      
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

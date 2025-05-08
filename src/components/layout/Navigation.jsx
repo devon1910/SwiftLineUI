@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
-  ChevronDown,
   CircleUserRound,
   Clock,
   Home,
@@ -12,15 +11,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
-import Login from "../auth/Login";
-import SignUp from "../auth/SignUp";
 import AuthForm from "../auth/AuthForm";
-import { set } from "date-fns";
 import { FiMoon, FiSun } from "react-icons/fi";
+import { useTheme } from "../../services/utils/useTheme";
 
 const Navigation = ({
-  darkMode,
-  toggleDarkMode,
   setShowAuthModal,
   showAuthModal,
 }) => {
@@ -28,6 +23,7 @@ const Navigation = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const {darkMode, toggleDarkMode} = useTheme();
   const isAuthenticated = localStorage.getItem("user");
   const userName = localStorage.getItem("userName");
 
@@ -46,21 +42,6 @@ const Navigation = ({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Handle click outside to close profile dropdown
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     console.log("clicked outside", event);
-  //     if (profileRef.current && !profileRef.current.contains(event.target)) {
-  //       setShowAuthModal(null);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
 
   // Listen for route changes to close the profile dropdown
   useEffect(() => {
@@ -84,22 +65,21 @@ const Navigation = ({
   const currentPath = window.location.pathname.split("/")[1] || "dashboard";
 
   const handleAuthAction = () => {
-    if (
-      isAuthenticated !== null &&
+    const isAUser =
+      isAuthenticated &&
       isAuthenticated !== "" &&
-      !userName.includes("Anonymous") 
-    ) {
+      !userName.includes("Anonymous");
+
+    if (isAUser) {
       const confirmLogout = window.confirm(
         "Are you sure you want to log out? Why would you wanna do that though?!🥲"
       );
+
       if (confirmLogout) {
         LogOut()
           .then((response) => {
             if (response.data.status) {
-              localStorage.removeItem("user");
-              localStorage.removeItem("userName");
-              localStorage.removeItem("userId");
-              localStorage.removeItem("refreshToken");
+              localStorage.clear();
               showToast.success(response.data.message);
               navigate("/", { replace: true });
             } else {
@@ -113,11 +93,10 @@ const Navigation = ({
     } else {
       setShowAuthModal("login");
     }
-    //setShowAuthModal(action); // Show login or sign-up modal
   };
 
   return (
-    <>
+    <header>
       <nav
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "py-2" : "py-4"
@@ -194,9 +173,9 @@ const Navigation = ({
                 }
               >
                 {darkMode ? (
-                 <FiSun className="w-5 h-5"/>
+                  <FiSun className="w-5 h-5" />
                 ) : (
-                  <FiMoon className="w-5 h-5"/>
+                  <FiMoon className="w-5 h-5" />
                 )}
               </button>
 
@@ -286,7 +265,7 @@ const Navigation = ({
           </div>
         </div>
       )}
-    </>
+    </header>
   );
 };
 

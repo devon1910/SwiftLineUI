@@ -4,7 +4,6 @@ import {
   ensureConnection,
   useSignalRWithLoading,
 } from "../../services/api/SignalRConn.js";
-import { toast } from "react-toastify";
 import {
   useNavigate,
   useOutletContext,
@@ -121,7 +120,7 @@ export const SearchEvents = () => {
           );
           userId = localStorage.getItem("userId");
           setIsCreatingAccount(false); // Hide loading indicator
-        }).catch((error) => {
+        }).catch(() => {
           setIsCreatingAccount(false); // Hide loading indicator
         });
       }else{
