@@ -49,6 +49,11 @@ export const MyQueue = () => {
   const { triggerFeedback } = useFeedback();
   const conn = useSignalRConnection();
 
+  const userToken =
+  localStorage.getItem("user") === "undefined"
+    ? null
+    : localStorage.getItem("user");
+
   useEffect(() => {
     getCurrentPosition();
     if (!conn) return; // Ensure conn is available before proceeding
@@ -115,6 +120,13 @@ export const MyQueue = () => {
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
+      //play next position sound
+      const playSound = () => {
+        nextPositionSoundRef.current?.play().catch((error) => {
+          console.error("Next Position Audio playback failed:", error);
+        });
+      };
+      playSound();
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
@@ -153,18 +165,15 @@ export const MyQueue = () => {
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
-      const playSound = () => {
-        nextPositionSoundRef.current?.play().catch((error) => {
-          console.error("Next Position Audio playback failed:", error);
-        });
-      };
-      playSound();
-      debugger;
+
+      
 
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
     if (myQueue.position === 1) {
+
+      //play 1st position sound
       const playSound = () => {
         firstPositionSoundRef.current?.play().catch((error) => {
           console.error("First Position Audio playback failed:", error);
@@ -175,9 +184,9 @@ export const MyQueue = () => {
       setTimeout(() => {
         clearInterval(intervalId); // Stop after 30 seconds
       }, 20000);
-    }
-    if (myQueue.positionRank === "1st" && positionRef.current !== 1) {
-      // Add special animation class
+
+
+      //apply special animation
       if (positionElementRef.current) {
         positionElementRef.current.classList.add("first-place-celebration");
         setTimeout(() => {
@@ -191,10 +200,6 @@ export const MyQueue = () => {
     prevPositionRef.current = myQueue.position;
   }, [myQueue.position, myQueue.positionRank]);
 
-  const userToken =
-    localStorage.getItem("user") === "undefined"
-      ? null
-      : localStorage.getItem("user");
   function getCurrentPosition() {
     setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
 
@@ -370,7 +375,7 @@ export const MyQueue = () => {
                         </p>
                         <p>
                         The system will automatically move you out of the queue in{" "}
-                        <span className="font-semibold">{myQueue.averageWait}</span>.
+                        <span className="font-semibold">{myQueue.averageWait} minutes</span>.
                           If you get served sooner, please help others by 
                           <b> leaving</b> the queue.<br></br>
                           Thanks for using SwiftLine{" "}
