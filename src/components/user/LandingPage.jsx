@@ -56,6 +56,7 @@ function LandingPage() {
   }, []);
 
   useNetworkStatus();
+  const showGuestBanner = !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"); //console.log("User Name:", !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"));
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
@@ -65,16 +66,16 @@ function LandingPage() {
       {/* Navigation */}
       <Navigation setShowAuthModal={setShowAuthModal} showAuthModal={showAuthModal} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        
+      <main className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-7">        
         {/* Guest Banner - only shown when user is not logged in */}
-        {!(userName || email) || userName.includes("Anonymous") || userName.includes("Guest") && (
+        {showGuestBanner && (
           <div className={`mb-4 p-3 rounded-md text-center ${
             darkMode 
               ? "bg-gray-800 text-gray-300 border border-gray-700" 
               : "bg-gray-100 text-gray-700 border border-gray-200"
           }`}>
             <p className="text-sm md:text-base flex flex-wrap items-center justify-center gap-2">
-              Create an account or sign in to create, view, manage your event queues and access more features.
+              Create an account or sign in to receive reminder email notifications before your turn,<br></br> create, view, manage your event queues <br></br>and access to more features.
               <button 
                 onClick={() => setShowAuthModal('signup')}
                 className={`mr-5 underline animate-pulse ${
