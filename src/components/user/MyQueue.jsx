@@ -12,11 +12,12 @@ import { GetUserLineInfo } from "../../services/api/swiftlineService";
 import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import {  useNavigate, useOutletContext } from "react-router-dom";
-import { FastForward, LocateIcon, MapPin } from "lucide-react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { FastForward, Info, LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import sound from "../../sounds/tv-talk-show-intro.mp3";
+import nextPositionSound from "../../sounds/audience-cheering-clapping.mp3";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -50,12 +51,12 @@ export const MyQueue = () => {
 
   useEffect(() => {
     getCurrentPosition();
-    if (!conn) return;  // Ensure conn is available before proceeding
+    if (!conn) return; // Ensure conn is available before proceeding
     // Ensure getCurrentPosition is only called once on mount
-  
+
     let isMounted = true;
     const setup = async () => {
-      await ensureConnection();                // now you know conn.start() has run
+      await ensureConnection(); // now you know conn.start() has run
       if (!isMounted) return;
 
       const onPosChange = (lineInfo) => {
@@ -83,12 +84,12 @@ export const MyQueue = () => {
         conn.off("ReceiveQueueStatusUpdate", onLineStatusChange);
       };
     };
-    
+
     const cleanupPromise = setup();
     return () => {
       isMounted = false;
       // if you want to wait on cleanupPromise to unregister, you can:
-      cleanupPromise.then(cleanup => cleanup && cleanup());
+      cleanupPromise.then((cleanup) => cleanup && cleanup());
     };
   }, [conn, showFeedbackForm]);
 
@@ -116,12 +117,7 @@ export const MyQueue = () => {
       setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
-  
-    prevPositionRef.current = myQueue.position;
-  }, [myQueue.position]);
 
-  // Compare time changes for arrow indicators
-  useEffect(() => {
     if (isFirstTimeUpdate.current) {
       isFirstTimeUpdate.current = false; // skip first update
     } else if (
@@ -131,20 +127,24 @@ export const MyQueue = () => {
       setShowWaitTimeArrow(true);
       setTimeout(() => setShowWaitTimeArrow(false), 30000);
     }
-  
-    prevTimeRef.current = myQueue.timeTillYourTurn;
-  }, [myQueue.timeTillYourTurn]);
 
-  const celebrationSoundRef = useRef(null);
+    prevTimeRef.current = myQueue.timeTillYourTurn;
+    prevPositionRef.current = myQueue.position;
+  }, [myQueue.position, myQueue.timeTillYourTurn]);
+
+  const firstPositionSoundRef = useRef(null);
+  const nextPositionSoundRef = useRef(null);
   // Initialize audio
   useEffect(() => {
     if (typeof window !== "undefined") {
-      celebrationSoundRef.current = new Audio(
-        sound
-      );
-      celebrationSoundRef.current.volume = 1;
+      firstPositionSoundRef.current = new Audio(sound);
+      nextPositionSoundRef.current = new Audio(nextPositionSound);
+      firstPositionSoundRef.current.volume = 1;
+      nextPositionSoundRef.current.volume = 1;
     }
   }, []);
+  const positionRef = useRef(myQueue.positionRank);
+  const positionElementRef = useRef(null);
 
   // Play sound when reaching first position
   useEffect(() => {
@@ -153,24 +153,43 @@ export const MyQueue = () => {
       myQueue.position < prevPositionRef.current
     ) {
       setShowPositionArrow(true);
+      const playSound = () => {
+        nextPositionSoundRef.current?.play().catch((error) => {
+          console.error("Next Position Audio playback failed:", error);
+        });
+      };
+      playSound();
+      debugger;
+
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
-    // Play sound repeatedly for 15 seconds
     if (myQueue.position === 1) {
       const playSound = () => {
-        celebrationSoundRef.current?.play().catch((error) => {
-          console.error("Audio playback failed:", error);
+        firstPositionSoundRef.current?.play().catch((error) => {
+          console.error("First Position Audio playback failed:", error);
         });
       };
       playSound();
       const intervalId = setInterval(playSound, 2000); // Play every 3 seconds
       setTimeout(() => {
         clearInterval(intervalId); // Stop after 30 seconds
-      }, 30000);
+      }, 20000);
     }
+    if (myQueue.positionRank === "1st" && positionRef.current !== 1) {
+      // Add special animation class
+      if (positionElementRef.current) {
+        positionElementRef.current.classList.add("first-place-celebration");
+        setTimeout(() => {
+          positionElementRef.current.classList.remove(
+            "first-place-celebration"
+          );
+        }, 5000);
+      }
+    }
+
     prevPositionRef.current = myQueue.position;
-  }, [myQueue.position]);
+  }, [myQueue.position, myQueue.positionRank]);
 
   const userToken =
     localStorage.getItem("user") === "undefined"
@@ -225,7 +244,7 @@ export const MyQueue = () => {
       setIsReconnecting(false);
     }
   };
-    
+
   return (
     <div
       className={`max-w-2xl mx-auto p-4 font-sans ${
@@ -233,7 +252,7 @@ export const MyQueue = () => {
       }`}
     >
       {isReconnecting && <GlobalSpinner />}
-      {(myQueue.position === -1 || userToken===null) && (
+      {(myQueue.position === -1 || userToken === null) && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
           <p className="font-medium">You're currently not in any queue.</p>
         </div>
@@ -278,13 +297,21 @@ export const MyQueue = () => {
 
           <div className="p-6 md:p-8">
             <div className="space-y-6 mb-6">
-              <div className="flex items-center gap-3 pb-3 border-b">
+              <div
+                ref={positionElementRef}
+                className="flex items-center gap-3 pb-3 border-b relative"
+              >
                 <MapPin className="text-emerald-600 h-6 w-6" />
                 <div className="flex flex-col">
                   <span className="text-gray-600 text-sm">Your Position</span>
                   <div className="flex items-center">
-                    <span className="text-3xl font-bold">
+                    <span className="text-3xl font-bold relative">
                       {myQueue.positionRank}
+                      {myQueue.positionRank === "1st" && (
+                        <span className="absolute -top-2 -right-3 text-yellow-500 animate-ping">
+                          👑
+                        </span>
+                      )}
                     </span>
                     {showPositionArrow && (
                       <FiArrowUp className="text-emerald-500 h-5 w-5 ml-2 animate-bounce" />
@@ -294,7 +321,6 @@ export const MyQueue = () => {
               </div>
 
               {/* Secondary Information: Wait Time - Second most important */}
-              {/* Updated Wait Time section with animation */}
               <div className="flex items-center gap-3 pb-3 border-b">
                 <div className="relative h-8 w-8 flex items-center justify-center">
                   {queueActivity && (
@@ -306,8 +332,8 @@ export const MyQueue = () => {
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
                   <div className="flex items-center">
                     <span className="text-2xl font-bold">
-                      {myQueue.timeTillYourTurn > 0 && ( myQueue.timeTillYourTurn -2)} 
-                      {" - "}
+                      {myQueue.timeTillYourTurn > 0 &&
+                        myQueue.timeTillYourTurn - 2 + " - "}
                       {myQueue.timeTillYourTurn} minute
                       {myQueue.timeTillYourTurn > 1 ? "s" : ""}
                     </span>
@@ -333,10 +359,27 @@ export const MyQueue = () => {
               {myQueue.position !== 1 ? (
                 <DidYouKnowSlider />
               ) : (
-                <div className="bg-sage-500 p-4 rounded-lg flex items-center gap-3">
-                  <span className="text-2xl">🎉</span>
-                  <p>You're next in line! Thanks for using SwiftLine <FastForward className="fast-forward-icon"/></p>
-                </div>
+                <>
+                  {/* Subtle reminder about queue progression */}
+                  <div className=" p-2 rounded text-xs  border border-white/20 mt-5">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p>
+                        You're next in line!🎉<br></br>
+                        </p>
+                        <p>
+                        The system will automatically move you out of the queue in{" "}
+                        <span className="font-semibold">{myQueue.averageWait}</span>.
+                          If you get served sooner, please help others by 
+                          <b> leaving</b> the queue.<br></br>
+                          Thanks for using SwiftLine{" "}
+                          <FastForward className="fast-forward-icon w-5 h-5" />
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>

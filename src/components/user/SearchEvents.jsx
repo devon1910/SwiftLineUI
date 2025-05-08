@@ -135,7 +135,7 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
-        saveAuthTokensFromSignalR(res);
+        if(!userId) saveAuthTokensFromSignalR(res);
 
         if(!res.status){
           showToast.error(res.message);
@@ -153,7 +153,7 @@ export const SearchEvents = () => {
 
     if (!event.isActive) {
       const confirmValue = confirm(
-        "This event has been paused by the host. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
+        "This event has been paused by the Organizer. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
       );
       if (confirmValue) {
         joinQueueLogic();

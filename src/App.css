@@ -639,3 +639,30 @@ input[type="range"]::-ms-thumb {
 .feedback-submit:enabled:hover {
   background-color: #556c60;
 }
+
+
+.first-place-celebration {
+  animation: firstPlaceCelebration 3s ease-out;
+}
+
+@keyframes firstPlaceCelebration {
+  0% { transform: scale(1); }
+  20% { 
+    transform: scale(1.2) rotate(-5deg); 
+    background: rgba(255, 215, 0, 0.1);
+  }
+  40% { 
+    transform: scale(1.3) rotate(5deg);
+    background: rgba(255, 215, 0, 0.2);
+  }
+  60% { 
+    transform: scale(1.25) rotate(-3deg);
+    background: rgba(255, 215, 0, 0.15);
+  }
+  100% { transform: scale(1); }
+}
+
+.first-place-celebration .text-3xl {
+  color: #FFD700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
