@@ -22,7 +22,7 @@ export const SearchEvents = () => {
   const { userName, setShowAuthModal } = useOutletContext();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isUserInQueue, setIsUserInQueue] = useState(true);
+  const [isUserInQueue, setIsUserInQueue] = useState(false);
   const [lastEventJoined, setLastEventJoined] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -122,7 +122,7 @@ export const SearchEvents = () => {
       return;
     }
     if (isUserInQueue) {
-      showToast.error("You're already in a queue");
+      showToast.error("You're already in a queue.");
       return;
     }
     const joinQueueLogic = async () => {

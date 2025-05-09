@@ -164,7 +164,7 @@ export const MyQueue = () => {
           positionElementRef.current.classList.remove(
             "first-place-celebration"
           );
-        }, 5000);
+        }, 7000);
       }
     }
 
