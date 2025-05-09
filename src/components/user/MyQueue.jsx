@@ -36,6 +36,8 @@ export const MyQueue = () => {
   // State to control the display of the up arrow indicators.
   const [showPositionArrow, setShowPositionArrow] = useState(false);
   const [showWaitTimeArrow, setShowWaitTimeArrow] = useState(false);
+
+  const[ showLeaveQueueMsg, setShowLeaveQueueMsg] = useState("");
   // useRef to store previous values.
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
@@ -64,8 +66,9 @@ export const MyQueue = () => {
       await ensureConnection(); // now you know conn.start() has run
       if (!isMounted) return;
 
-      const onPosChange = (lineInfo) => {
+      const onPosChange = (lineInfo, leaveQueueMessage) => {
         setMyQueue(lineInfo);
+        setShowLeaveQueueMsg(leaveQueueMessage);
         if (lineInfo.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
@@ -128,6 +131,12 @@ export const MyQueue = () => {
       };
       playSound();
       setShowPositionArrow(true);
+      
+      //show leave queue message if any
+      if(showLeaveQueueMsg!==""){
+        setTimeout(() => setShowLeaveQueueMsg(""), 30000);
+      }
+
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
@@ -232,7 +241,8 @@ export const MyQueue = () => {
       setIsReconnecting(true);
       await ensureConnection();
       const lineMemberId = myQueue.lineMemberId;
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1");
+      const position= myQueue.position;
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1", position);
 
       showToast.success("Exited queue.");
       triggerFeedback(2);
@@ -269,7 +279,14 @@ export const MyQueue = () => {
               <span className="text-sm font-medium text-white">Leave</span>
             </button>
           </div>
-
+          {showLeaveQueueMsg !=="" && (
+            <div class="animate-slide-in bg-blue-100 dark:bg-blue-900/30 border-l-4 border-blue-500 dark:border-blue-400 text-blue-500 dark:text-blue-500 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md grid grid-col">
+                <h4 className="font-semibold mb-1">Served earlier🕺🏽!</h4>
+                <p className="text-sm">
+                  {showLeaveQueueMsg}
+                </p>
+              </div>
+          )}
           {!queueActivity && (
             <div className="animate-slide-in bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-200 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md">
               <div className="animate-pulse">

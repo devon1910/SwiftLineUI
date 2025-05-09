@@ -22,7 +22,13 @@ module.exports = {
           700: '#4A5568',  // Dark mode secondary text
           800: '#2D3748',  // Dark mode background
           900: '#1A202C'   // Dark mode surface
+        },
+        blue: {
+          500: '#4299E1',  // Primary blue
+          600: '#3182CE',  // Darker blue for hover states
+          700: '#2B6CB0'   // Even darker blue for active states
         }
+
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'] // Your preferred font

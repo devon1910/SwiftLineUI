@@ -8,10 +8,14 @@ export const saveAuthTokens = (response) => {
 export const saveAuthTokensFromSignalR = (response) => {
 
   const { accessToken, refreshToken, userName, userId } = response;
-  localStorage.setItem('user', JSON.stringify(accessToken));
-  localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
-  localStorage.setItem('userName', userName);
-  localStorage.setItem('userId', JSON.stringify(userId));
+  if(response.isNewUser)
+    {
+      localStorage.setItem('user', JSON.stringify(accessToken));
+      localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('userId', JSON.stringify(userId));
+    }
+
 };
 
 export const validatePassword = (password) => {

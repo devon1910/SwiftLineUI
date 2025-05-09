@@ -133,7 +133,7 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
-        if(!userId) saveAuthTokensFromSignalR(res);
+        saveAuthTokensFromSignalR(res);
 
         if(!res.status){
           showToast.error(res.message);
