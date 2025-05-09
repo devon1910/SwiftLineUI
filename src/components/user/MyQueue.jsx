@@ -43,12 +43,12 @@ export const MyQueue = () => {
   const isFirstTimeUpdate = useRef(true);
 
   const { invokeWithLoading } = useSignalRWithLoading();
-
+  const [isReconnecting, setIsReconnecting] = useState(false);
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
 
   const { triggerFeedback } = useFeedback();
   const conn = useSignalRConnection();
-
+  const positionElementRef = useRef(null);
   const userToken =
   localStorage.getItem("user") === "undefined"
     ? null
@@ -119,7 +119,7 @@ export const MyQueue = () => {
       prevPositionRef.current !== null &&
       myQueue.position < prevPositionRef.current
     ) {
-      setShowPositionArrow(true);
+      
       //play next position sound
       const playSound = () => {
         nextPositionSoundRef.current?.play().catch((error) => {
@@ -127,6 +127,7 @@ export const MyQueue = () => {
         });
       };
       playSound();
+      setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 30000);
     }
 
@@ -140,37 +141,7 @@ export const MyQueue = () => {
       setTimeout(() => setShowWaitTimeArrow(false), 30000);
     }
 
-    prevTimeRef.current = myQueue.timeTillYourTurn;
-    prevPositionRef.current = myQueue.position;
-  }, [myQueue.position, myQueue.timeTillYourTurn]);
-
-  const firstPositionSoundRef = useRef(null);
-  const nextPositionSoundRef = useRef(null);
-  // Initialize audio
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      firstPositionSoundRef.current = new Audio(sound);
-      nextPositionSoundRef.current = new Audio(nextPositionSound);
-      firstPositionSoundRef.current.volume = 1;
-      nextPositionSoundRef.current.volume = 1;
-    }
-  }, []);
-  const positionRef = useRef(myQueue.positionRank);
-  const positionElementRef = useRef(null);
-
-  // Play sound when reaching first position
-  useEffect(() => {
-    if (
-      prevPositionRef.current !== null &&
-      myQueue.position < prevPositionRef.current
-    ) {
-      setShowPositionArrow(true);
-
-      
-
-      setTimeout(() => setShowPositionArrow(false), 30000);
-    }
-
+    //for first position
     if (myQueue.position === 1) {
 
       //play 1st position sound
@@ -197,8 +168,34 @@ export const MyQueue = () => {
       }
     }
 
+    prevTimeRef.current = myQueue.timeTillYourTurn;
     prevPositionRef.current = myQueue.position;
-  }, [myQueue.position, myQueue.positionRank]);
+  }, [myQueue.position, myQueue.timeTillYourTurn]);
+
+  const firstPositionSoundRef = useRef(null);
+  const nextPositionSoundRef = useRef(null);
+  // Initialize audio
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      firstPositionSoundRef.current = new Audio(sound);
+      nextPositionSoundRef.current = new Audio(nextPositionSound);
+      firstPositionSoundRef.current.volume = 1;
+      nextPositionSoundRef.current.volume = 1;
+    }
+  }, []);
+
+  // // Play sound when reaching first position
+  // useEffect(() => {
+  //   if (
+  //     prevPositionRef.current !== null &&
+  //     myQueue.position < prevPositionRef.current
+  //   ) {
+  //     setShowPositionArrow(true);
+  //     setTimeout(() => setShowPositionArrow(false), 30000);
+  //   }
+
+    
+  // }, [myQueue.position, myQueue.positionRank]);
 
   function getCurrentPosition() {
     setIsLoading(true); // Moved setIsLoading here to ensure proper loading state
@@ -225,8 +222,6 @@ export const MyQueue = () => {
         setIsLoading(false); // Ensure loading state is updated after the call
       });
   }
-
-  const [isReconnecting, setIsReconnecting] = useState(false);
 
   const handleLeaveQueue = async () => {
     if (!window.confirm("Are you sure you want to leave the queue?")) {
