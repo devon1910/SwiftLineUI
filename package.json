@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
     "@microsoft/signalr": "^8.0.7",
     "@tailwindcss/vite": "^4.0.14",
     "@uidotdev/usehooks": "^2.4.1",
@@ -33,7 +32,6 @@
     "react-toastify": "^11.0.5",
     "react-tsparticles": "^2.12.2",
     "react-turnstile": "^1.1.4",
-    "styled-components": "^6.1.15",
     "tailwindcss": "^4.0.14",
     "tsparticles": "^3.8.1",
     "use-debounce": "^10.0.4"

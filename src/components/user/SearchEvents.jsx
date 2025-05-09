@@ -63,12 +63,9 @@ export const SearchEvents = () => {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
 
-    // if(userId && localStorage.getItem("user")) {
-    // startSignalRConnection(navigate);
-    // }
   }, [currentPage, debouncedSearchTerm]);
 
-  // In your search page component
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const eventId = queryParams.get("eventId");
@@ -78,6 +75,7 @@ export const SearchEvents = () => {
       const event = events.find((e) => e.id.toString() === eventId);
       if (event) {
         joinQueue(event);
+        window.history.replaceState({}, document.title, window.location.pathname); // Clear the URL parameter after joining
       }
     }
   }, [events]);
