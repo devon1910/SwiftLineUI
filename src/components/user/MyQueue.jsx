@@ -332,7 +332,7 @@ export const MyQueue = () => {
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
                   <div className="flex items-center">
                     <span className="text-2xl font-bold">
-                      {myQueue.timeTillYourTurn > 0 &&
+                      {myQueue.timeTillYourTurn > 2 &&
                         myQueue.timeTillYourTurn - 2 + " - "}
                       {myQueue.timeTillYourTurn} minute
                       {myQueue.timeTillYourTurn > 1 ? "s" : ""}
