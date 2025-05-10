@@ -133,6 +133,7 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
+        
         saveAuthTokensFromSignalR(res);
 
         if(!res.status){
