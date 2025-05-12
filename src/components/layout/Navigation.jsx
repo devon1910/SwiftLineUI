@@ -30,7 +30,7 @@ const Navigation = ({
   const navItems = [
     { label: "Dashboard", path: "", icon: <Home size={18} /> },
     { label: "Search Events", path: "search", icon: <Search size={18} /> },
-    // { label: "My Events", path: "myEvents", icon: <Calendar size={18} /> },
+    { label: "My Events", path: "myEvents", icon: <Calendar size={18} /> },
     { label: "My Queue", path: "myQueue", icon: <Clock size={18} /> },
   ];
 

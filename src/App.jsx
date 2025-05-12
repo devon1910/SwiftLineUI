@@ -31,7 +31,7 @@ function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="search" element={<SearchEvents />} />
                   <Route path="myEvents" element={<MyEvents />} />
-                  {/* <Route path="newEvent" element={<EventForm />} /> */}
+                  <Route path="newEvent" element={<EventForm />} />
                   <Route path="myQueue" element={<MyQueue />} />
                   <Route path="queueManagement" element={<ViewQueue />} />
                   <Route path="events/:eventId" element={<ViewEvent />} />

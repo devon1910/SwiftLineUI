@@ -169,14 +169,14 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Floating Action Button */}
-        {/* <button
+        <button
           onClick={() => handleNavigation("newEvent")}
           className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
           aria-label="Create new event"
         >
           <FiPlus className="w-8 h-8 md:w-10 md:h-10 transition-transform group-hover:rotate-90" />
           
-        </button> */}
+        </button>
       </div>
     </div>
   );
