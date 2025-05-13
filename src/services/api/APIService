@@ -44,7 +44,7 @@ API.interceptors.response.use(
 
     // Handle 400 errors
     if (error.response?.status === 400) {
-      showToast.error(error.response.data?.message || "Bad request.");
+      showToast.error(error.response.data?.data?.message || "Bad request.");
       return Promise.reject(error);
     }
 

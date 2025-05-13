@@ -19,21 +19,11 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
 
     try {
       const response = await loginUser({ email, password });
-      const { userName, userId, email: userEmail, isInLine } = response.data.data;
       saveAuthTokens(response);
       handleAuthSuccess(response, navigator, from);
-      
-      if (from) {
-        window.location.href = from;
-      } else {
-        navigator("/", {
-          state: { email: userEmail, isInLine, userId, userName },
-          replace: true,
-        });
-      }
       setShowAuthModal(null);
     } catch (error) {
-      showToast.error(error.response.data.data.message);
+      console.error(error);
     }
   };
 
