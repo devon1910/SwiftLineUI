@@ -662,7 +662,7 @@ input[type="range"]::-ms-thumb {
   100% { transform: scale(1); }
 }
 
-.first-place-celebration .text-4xl {
+.first-place-celebration .text-3xl {
   color: #FFD700;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
