@@ -119,7 +119,7 @@ const Navigation = ({
                 <div className="relative w-8 h-8 overflow-hidden rounded-lg">
                   <img
                     className="w-full h-full object-cover"
-                    src="https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp"
+                    src="/Swiftline_logo.jpeg"
                     alt="Swiftline"
                   />
                 </div>

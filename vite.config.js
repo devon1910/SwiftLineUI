@@ -5,7 +5,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const manifestForPlugin = {
   registerType: 'prompt',
-  includeAssets: ['favicon.ico', "apple-touch-icon.png"],
+  includeAssets: ['favicon.ico', "apple-touch-icon.png","maskable-icon.png"],
   manifest: {
     name: "Swiftline",
     short_name: "swiftline",
@@ -27,6 +27,12 @@ const manifestForPlugin = {
       sizes: '180x180',
       type: 'image/png',
       purpose: 'any'
+    },
+    {
+      src: '/maskable-icon.png',
+      sizes:'512x512',
+      type:'image/png',
+      purpose:'any maskable',
     }],
     theme_color: '#698474',
     background_color: '#698474',
@@ -40,6 +46,7 @@ const manifestForPlugin = {
   },
   workbox: {
     globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+    navigateFallback: '/index.html', 
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
