@@ -17,7 +17,6 @@ import CustomToast from "./components/common/CustomToast";
 import { ThemeProvider } from "./services/context/ThemeProvider";
 import FeedbackForm from "./components/user/FeedbackForm";
 import { FeedbackProvider } from "./services/context/FeedbackProvider";
-import { Header } from "./components/layout/Header";
 
 function App() {
   return (
