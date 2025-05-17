@@ -42,7 +42,7 @@ function LandingPage() {
 
     // If we have the access token, store everything in localStorage
     if (accessToken) {
-      saveAuthTokens({ accessToken, refreshToken, username, userId });
+      saveAuthTokens({ accessToken, refreshToken, username, userId }, "google");
 
       if (from) {
         localStorage.removeItem("from");

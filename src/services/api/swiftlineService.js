@@ -28,4 +28,4 @@ export const GetUserLineInfo = () => API.get(`${apiUrl}Line/GetUserLineInfo`);
 export const createFeedback = (feedback) => API.post(`${apiUrl}Feedback/SubmitFeedback`, feedback);
 
 //Subscribtion
-export const subscribe = (subscription) => API.post(`${apiUrl}PushNotification/Subscribe`, subscription);
+export const subscribe = (subscription) => API.post(`${apiUrl}PushNotification/Subscribe?subscription=${subscription}`);

@@ -5,17 +5,21 @@ const VAPID_PUBLIC_KEY =  import.meta.env.VITE_PUBLIC_VAPID_KEY
 export async function subscribeToPush() {
   if (!('serviceWorker' in navigator)) return;
 
+  //await navigator.serviceWorker.register('./dist/sw.js');
+
   const registration = await navigator.serviceWorker.ready;
   const permission = await Notification.requestPermission();
 
   if (permission !== 'granted') return;
-
+  const key = urlBase64ToUint8Array(VAPID_PUBLIC_KEY); 
+  //navigator.serviceWorker.ready.then(() => console.log("✅ SW Ready!"))
   await registration.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+    applicationServerKey: key,
   }).then((response) => {
-    subscribe(response).then((response) => {
-        console.log(response);
+    const registrationResponse = JSON.stringify(response);
+    subscribe(registrationResponse).then((subscriptionResponse) => {
+        console.log(subscriptionResponse);
       }).catch((error) => {
         console.error('Error subscribing to push notifications:', error);
       });
