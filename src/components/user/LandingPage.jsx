@@ -10,6 +10,7 @@ import { FastForward, TrendingUpDown } from "lucide-react";
 import { useNetworkStatus } from "../../services/utils/NetworkStatus";
 import { useTheme } from "../../services/utils/useTheme";
 import { saveAuthTokens } from "../../services/utils/authUtils";
+import { subscribeToPush } from "../../services/utils/pushNotificationsSetup";
 
 function LandingPage() {
   //const [darkMode, setDarkMode] = useState(false);
@@ -55,8 +56,15 @@ function LandingPage() {
     setLoaded(true);
   }, []);
 
-  useNetworkStatus();
   const showGuestBanner = !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"); //console.log("User Name:", !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"));
+  useEffect(() => {
+    if (!showGuestBanner) {
+      subscribeToPush();
+    }
+  }, [showGuestBanner]);
+
+  useNetworkStatus();
+
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${

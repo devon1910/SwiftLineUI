@@ -11,11 +11,4 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-registerSW({
-  onNeedRefresh() {
-    console.log("New content available.")
-  },
-  onOfflineReady() {
-    console.log("App is ready to work offline.")
-  },
-})
+registerSW({ immediate: true });
