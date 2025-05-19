@@ -9,7 +9,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt', // or 'autoUpdate'
+      registerType: 'autoUpdate',
+      srcDir: 'public', // optional if your sw.js is in /public
+      filename: 'sw.js', // tells Vite to use /public/sw.js
+      strategies: 'injectManifest', // since i am writing the sw manually
+      injectManifest: {
+        swSrc: 'public/sw.js',
+        swDest: 'dist/sw.js',
+      },
       includeAssets: [
         'favicon.ico',
         'apple-touch-icon.png',

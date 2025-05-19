@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Outlet,
   useLocation,
@@ -57,14 +57,16 @@ function LandingPage() {
   }, []);
 
   const showGuestBanner = !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"); //console.log("User Name:", !(userName || email) || userName.includes("Anonymous") || userName.includes("Guest"));
+    const hasSubscribed = useRef(false);
+
   useEffect(() => {
-    if (!showGuestBanner) {
+    if (!showGuestBanner && !hasSubscribed.current) {
       subscribeToPush();
+      hasSubscribed.current = true;
     }
   }, [showGuestBanner]);
 
   useNetworkStatus();
-
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${

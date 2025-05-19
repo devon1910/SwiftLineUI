@@ -33,7 +33,7 @@ function App() {
                   <Route path="newEvent" element={<EventForm />} />
                   <Route path="myQueue" element={<MyQueue />} />
                   <Route path="queueManagement" element={<ViewQueue />} />
-                  <Route path="events/:eventId" element={<ViewEvent />} />
+                  {/* <Route path="events/:eventId" element={<ViewEvent />} /> */}
                 </Route>
                 <Route path="/auth" element={<AuthForm />} />
                 <Route path="/VerifyToken" element={<VerifyToken />} />

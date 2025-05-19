@@ -17,12 +17,12 @@ export const saveAuthTokens = (response,src="") => {
 };
 export const saveAuthTokensFromSignalR = (response) => {
 
-  const { accessToken, refreshToken, userName, userId } = response;
+  const { accessToken, refreshToken, username, userId } = response;
   if(response.isNewUser)
     {
       localStorage.setItem('user', JSON.stringify(accessToken));
       localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
-      localStorage.setItem('userName', userName);
+      localStorage.setItem('userName', username);
       localStorage.setItem('userId', JSON.stringify(userId));
     }
 
@@ -44,13 +44,13 @@ export const getPasswordRequirements = (password) => {
 };
 
 export const handleAuthSuccess = (response, navigate, from) => {
-  const { email, isInLine, userId, userName } = response.data.data;
+  const { email, isInLine, userId, username } = response.data.data;
   
   if (from) {
     window.location.href = from;
   } else {
     navigate('/', {
-      state: { email, isInLine, userId, userName },
+      state: { email, isInLine, userId, username },
       replace: true,
     });
   }
