@@ -12,10 +12,10 @@ export async function subscribeToPush() {
   const key = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
 
   //check if sub is already registered
-  const existingSubscription = await registration.pushManager.getSubscription();
-  if (existingSubscription) {
-    return;
-  }
+//   const existingSubscription = await registration.pushManager.getSubscription();
+//   if (existingSubscription) {
+//     return;
+//   }
   await registration.pushManager
     .subscribe({
       userVisibleOnly: true,

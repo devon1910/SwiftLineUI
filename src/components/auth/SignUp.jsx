@@ -41,7 +41,7 @@ const SignUp = ({ setShowAuthModal }) => {
         setShowAuthModal(null);
       }
     } catch (error) {
-      showToast.error(error.response?.data?.data?.message || "Sign up failed");
+        console.error("Error during sign up:", error);
     } finally {
       setIsLoading(false);
     }
