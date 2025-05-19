@@ -42,7 +42,8 @@ self.addEventListener('message', (event) => {
 // Handle push notifications
 self.addEventListener('push', (event) => {
 
-  
+  console.log('[SW] Push event received:', event); // 🔥
+
   if (event.data) {
     try {
       const data = event.data.json();
