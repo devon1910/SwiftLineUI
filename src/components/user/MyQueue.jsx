@@ -240,9 +240,8 @@ export const MyQueue = () => {
     try {
       setIsReconnecting(true);
       await ensureConnection();
-      const lineMemberId = myQueue.lineMemberId;
       const position= myQueue.position;
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "-1", position);
+      await invokeWithLoading(connection, "ExitQueue", localStorage.getItem("userId"), "", "-1", position);
 
       showToast.success("Exited queue.");
       triggerFeedback(2);

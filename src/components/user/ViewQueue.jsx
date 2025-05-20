@@ -344,7 +344,7 @@ const ViewQueue = () => {
                           {(currentPage - 1) * lineMembersPerPage + index + 1}
                         </td>
                         <td className="px-4 py-3">
-                          {user.lineMember.swiftLineUser.userName} 
+                          {user.swiftLineUser.userName} 
                         </td>
                         <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
                           {format(new Date(user.createdAt), "dd/MM/yyyy hh:mm:ss a")}
@@ -422,7 +422,7 @@ const ViewQueue = () => {
                           {(historyPage - 1) * lineMembersPerPage + index + 1}
                         </td>
                         <td className="px-4 py-3">
-                          {member.lineMember.swiftLineUser.userName} 
+                          {member.swiftLineUser.userName} 
                         </td>
                         <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
                           {format(new Date(member?.createdAt), "dd/MM/yyyy hh:mm:ss a")}
