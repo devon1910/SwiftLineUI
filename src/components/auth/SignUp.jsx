@@ -39,6 +39,7 @@ const SignUp = ({ setShowAuthModal }) => {
         saveAuthTokens(response);
         handleAuthSuccess(response, navigate, from);
         setShowAuthModal(null);
+        showToast.success("Welcome Aboard! ⏩");
       }
     } catch (error) {
         console.error("Error during sign up:", error);
