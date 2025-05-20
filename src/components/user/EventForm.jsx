@@ -139,7 +139,7 @@ const EventForm = () => {
       {/* Title Input */}
       <div className="mb-6 relative">
         <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
-          Event Title
+          Title
         </label>
         <div className="relative">
           <input
@@ -161,7 +161,7 @@ const EventForm = () => {
           htmlFor="eventDescription"
           className="block text-sm font-medium mb-1"
         >
-          Event Description
+          Description
         </label>
         <div className="relative">
           <textarea
@@ -209,7 +209,7 @@ const EventForm = () => {
             htmlFor="staffCount"
             className="block text-sm font-medium mb-1"
           >
-            Number of Staff
+            Serving Staff No.
           </label>
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />

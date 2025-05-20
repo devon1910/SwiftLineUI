@@ -9,7 +9,7 @@ import {
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/api/swiftlineService";
 
-import { FiArrowUp, FiClock, FiPause, FiUserCheck, FiX } from "react-icons/fi";
+import { FiArrowUp, FiClock, FiPause, FiRefreshCw, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -46,6 +46,8 @@ export const MyQueue = () => {
 
   const { invokeWithLoading } = useSignalRWithLoading();
   const [isReconnecting, setIsReconnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const showFeedbackForm = localStorage.getItem("showFeedbackForm");
 
   const { triggerFeedback } = useFeedback();
@@ -66,6 +68,7 @@ export const MyQueue = () => {
       await ensureConnection(); // now you know conn.start() has run
       if (!isMounted) return;
 
+      setIsConnected(conn.state === "Connected");
       const onPosChange = (lineInfo, leaveQueueMessage) => {
         setMyQueue(lineInfo);
         setShowLeaveQueueMsg(leaveQueueMessage);
@@ -83,13 +86,23 @@ export const MyQueue = () => {
         }
       };
 
+      const handleConnectionChange = () => {
+        setIsConnected(conn.state === "Connected");
+      };
+
       conn.on("ReceivePositionUpdate", onPosChange);
       conn.on("ReceiveQueueStatusUpdate", onLineStatusChange);
+      conn.onclose(handleConnectionChange);
+      conn.onreconnected(handleConnectionChange);
+      conn.onreconnecting(handleConnectionChange);
 
       // cleanup registrations
       return () => {
         conn.off("ReceivePositionUpdate", onPosChange);
         conn.off("ReceiveQueueStatusUpdate", onLineStatusChange);
+        conn.off("onclose", handleConnectionChange);
+        conn.off("onreconnected", handleConnectionChange);
+        conn.off("onreconnecting", handleConnectionChange);
       };
     };
 
@@ -101,6 +114,16 @@ export const MyQueue = () => {
     };
   }, [conn, showFeedbackForm]);
 
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      getCurrentPosition(); // Your server call to get queue info
+    } catch (err) {
+      showToast.error("Failed to refresh. Please try again.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   // Handle window resize (separate from SignalR concerns)
   useEffect(() => {
     const handleResize = () => {
@@ -113,6 +136,29 @@ export const MyQueue = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Reconnect on tab resume
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible") {
+        await ensureConnection();
+        await getCurrentPosition();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  //Fallback polling every 60s if disconnected
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      if (!isConnected && document.visibilityState === "visible") {
+        getCurrentPosition();
+      }
+    }, 60000);
+    return () => clearInterval(pollInterval);
+  }, [isConnected]);
+
 
   // Compare position changes for arrow indicators
   useEffect(() => {
@@ -255,11 +301,32 @@ export const MyQueue = () => {
   };
 
   return (
-    <div
-      className={`max-w-2xl mx-auto p-4 font-sans ${
-        isReconnecting ? "opacity-50 pointer-events-none" : ""
-      }`}
-    >
+    <div className="max-w-2xl mx-auto p-4 font-sans">
+      {/* SignalR Status Bar + Manual Refresh */}
+      {myQueue.position !== -1 && (
+        <div className="flex items-center justify-end text-xs text-gray-600 mb-2 gap-2">
+        <span
+          className={`flex items-center gap-1 ${
+            isConnected ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+          {isConnected ? "Live" : "Offline"}
+        </span>
+        {!isConnected && (
+          <button
+            onClick={handleManualRefresh}
+            className="flex items-center gap-1 bg-sage-100 hover:bg-sage-200 px-2 py-1 rounded text-sage-800"
+            disabled={isRefreshing}
+          >
+            <FiRefreshCw className={`w-4 h-4 ${isRefreshing && "animate-spin"}`} />
+            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+          </button>
+        )}
+      </div>
+      )}
+     
+
       {isReconnecting && <GlobalSpinner />}
       {(myQueue.position === -1 || userToken === null) && (
         <div className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
