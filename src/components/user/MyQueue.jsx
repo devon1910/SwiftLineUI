@@ -9,11 +9,11 @@ import {
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/api/swiftlineService";
 
-import { FiArrowUp, FiClock, FiPause, FiRefreshCw, FiUserCheck, FiX } from "react-icons/fi";
+import { FiArrowUp, FiClock, FiInfo, FiPause, FiRefreshCw, FiUserCheck, FiX } from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { FastForward, Info, LocateIcon, MapPin } from "lucide-react";
+import { Bot, BotIcon, FastForward, Info, LocateIcon, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import sound from "../../sounds/tv-talk-show-intro.mp3";
@@ -404,26 +404,38 @@ export const MyQueue = () => {
               </div>
 
               {/* Secondary Information: Wait Time - Second most important */}
-              <div className="flex items-center gap-3 pb-3 border-b">
+             <div className="flex items-start gap-3 pb-3 border-b">
                 <div className="relative h-8 w-8 flex items-center justify-center">
                   {queueActivity && (
                     <div className="absolute top-0 left-0 w-full h-full border-2 border-amber-500/30 rounded-full animate-spin border-t-transparent" />
                   )}
                   <FiClock className="text-amber-500 h-6 w-6 relative z-10" />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                   <span className="text-gray-600 text-sm">Estimated Wait</span>
-                  <div className="flex items-center">
-                    <span className="text-2xl font-bold">
-                      {myQueue.timeTillYourTurn > 2 &&
-                        myQueue.timeTillYourTurn - 2 + " - "}
-                      {myQueue.timeTillYourTurn} minute
-                      {myQueue.timeTillYourTurn > 1 ? "s" : ""}
-                    </span>
-                    {showWaitTimeArrow && (
-                      <FiArrowUp className="text-amber-500 h-5 w-5 ml-2 animate-bounce" />
-                    )}
+                  <div className="flex items-center space-x-4">
+                    {/* Manual Estimate */}
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold">
+                        {myQueue.timeTillYourTurn > 2 && `${myQueue.timeTillYourTurn - 2} - `}
+                        {myQueue.timeTillYourTurn}
+                        &nbsp;min
+                        {myQueue.timeTillYourTurn > 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {/* AI Estimate (Beta) */}
+                    <div className="flex items-center text-sm">
+                      <Bot className="h-5 w-5 mr-1" title="Experimental AI prediction" />
+                      <span>
+                        : {myQueue.timeTillYourTurnAI}&nbsp;min
+                        {myQueue.timeTillYourTurnAI > 1 ? 's' : ''}
+                      </span>
+                    </div>
                   </div>
+                  <p className="mt-1 text-xs text-gray-400">
+                    AI estimate is <em>experimental</em> and will improve over time.
+                  </p>
                 </div>
               </div>
 
