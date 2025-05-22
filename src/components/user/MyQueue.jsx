@@ -473,6 +473,9 @@ export const MyQueue = () => {
                       with each event
                     </p>
                   </div>
+                  {showWaitTimeArrow && (
+                      <FiArrowUp className="text-amber-500 h-5 w-5 ml-2 animate-bounce" />
+                    )}
                 </div>
               </div>
 
