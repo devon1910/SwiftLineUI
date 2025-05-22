@@ -9,11 +9,27 @@ import {
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/api/swiftlineService";
 
-import { FiArrowUp, FiClock, FiInfo, FiPause, FiRefreshCw, FiUserCheck, FiX } from "react-icons/fi";
+import {
+  FiArrowUp,
+  FiClock,
+  FiInfo,
+  FiPause,
+  FiRefreshCw,
+  FiUserCheck,
+  FiX,
+} from "react-icons/fi";
 import { FiLogOut } from "react-icons/fi";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { Bot, BotIcon, FastForward, Info, LocateIcon, MapPin } from "lucide-react";
+import {
+  Bot,
+  BotIcon,
+  Clock,
+  FastForward,
+  Info,
+  LocateIcon,
+  MapPin,
+} from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import sound from "../../sounds/tv-talk-show-intro.mp3";
@@ -37,7 +53,7 @@ export const MyQueue = () => {
   const [showPositionArrow, setShowPositionArrow] = useState(false);
   const [showWaitTimeArrow, setShowWaitTimeArrow] = useState(false);
 
-  const[ showLeaveQueueMsg, setShowLeaveQueueMsg] = useState("");
+  const [showLeaveQueueMsg, setShowLeaveQueueMsg] = useState("");
   // useRef to store previous values.
   const prevPositionRef = useRef(myQueue.position);
   const prevTimeRef = useRef(myQueue.timeTillYourTurn);
@@ -54,9 +70,9 @@ export const MyQueue = () => {
   const conn = useSignalRConnection();
   const positionElementRef = useRef(null);
   const userToken =
-  localStorage.getItem("user") === "undefined"
-    ? null
-    : localStorage.getItem("user");
+    localStorage.getItem("user") === "undefined"
+      ? null
+      : localStorage.getItem("user");
 
   useEffect(() => {
     getCurrentPosition();
@@ -146,7 +162,8 @@ export const MyQueue = () => {
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   //Fallback polling every 60s if disconnected
@@ -159,7 +176,6 @@ export const MyQueue = () => {
     return () => clearInterval(pollInterval);
   }, [isConnected]);
 
-
   // Compare position changes for arrow indicators
   useEffect(() => {
     if (isFirstPositionUpdate.current) {
@@ -168,7 +184,6 @@ export const MyQueue = () => {
       prevPositionRef.current !== null &&
       myQueue.position < prevPositionRef.current
     ) {
-      
       //play next position sound
       const playSound = () => {
         nextPositionSoundRef.current?.play().catch((error) => {
@@ -177,9 +192,9 @@ export const MyQueue = () => {
       };
       playSound();
       setShowPositionArrow(true);
-      
+
       //show leave queue message if any
-      if(showLeaveQueueMsg!==""){
+      if (showLeaveQueueMsg !== "") {
         setTimeout(() => setShowLeaveQueueMsg(""), 30000);
       }
 
@@ -198,7 +213,6 @@ export const MyQueue = () => {
 
     //for first position
     if (myQueue.position === 1) {
-
       //play 1st position sound
       const playSound = () => {
         firstPositionSoundRef.current?.play().catch((error) => {
@@ -210,7 +224,6 @@ export const MyQueue = () => {
       setTimeout(() => {
         clearInterval(intervalId); // Stop after 30 seconds
       }, 15000);
-
 
       //apply special animation
       if (positionElementRef.current) {
@@ -249,7 +262,6 @@ export const MyQueue = () => {
   //     setTimeout(() => setShowPositionArrow(false), 30000);
   //   }
 
-    
   // }, [myQueue.position, myQueue.positionRank]);
 
   function getCurrentPosition() {
@@ -286,8 +298,15 @@ export const MyQueue = () => {
     try {
       setIsReconnecting(true);
       await ensureConnection();
-      const position= myQueue.position;
-      await invokeWithLoading(connection, "ExitQueue", JSON.parse(localStorage.getItem("userId")), 0, "-1", position);
+      const position = myQueue.position;
+      await invokeWithLoading(
+        connection,
+        "ExitQueue",
+        JSON.parse(localStorage.getItem("userId")),
+        0,
+        "-1",
+        position
+      );
 
       showToast.success("Exited queue.");
       triggerFeedback(2);
@@ -305,27 +324,28 @@ export const MyQueue = () => {
       {/* SignalR Status Bar + Manual Refresh */}
       {myQueue.position !== -1 && (
         <div className="flex items-center justify-end text-xs text-gray-600 mb-2 gap-2">
-        <span
-          className={`flex items-center gap-1 ${
-            isConnected ? "text-green-600" : "text-red-500"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-          {isConnected ? "Live" : "Offline"}
-        </span>
-        {!isConnected && (
-          <button
-            onClick={handleManualRefresh}
-            className="flex items-center gap-1 bg-sage-100 hover:bg-sage-200 px-2 py-1 rounded text-sage-800"
-            disabled={isRefreshing}
+          <span
+            className={`flex items-center gap-1 ${
+              isConnected ? "text-green-600" : "text-red-500"
+            }`}
           >
-            <FiRefreshCw className={`w-4 h-4 ${isRefreshing && "animate-spin"}`} />
-            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
-          </button>
-        )}
-      </div>
+            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+            {isConnected ? "Live" : "Offline"}
+          </span>
+          {!isConnected && (
+            <button
+              onClick={handleManualRefresh}
+              className="flex items-center gap-1 bg-sage-100 hover:bg-sage-200 px-2 py-1 rounded text-sage-800"
+              disabled={isRefreshing}
+            >
+              <FiRefreshCw
+                className={`w-4 h-4 ${isRefreshing && "animate-spin"}`}
+              />
+              <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+            </button>
+          )}
+        </div>
       )}
-     
 
       {isReconnecting && <GlobalSpinner />}
       {(myQueue.position === -1 || userToken === null) && (
@@ -345,13 +365,11 @@ export const MyQueue = () => {
               <span className="text-sm font-medium text-white">Leave</span>
             </button>
           </div>
-          {showLeaveQueueMsg !=="" && (
+          {showLeaveQueueMsg !== "" && (
             <div class="animate-slide-in bg-blue-100 dark:bg-blue-900/30 border-l-4 border-blue-500 dark:border-blue-400 text-blue-500 dark:text-blue-500 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md grid grid-col">
-                <h4 className="font-semibold mb-1">Served earlier🕺🏽!</h4>
-                <p className="text-sm">
-                  {showLeaveQueueMsg}
-                </p>
-              </div>
+              <h4 className="font-semibold mb-1">Served earlier🕺🏽!</h4>
+              <p className="text-sm">{showLeaveQueueMsg}</p>
+            </div>
           )}
           {!queueActivity && (
             <div className="animate-slide-in bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-200 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md">
@@ -404,44 +422,63 @@ export const MyQueue = () => {
               </div>
 
               {/* Secondary Information: Wait Time - Second most important */}
-             <div className="flex items-start gap-3 pb-3 border-b">
-                <div className="relative h-8 w-8 flex items-center justify-center">
+              <div className="flex items-start gap-4 pb-4 border-b">
+                <div className="relative h-12 w-12 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl">
                   {queueActivity && (
-                    <div className="absolute top-0 left-0 w-full h-full border-2 border-amber-500/30 rounded-full animate-spin border-t-transparent" />
+                    <div className="absolute top-0 left-0 w-full h-full border-2 border-blue-400/40 rounded-xl animate-pulse" />
                   )}
-                  <FiClock className="text-amber-500 h-6 w-6 relative z-10" />
+                  <Bot className="text-blue-600 h-7 w-7 relative z-10" />
                 </div>
-                <div className="flex flex-col flex-1">
-                  <span className="text-gray-600 text-sm">Estimated Wait</span>
-                  <div className="flex items-center space-x-4">
-                    {/* Manual Estimate */}
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold">
-                        {myQueue.timeTillYourTurn > 2 && `${myQueue.timeTillYourTurn - 2} - `}
-                        {myQueue.timeTillYourTurn}
-                        &nbsp;min
-                        {myQueue.timeTillYourTurn > 1 ? 's' : ''}
-                      </span>
-                    </div>
 
-                    {/* AI Estimate (Beta) */}
-                    <div className="flex items-center text-sm">
-                      <Bot className="h-5 w-5 mr-1" title="Experimental AI prediction" />
-                      <span>
-                        : {myQueue.timeTillYourTurnAI}&nbsp;min
-                        {myQueue.timeTillYourTurnAI > 1 ? 's' : ''}
-                      </span>
-                    </div>
+                <div className="flex flex-col flex-1">
+                  {/* AI Badge Header */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-blue-600 text-sm font-medium">
+                      AI Prediction
+                    </span>
+                    <span className="text-xs bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full font-medium">
+                      Beta
+                    </span>
                   </div>
-                  <p className="mt-1 text-xs text-gray-400">
-                    AI estimate is <em>experimental</em> and will improve over time.
-                  </p>
+
+                  {/* Main AI Estimate - Large and Prominent */}
+                  <div className="text-3xl font-bold mb-1">
+                    {myQueue.timeTillYourTurnAI > 2 &&
+                      `${myQueue.timeTillYourTurnAI - 2} - `}
+                    {myQueue.timeTillYourTurnAI}
+                    <span className="text-lg text-gray-600 ml-1">
+                      min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}
+                    </span>
+                  </div>
+
+                  {/* Subtitle */}
+                  <div className="text-sm text-gray-600 mb-3">
+                    Estimated wait time
+                  </div>
+
+                  {/* Regular Estimate - Smaller, Secondary */}
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-500">
+                      Standard estimate: {myQueue.timeTillYourTurn} min
+                      {myQueue.timeTillYourTurn > 1 ? "s" : ""}
+                    </span>
+                  </div>
+
+                  {/* Footer Note */}
+                  <div className="flex items-start gap-2 mt-3">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      AI predictions learn from real-time patterns and improve
+                      with each event
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Tertiary Information: Staff Count - Informational but less actionable */}
               <div className="flex items-center gap-3">
-                <FiUserCheck className="text-blue-500 h-6 w-6" />
+                <FiUserCheck className="text-amber-500 h-6 w-6" />
                 <div className="flex flex-col">
                   <span className="text-gray-600 text-sm">Staff Serving</span>
                   <span className="text-lg font-medium">
@@ -461,12 +498,15 @@ export const MyQueue = () => {
                       <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
                       <div>
                         <p>
-                        You're next in line!🎉<br></br>
+                          You're next in line!🎉<br></br>
                         </p>
                         <p>
-                        The system will automatically move you out of the queue in{" "}
-                        <span className="font-semibold">{myQueue.averageWait} minutes</span>.
-                          If you get served sooner, please help others by 
+                          The system will automatically move you out of the
+                          queue in{" "}
+                          <span className="font-semibold">
+                            {myQueue.averageWait} minutes
+                          </span>
+                          . If you get served sooner, please help others by
                           <b> leaving</b> the queue.<br></br>
                           Thanks for using SwiftLine{" "}
                           <FastForward className="fast-forward-icon w-5 h-5" />
