@@ -442,15 +442,20 @@ export const MyQueue = () => {
                   </div>
 
                   {/* Main AI Estimate - Large and Prominent */}
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold mb-1 flex items-center flex-1">
                     {myQueue.timeTillYourTurnAI > 2 &&
                       `${myQueue.timeTillYourTurnAI - 2} - `}
                     {myQueue.timeTillYourTurnAI}
-                    <span className="text-lg text-gray-600 ml-1">
-                      min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}
+                    <span className="text-lg text-gray-600 ml-1 mt-2">
+                      min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}              
                     </span>
+                    {showWaitTimeArrow && (
+                      <FiArrowUp className="text-blue-500 h-5 w-5 ml-2 animate-bounce" />
+                  )}                
                   </div>
-
+                  
+                  
+                  
                   {/* Subtitle */}
                   <div className="text-sm text-gray-600 mb-3">
                     Estimated wait time
@@ -473,9 +478,7 @@ export const MyQueue = () => {
                       with each event
                     </p>
                   </div>
-                  {showWaitTimeArrow && (
-                      <FiArrowUp className="text-amber-500 h-5 w-5 ml-2 animate-bounce" />
-                    )}
+                  
                 </div>
               </div>
 
