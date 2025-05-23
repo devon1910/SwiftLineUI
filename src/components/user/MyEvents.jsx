@@ -119,7 +119,8 @@ const MyEvents = () => {
         {userEvents.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
-              <div class="relative border rounded-lg shadow-md p-6">
+              <div key={event.id} class="relative border rounded-lg shadow-md p-6">
+               
                 {/* Delete Button (Subtler) */}
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
