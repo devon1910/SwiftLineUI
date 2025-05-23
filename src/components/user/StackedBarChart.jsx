@@ -58,7 +58,7 @@ const StackedBarChart = () => {
     ],
   };
   return (
-    <div className="p-4 rounded-lg shadow">
+    <div className="p-4 rounded-lg shadow border">
       <h3 className="text-lg font-semibold mb-4 text-sage-800 dark:text-gray-100">
         Event Performance Comparison
       </h3>
