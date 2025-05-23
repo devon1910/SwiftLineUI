@@ -4,15 +4,24 @@ import { createEvent } from "../../services/api/swiftlineService";
 import { updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiClock, FiPlus, FiCheck, FiUsers, FiUnlock, FiInfo, FiLock } from "react-icons/fi";
+import {
+  FiClock,
+  FiPlus,
+  FiCheck,
+  FiUsers,
+  FiUnlock,
+  FiInfo,
+  FiLock,
+} from "react-icons/fi";
 import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 import { useTheme } from "../../services/utils/useTheme";
+import { ArrowReturnLeft } from "react-bootstrap-icons";
 
 const EventForm = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
-  const {darkMode} = useTheme();
+  const { darkMode } = useTheme();
 
   const optionsbgColor = darkMode ? "#1f2937" : "#f3f4f6";
   const optionsTextColor = darkMode ? "#f3f4f6" : "#4b5563";
@@ -40,7 +49,8 @@ const EventForm = () => {
     editingEvent ? editingEvent.capacity : 50
   );
   const [allowAnonymous, setAllowAnonymous] = useState(
-    editingEvent ? editingEvent.allowAnonymousJoining : false);
+    editingEvent ? editingEvent.allowAnonymousJoining : false
+  );
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -123,19 +133,26 @@ const EventForm = () => {
       className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
       onSubmit={handleSubmit}
     >
-      <h3 className="text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
-        {editingEvent ? (
-          <>
-            <FiCheck className="w-6 h-6" />
-            Edit Event
-          </>
-        ) : (
-          <>
-            <FiPlus className="w-6 h-6" />
-            Create New Event
-          </>
-        )}
-      </h3>
+      <div className="flex items-center mb-4 grid grid-cols-2">
+        <ArrowReturnLeft
+          className="w-6 h-6 cursor-pointer col-span-1"
+          onClick={() => navigator("/myEvents")}
+        />
+        <h3 className="col-span-1 text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
+          {editingEvent ? (
+            <>
+              <FiCheck className="w-6 h-6" />
+              Edit Event
+            </>
+          ) : (
+            <>
+              <FiPlus className="w-6 h-6" />
+              Create New Event
+            </>
+          )}
+        </h3>
+      </div>
+
       {/* Title Input */}
       <div className="mb-6 relative">
         <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
@@ -266,8 +283,21 @@ const EventForm = () => {
               className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
             >
               {timeOptions.map((option) => (
-                <option key={option.value} value={option.value} 
-                style={{ background: option.value === eventStartTime ? "#698474" : optionsbgColor, color: option.value === eventStartTime ? "white" : optionsTextColor, padding: "0.5rem" }}>
+                <option
+                  key={option.value}
+                  value={option.value}
+                  style={{
+                    background:
+                      option.value === eventStartTime
+                        ? "#698474"
+                        : optionsbgColor,
+                    color:
+                      option.value === eventStartTime
+                        ? "white"
+                        : optionsTextColor,
+                    padding: "0.5rem",
+                  }}
+                >
                   {option.label}
                 </option>
               ))}
@@ -292,8 +322,21 @@ const EventForm = () => {
               className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
             >
               {timeOptions.map((option) => (
-                <option key={option.value} value={option.value}
-                style={{ background: option.value === eventEndTime ? "#698474" : optionsbgColor, color: option.value === eventEndTime ? "white" : optionsTextColor, padding: "0.5rem" }}>
+                <option
+                  key={option.value}
+                  value={option.value}
+                  style={{
+                    background:
+                      option.value === eventEndTime
+                        ? "#698474"
+                        : optionsbgColor,
+                    color:
+                      option.value === eventEndTime
+                        ? "white"
+                        : optionsTextColor,
+                    padding: "0.5rem",
+                  }}
+                >
                   {option.label}
                 </option>
               ))}
@@ -322,7 +365,7 @@ const EventForm = () => {
                   }`}
                 >
                   {allowAnonymous ? (
-                    <LockKeyholeOpen  className="w-full h-full p-1" />
+                    <LockKeyholeOpen className="w-full h-full p-1" />
                   ) : (
                     <FiLock className="w-full h-full p-1" />
                   )}

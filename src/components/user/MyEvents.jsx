@@ -4,9 +4,18 @@ import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { QrCode } from "lucide-react";
+import {
+  BadgePlus,
+  CopyIcon,
+  Edit,
+  QrCode,
+  QrCodeIcon,
+  Share2Icon,
+} from "lucide-react";
 import EventQRCode from "../common/EventQRCode";
 import { showToast } from "../../services/utils/ToastHelper";
+import { Copy, Eye, Share } from "react-bootstrap-icons";
+import { format } from "date-fns";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
@@ -16,13 +25,18 @@ const MyEvents = () => {
     getUserEvents();
   }, []);
 
-  
   const { userId, userName, setShowAuthModal } = useOutletContext();
 
   const [showQRCode, setShowQRCode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   function handleNavigation() {
-    if (!userId || userName=="" || userName==null || userName==undefined || userName=="Anonymous") {
+    if (
+      !userId ||
+      userName == "" ||
+      userName == null ||
+      userName == undefined ||
+      userName == "Anonymous"
+    ) {
       showToast.error("Please login or signup to create an event.");
       //navigate("/auth");
       setShowAuthModal("login");
@@ -59,7 +73,13 @@ const MyEvents = () => {
   };
 
   function getUserEvents() {
-    if(!userId ||userName=="" || userName==null || userName==undefined || userName=="Anonymous"){
+    if (
+      !userId ||
+      userName == "" ||
+      userName == null ||
+      userName == undefined ||
+      userName == "Anonymous"
+    ) {
       return;
     }
     UserEvents()
@@ -67,7 +87,7 @@ const MyEvents = () => {
         setUserEvents(response.data.data);
       })
       .catch((error) => {
-        setShowAuthModal("login")
+        setShowAuthModal("login");
         console.log(error);
       });
   }
@@ -91,86 +111,84 @@ const MyEvents = () => {
         {userEvents.length === 0 && (
           <div className="text-center py-12">
             <p className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
-              No events created yet. Contact us to create your first event! 📅
+              No events created yet. 📅
             </p>
-          </div>)}
-         
+          </div>
+        )}
+
         {userEvents.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
-              <div
-                key={event.id}
-                className="relative  rounded-xl shadow-md border border-sage-200 dark:border-gray-700"
-              >
-                {/* Delete Button */}
+              <div class="relative border rounded-lg shadow-md p-6">
+                {/* Delete Button (Subtler) */}
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
-                  className="absolute top-4 right-4 p-2 text-red-500 hover:text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className="absolute top-3 right-3 text-gray-400 hover:text-red-500 rounded-full p-1 transition-colors"
                   aria-label="Delete event"
                 >
-                  <FiTrash2 className="w-5 h-5" />
+                  <FiTrash2 class="w-5 h-5" />
                 </button>
 
-                <div className="p-6 flex flex-col gap-4">
-                  {/* Title */}
-                  <h3 className="text-xl  font-semibold text-gray-900 dark:text-gray-100 pr-6">
-                    {event.title}
-                  </h3>
+                {/* Title and Description */}
+                <h3 class="text-xl font-semibold dark:text-white mb-2">
+                  {event.title}
+                </h3>
+                <p class="mb-4">{event.description}</p>
 
-                  {/* Description */}
-                  <p className="dark:text-gray-500 text-sm leading-relaxed">
-                    {event.description}
-                  </p>
+                {/* Main Action Button */}
+                <button
+                  onClick={() =>
+                    navigate("/queueManagement", { state: { event: event } })
+                  }
+                  className="w-full py-2 px-4 bg-sage-500 text-white rounded-lg font-medium hover:bg-sage-600 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Eye class="w-5 h-5" />
+                  <span>View Queue</span>
+                </button>
 
-                  {/* Buttons */}
-                  <div className="flex flex-col gap-2 mt-2">
-                    <button
-                      onClick={() =>
-                        navigate("/queueManagement", {
-                          state: { event: event },
-                        })
-                      }
-                      className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
-                    >
-                      View Queue
-                    </button>
-
-                    <button
-                      onClick={() => handleShare(event.title)}
-                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
-                    >
-                      Share Event
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        navigate("/newEvent", {
-                          state: { editingEvent: event },
-                        })
-                      }
-                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
-                    >
-                      Edit Event
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedEvent(event);
-                        setShowQRCode(true);
-                      }}
-                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 flex items-center justify-center gap-2"
-                    >
-                      <QrCode /> Get QR Code
-                    </button>
+                {/* Secondary Actions (as icons or in a dropdown) */}
+                <div class="flex justify-end gap-2 mt-4">
+                  <button
+                    onClick={() => handleShare(event.title)}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-sage-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    aria-label="Share event"
+                  >
+                    <CopyIcon class="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/newEvent", { state: { editingEvent: event } })
+                    }
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-sage-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    aria-label="Edit event"
+                  >
+                    <Edit class="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedEvent(event);
+                      setShowQRCode(true);
+                    }}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-sage-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    aria-label="Get QR Code"
+                  >
+                    <QrCodeIcon />
+                  </button>
+                </div>
+                <div class="absolute bottom-3 left-3 text-gray-500 text-sm">
+                  <div className="flex items-center gap-1">
+                    <BadgePlus className="w-4 h-4" />
+                    Created on: {format(new Date(event.createdAt), "dd/MM/yyyy")}
+                    
                   </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-
       </div>
       {showQRCode && selectedEvent && (
-        <EventQRCode 
+        <EventQRCode
           eventId={selectedEvent.id}
           eventTitle={selectedEvent.title}
           onClose={() => setShowQRCode(false)}
