@@ -2,10 +2,15 @@ import { faker } from "@faker-js/faker";
 import React from "react";
 import { Line } from "react-chartjs-2";
 
-const LineChart = ({ isForDropOff }) => {
+const LineChart = ({ isForDropOff, attendanceData }) => {
 
 
-  const labels = [
+const monthNames = [
+        null, // Placeholder for index 0
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+  let labels = [
     "January",
     "February",
     "March",
@@ -48,12 +53,17 @@ const LineChart = ({ isForDropOff }) => {
 
      
   } else {
-    const values1 = labels.map(() =>
-      faker.number.int({ min: -1000, max: 1000 })
+
+
+    labels = attendanceData.map((item) => monthNames[item.month])
+    const attendees = attendanceData.map((item) =>
+      item.attendeesCount
     );
-    const values2 = labels.map(() =>
-      faker.number.int({ min: -1000, max: 1000 })
+    const served = attendanceData.map((item) =>
+      item.servedCount
     );
+
+    
     options = {
         responsive: true,
         plugins: {
@@ -61,7 +71,7 @@ const LineChart = ({ isForDropOff }) => {
             position: "top",
           },
           title: {
-            display: true,
+            display: false,
             text: "Chart.js Line Chart",
           },
         },
@@ -70,14 +80,14 @@ const LineChart = ({ isForDropOff }) => {
       labels,
       datasets: [
         {
-          label: "Dataset 1",
-          data: values1,
+          label: "Attendees",
+          data: attendees,
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
         {
-          label: "Dataset 2",
-          data: values2,
+          label: "Served",
+          data: served,
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },

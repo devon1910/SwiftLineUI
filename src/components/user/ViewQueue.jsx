@@ -55,6 +55,7 @@ const ViewQueue = () => {
   const [historyTotalPages, setHistoryTotalPages] = useState(1);
   let [totalServed, setTotalServed] = useState(0);
   let [dropOffRate, setDropOffRate] = useState(0);
+  let [attendanceData, setAttendanceData] = useState([]);
   const [avgWaitTime, setAvgWaitTime] = useState(0);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const ViewQueue = () => {
         setTotalServed(response.data.data.totalServed);
         setAvgWaitTime(response.data.data.averageWaitTime);
         setDropOffRate(response.data.data.dropOffRate);
+        setAttendanceData(response.data.data.attendanceData);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -527,7 +529,7 @@ const ViewQueue = () => {
             )
           ) : (
             <div>
-              <LineChart isForDropOff={false} />
+              <LineChart isForDropOff={false} attendanceData={attendanceData} />
               <DropOffChart />
               <BarChart />
             </div>
