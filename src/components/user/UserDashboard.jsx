@@ -8,9 +8,7 @@ import PerformanceMatrix from "./PerformanceMatrix";
 const UserDashboard = () => {
   return (
     <>
-      <LineChart isForDropOff={false} />
-      <DropOffChart />
-      <BarChart />
+      
       <StackedBarChart />
       <PerformanceMatrix />
     </>

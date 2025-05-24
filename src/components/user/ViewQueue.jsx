@@ -51,52 +51,34 @@ const ViewQueue = () => {
 
   // State for history queue
   const [queueHistory, setQueueHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
   const [historyPage, setHistoryPage] = useState(1);
   const [historyTotalPages, setHistoryTotalPages] = useState(1);
   let [totalServed, setTotalServed] = useState(0);
+  let [dropOffRate, setDropOffRate] = useState(0);
   const [avgWaitTime, setAvgWaitTime] = useState(0);
 
   useEffect(() => {
-    if (activeTab === "current") {
-      getEventQueues();
-    } else {
-      fetchQueueHistory();
-    }
-  }, [currentPage, historyPage, activeTab]);
+    getEventQueues();    
+  }, [currentPage, historyPage]);
 
   const getEventQueues = () => {
     getQueueHistory(currentPage, lineMembersPerPage, event.id, false)
       .then((response) => {
-        setQueues(response.data.data.lines);
+        setQueues(response.data.data.linesMembersInQueue);
+        setTotalPages(response.data.data.pageCountInQueue);
+        setQueueHistory(response.data.data.pastLineMembers);
+        setHistoryTotalPages(response.data.data.pageCountPastMembers);
         setIsPaused(response.data.data.isEventPaused);
-        setTotalPages(response.data.data.pageCount);
         setTotalServed(response.data.data.totalServed);
         setAvgWaitTime(response.data.data.averageWaitTime);
+        setDropOffRate(response.data.data.dropOffRate);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
-        showToast.error("Failed to load current queue members");
+        showToast.error("Failed to load queue members");
       });
   };
 
-  const fetchQueueHistory = () => {
-    setHistoryLoading(true);
-    getQueueHistory(historyPage, lineMembersPerPage, event.id, true)
-      .then((response) => {
-        setQueueHistory(response.data.data.lines);
-        setHistoryTotalPages(response.data.data.pageCount);
-        setTotalServed(response.data.data.totalServed);
-        setAvgWaitTime(response.data.data.averageWaitTime);
-      })
-      .catch((error) => {
-        console.error("Error fetching queue history:", error);
-        showToast.error("Failed to load queue history");
-      })
-      .finally(() => {
-        setHistoryLoading(false);
-      });
-  };
 
   const ToggleQueueActivity = async () => {
     //check if user is logged In
@@ -175,10 +157,10 @@ const ViewQueue = () => {
         .then(() => {
           toast.success("Served Line Member.");
           getEventQueues();
-          // Refresh history data if we're switching to that tab
-          if (activeTab === "history") {
-            fetchQueueHistory();
-          }
+          // // Refresh history data if we're switching to that tab
+          // if (activeTab === "history") {
+          //   fetchQueueHistory();
+          // }
         })
         .catch((err) => {
           console.error(err);
@@ -200,11 +182,7 @@ const ViewQueue = () => {
   };
 
   const refreshCurrentView = () => {
-    if (activeTab === "current") {
-      getEventQueues();
-    } else {
-      fetchQueueHistory();
-    }
+    getEventQueues();
   };
 
   // Calculate total attendees
@@ -300,7 +278,7 @@ const ViewQueue = () => {
           </div>
 
           {/* Stats cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className={` p-4 rounded-lg ${containerClass}`}>
               <div className="flex items-center">
                 <FiUsers className="text-sage-600 dark:text-sage-400 mr-3 w-5 h-5" />
@@ -340,27 +318,23 @@ const ViewQueue = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className={`p-4 rounded-lg  ${containerClass}`}>
-            <div className="flex items-center">
-              <FiUserX className="text-sage-600 dark:text-sage-400 mr-3 w-5 h-5" />
-              <div>
-                <p className="text-sm text-sage-500 dark:text-sage-400">
-                  Drop-off Rate
-                </p>
-                <p className="text-lg font-semibold text-sage-700 dark:text-sage-300">
-                  {"dropOffRate"}%
-                </p>
-                <p className="text-xs text-sage-500 dark:text-sage-400">
-                  {"leftBeforeServed"} members left
-                </p>
+            <div className={`p-4 rounded-lg  ${containerClass}`}>
+              <div className="flex items-center">
+                <FiUserX className="text-sage-600 dark:text-sage-400 mr-3 w-5 h-5" />
+                <div>
+                  <p className="text-sm text-sage-500 dark:text-sage-400">
+                    Drop-off Rate
+                  </p>
+                  <p className="text-lg font-semibold text-sage-700 dark:text-sage-300">
+                    {dropOffRate}% 
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="border-b border-sage-200 dark:border-gray-700">
+          <div className="border-b border-sage-200 dark:border-gray-700 mt-3">
             <div className="auth-tabs">
               <button
                 onClick={() => setActiveTab("current")}
@@ -377,6 +351,14 @@ const ViewQueue = () => {
                 }`}
               >
                 Queue History
+              </button>
+              <button
+                onClick={() => setActiveTab("analytics")}
+                className={`auth-tab-button signup ${
+                  activeTab === "analytics" ? "active" : ""
+                }`}
+              >
+                Analytics
               </button>
             </div>
           </div>
@@ -454,98 +436,100 @@ const ViewQueue = () => {
                 </div>
               </div>
             )
-          ) : // History Tab
-          historyLoading ? (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sage-600"></div>
-              <p className="mt-2 text-sage-600 dark:text-sage-400">
-                Loading history...
-              </p>
-            </div>
-          ) : queueHistory.length === 0 ? (
-            <div className="text-center py-8 text-sage-500 dark:text-sage-400">
-              No queue history available
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-sage-50 dark:bg-gray-800">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      #
-                    </th>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      User
-                    </th>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      Joined At
-                    </th>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      Served At
-                    </th>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      Wait Time
-                    </th>
-                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-sage-100 dark:divide-gray-700">
-                  {queueHistory.map((member, index) => (
-                    <tr
-                      key={member.id}
-                      className="hover:bg-sage-50 dark:hover:bg-gray-800/50 transition-colors"
-                    >
-                      <td className="px-4 py-3 text-sage-600 dark:text-sage-300 font-medium">
-                        {(historyPage - 1) * lineMembersPerPage + index + 1}
-                      </td>
-                      <td className="px-4 py-3">
-                        {member.swiftLineUser.userName}
-                      </td>
-                      <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                        {format(
-                          new Date(member?.createdAt),
-                          "dd/MM/yyyy hh:mm:ss a"
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                        {member?.dateCompletedBeingAttendedTo
-                          ? format(
-                              new Date(member?.dateCompletedBeingAttendedTo),
-                              "dd/MM/yyyy hh:mm:ss a"
-                            )
-                          : "-"}
-                      </td>
-                      <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
-                        {member?.timeWaited ? `${member?.timeWaited} min` : "-"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            member.status === "served"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-                              : member.status === "served by Admin"
-                              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
-                              : member.status === "left"
-                              ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
-                              : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
-                          }`}
-                        >
-                          {member.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="mt-6">
-                <PaginationControls
-                  currentPage={historyPage}
-                  totalPages={historyTotalPages}
-                  onPageChange={handleHistoryPageChange}
-                />
+          ) : activeTab === "history" ? (
+            queueHistory.length === 0 ? (
+              <div className="text-center py-8 text-sage-500 dark:text-sage-400">
+                No queue history available
               </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-sage-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        #
+                      </th>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        User
+                      </th>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        Joined At
+                      </th>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        Served At
+                      </th>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        Wait Time
+                      </th>
+                      <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-sage-100 dark:divide-gray-700">
+                    {queueHistory.map((member, index) => (
+                      <tr
+                        key={member.id}
+                        className="hover:bg-sage-50 dark:hover:bg-gray-800/50 transition-colors"
+                      >
+                        <td className="px-4 py-3 text-sage-600 dark:text-sage-300 font-medium">
+                          {(historyPage - 1) * lineMembersPerPage + index + 1}
+                        </td>
+                        <td className="px-4 py-3">
+                          {member.swiftLineUser.userName}
+                        </td>
+                        <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
+                          {format(
+                            new Date(member?.createdAt),
+                            "dd/MM/yyyy hh:mm:ss a"
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
+                          {member?.dateCompletedBeingAttendedTo
+                            ? format(
+                                new Date(member?.dateCompletedBeingAttendedTo),
+                                "dd/MM/yyyy hh:mm:ss a"
+                              )
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
+                          {member?.timeWaited
+                            ? `${member?.timeWaited} min`
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              member.status === "served"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+                                : member.status === "served by Admin"
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+                                : member.status === "left"
+                                ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
+                            }`}
+                          >
+                            {member.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="mt-6">
+                  <PaginationControls
+                    currentPage={historyPage}
+                    totalPages={historyTotalPages}
+                    onPageChange={handleHistoryPageChange}
+                  />
+                </div>
+              </div>
+            )
+          ) : (
+            <div>
+              <LineChart isForDropOff={false} />
+              <DropOffChart />
+              <BarChart />
             </div>
           )}
         </div>
