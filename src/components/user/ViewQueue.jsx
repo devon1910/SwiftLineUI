@@ -56,7 +56,9 @@ const ViewQueue = () => {
   let [totalServed, setTotalServed] = useState(0);
   let [dropOffRate, setDropOffRate] = useState(0);
   let [attendanceData, setAttendanceData] = useState([]);
+  const [dropOffRateTrend, setDropOffRateTrend] = useState([]);
   const [avgWaitTime, setAvgWaitTime] = useState(0);
+
 
   useEffect(() => {
     getEventQueues();    
@@ -74,6 +76,7 @@ const ViewQueue = () => {
         setAvgWaitTime(response.data.data.averageWaitTime);
         setDropOffRate(response.data.data.dropOffRate);
         setAttendanceData(response.data.data.attendanceData);
+        setDropOffRateTrend(response.data.data.dropOffRateTrend);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -230,7 +233,6 @@ const ViewQueue = () => {
   //     dropOffRate: total > 0 ? ((dropped / total) * 100).toFixed(1) : 0
   //   };
   // });
-
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="rounded-xl shadow-lg border border-sage-100 overflow-hidden">
@@ -529,8 +531,11 @@ const ViewQueue = () => {
             )
           ) : (
             <div>
-              <LineChart isForDropOff={false} attendanceData={attendanceData} />
-              <DropOffChart />
+              <LineChart 
+              isForDropOff={false} 
+              attendanceData={attendanceData} 
+              /> 
+              <DropOffChart dropOffRateTrend={dropOffRateTrend}/>
               <BarChart />
             </div>
           )}
