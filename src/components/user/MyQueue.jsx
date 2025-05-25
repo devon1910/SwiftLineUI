@@ -34,6 +34,7 @@ import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import sound from "../../sounds/tv-talk-show-intro.mp3";
 import nextPositionSound from "../../sounds/audience-cheering-clapping.mp3";
+import LeaveQueueModal from "./LeaveQueueModal.jsx";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -73,6 +74,8 @@ export const MyQueue = () => {
     localStorage.getItem("user") === "undefined"
       ? null
       : localStorage.getItem("user");
+
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   useEffect(() => {
     getCurrentPosition();
@@ -290,10 +293,8 @@ export const MyQueue = () => {
       });
   }
 
+  let leaveQueueReason=""
   const handleLeaveQueue = async () => {
-    if (!window.confirm("Are you sure you want to leave the queue?")) {
-      return;
-    }
 
     try {
       setIsReconnecting(true);
@@ -305,7 +306,8 @@ export const MyQueue = () => {
         JSON.parse(localStorage.getItem("userId")),
         0,
         "-1",
-        position
+        position,
+        leaveQueueReason
       );
 
       showToast.success("Exited queue.");
@@ -321,6 +323,18 @@ export const MyQueue = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-4 font-sans">
+      {showLeaveModal && (
+        <LeaveQueueModal
+          onConfirm={(reason) => {
+            console.log("Left queue because:", reason);
+            leaveQueueReason = reason;       
+            setShowLeaveModal(false);
+            handleLeaveQueue(); // Call the leave queue function
+            // Add your leave queue logic here
+          }}
+          onCancel={() => setShowLeaveModal(false)}
+        />
+      )}
       {/* SignalR Status Bar + Manual Refresh */}
       {myQueue.position !== -1 && (
         <div className="flex items-center justify-end text-xs text-gray-600 mb-2 gap-2">
@@ -358,7 +372,7 @@ export const MyQueue = () => {
           <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600 flex justify-between items-center">
             <h3 className="text-xl font-semibold ">{myQueue.eventTitle}</h3>
             <button
-              onClick={handleLeaveQueue}
+              onClick={setShowLeaveModal(true)}
               className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors"
             >
               <FiLogOut className="w-4 h-4 text-white" />
@@ -447,15 +461,13 @@ export const MyQueue = () => {
                       `${myQueue.timeTillYourTurnAI - 2} - `}
                     {myQueue.timeTillYourTurnAI}
                     <span className="text-lg text-gray-600 ml-1 mt-2">
-                      min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}              
+                      min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}
                     </span>
                     {showWaitTimeArrow && (
                       <FiArrowUp className="text-blue-500 h-5 w-5 ml-2 animate-bounce" />
-                  )}                
+                    )}
                   </div>
-                  
-                  
-                  
+
                   {/* Subtitle */}
                   <div className="text-sm text-gray-600 mb-3">
                     Estimated wait time
@@ -478,7 +490,6 @@ export const MyQueue = () => {
                       with each event
                     </p>
                   </div>
-                  
                 </div>
               </div>
 
