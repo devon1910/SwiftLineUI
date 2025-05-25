@@ -326,7 +326,6 @@ export const MyQueue = () => {
       {showLeaveModal && (
         <LeaveQueueModal
           onConfirm={(reason) => {
-            console.log("Left queue because:", reason);
             leaveQueueReason = reason;       
             setShowLeaveModal(false);
             handleLeaveQueue(); // Call the leave queue function
@@ -372,7 +371,7 @@ export const MyQueue = () => {
           <div className="bg-sage-500 px-6 py-4 border-b-2 border-sage-600 flex justify-between items-center">
             <h3 className="text-xl font-semibold ">{myQueue.eventTitle}</h3>
             <button
-              onClick={setShowLeaveModal(true)}
+              onClick={ () => setShowLeaveModal(true)}
               className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors"
             >
               <FiLogOut className="w-4 h-4 text-white" />
