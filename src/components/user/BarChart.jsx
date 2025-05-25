@@ -1,8 +1,8 @@
-import { faker } from "@faker-js/faker";
+
 import React from "react";
 import { Bar } from "react-chartjs-2";
 
-const BarChart = () => {
+const BarChart = ({peakArrivalPeriodData}) => {
   const options = {
     responsive: true,
     plugins: {
@@ -10,41 +10,35 @@ const BarChart = () => {
         position: "top",
       },
       title: {
-        display: true,
-        text: "Chart.js Bar Chart",
+        display: false,
       },
     },
   };
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
+  const PeriodsOfDay = [
+    "Morning",
+    "Afternoon",
+    "Evening",
+    "Night",
   ];
+  const labels = peakArrivalPeriodData.map((item) => PeriodsOfDay[item.timeOfDay]);
+  const values = peakArrivalPeriodData.map((item) => item.count);
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Dataset 1",
-        data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
+        label: "Arrivals",
+        data: values,
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
-      {
-        label: "Dataset 2",
-        data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
+      
     ],
   };
   return (
-    <div className="p-4 rounded-lg shadow border">
+    <div className="p-4 rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-4 text-sage-800 dark:text-gray-100">
-        Peak Arrival Hours
+        Peak Arrival Periods
       </h3>
       <div className="h-64">
         <Bar options={options} data={data} />

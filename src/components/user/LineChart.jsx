@@ -82,7 +82,7 @@ const LineChart = ({ isForDropOff, attendanceData, dropOffRateTrend }) => {
             ? "Drop-off Rate Trend"
             : "Attendees vs Served Over Time"}
         </h3>
-        <div className="h-64 border">
+        <div className="h-64">
           <Line data={data} options={options} />
         </div>
       </div>

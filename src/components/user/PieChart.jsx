@@ -1,37 +1,38 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 
-const PieChart = () => {
+const PieChart = ({dropOffReasons}) => {
 
-    const data = {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [
-          {
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3], //dict should be okay here
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)',
-            ],
-            borderWidth: 1,
-          },
-        ],
+    const generateBeautifulChartColors = (count) => {
+        const goldenRatio = 0.618033988749;
+        
+        return Array.from({ length: count }, (_, i) => {
+          const hue = (i * goldenRatio * 360) % 360;
+          const saturation = 75 + (i % 3) * 8;
+          const lightness = 55 + (i % 4) * 5;
+          
+          return {
+            bg: `hsla(${hue}, ${saturation}%, ${lightness}%, 0.2)`,
+            border: `hsla(${hue}, ${saturation}%, ${lightness}%, 1)`,
+          };
+        });
+      };
+      
+      const colors = generateBeautifulChartColors(dropOffReasons.length);
+      
+      const data = {
+        labels: dropOffReasons.map((reason) => reason.reason),
+        datasets: [{
+          label: '# of Reasons',
+          data: dropOffReasons.map((reason) => reason.count),
+          backgroundColor: colors.map(c => c.bg),
+          borderColor: colors.map(c => c.border),
+          borderWidth: 1,
+        }],
       };
 
   return (
-    <div className="p-4 rounded-lg shadow border">
+    <div className="p-4 rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-4 text-sage-800 dark:text-gray-100">
         Drop-off Reasons
       </h3>

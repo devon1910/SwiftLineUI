@@ -33,8 +33,8 @@ const LeaveQueueModal = ({ onConfirm, onCancel }) => {
           {/* Reason Options */}
           <div className="space-y-2">
             {[
-              { value: 'got_served', label: 'Got served elsewhere', icon: '✓' },
-              { value: 'too_slow', label: 'Queue moving too slow', icon: '⏱' },
+              { value: 'Got served', label: 'Got served elsewhere', icon: '✓' },
+              { value: 'Too slow', label: 'Queue moving too slow', icon: '⏱' },
               { value: 'other', label: 'Other reason', icon: '💭' }
             ].map((option) => (
               <label

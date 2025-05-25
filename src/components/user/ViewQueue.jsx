@@ -56,34 +56,41 @@ const ViewQueue = () => {
   let [totalServed, setTotalServed] = useState(0);
   let [dropOffRate, setDropOffRate] = useState(0);
   let [attendanceData, setAttendanceData] = useState([]);
+  let [peakArrivalPeriodData, setPeakArrivalPeriodData] = useState([]);
+  const [dropOffReasons, setDropOffReasons] = useState([]);
   const [dropOffRateTrend, setDropOffRateTrend] = useState([]);
   const [avgWaitTime, setAvgWaitTime] = useState(0);
 
-
   useEffect(() => {
-    getEventQueues();    
+    getEventQueues();
   }, [currentPage, historyPage]);
 
   const getEventQueues = () => {
-    getQueueHistory(currentPage, lineMembersPerPage, event.id, false)
+    console.log("currentPage:", currentPage);
+    console.log("historyPage:", historyPage);
+    
+    getQueueHistory(currentPage, historyPage, lineMembersPerPage, event.id)
       .then((response) => {
         setQueues(response.data.data.linesMembersInQueue);
         setTotalPages(response.data.data.pageCountInQueue);
         setQueueHistory(response.data.data.pastLineMembers);
         setHistoryTotalPages(response.data.data.pageCountPastMembers);
         setIsPaused(response.data.data.isEventPaused);
-        setTotalServed(response.data.data.totalServed);
-        setAvgWaitTime(response.data.data.averageWaitTime);
-        setDropOffRate(response.data.data.dropOffRate);
-        setAttendanceData(response.data.data.attendanceData);
-        setDropOffRateTrend(response.data.data.dropOffRateTrend);
+        if (currentPage === 1 && historyPage === 1) {
+          setTotalServed(response.data.data.totalServed);
+          setAvgWaitTime(response.data.data.averageWaitTime);
+          setDropOffRate(response.data.data.dropOffRate);
+          setAttendanceData(response.data.data.attendanceData);
+          setDropOffRateTrend(response.data.data.dropOffRateTrend);
+          setDropOffReasons(response.data.data.dropOffReasons);
+          setPeakArrivalPeriodData(response.data.data.peakArrivalPeriodData);
+        }
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
         showToast.error("Failed to load queue members");
       });
   };
-
 
   const ToggleQueueActivity = async () => {
     //check if user is logged In
@@ -158,7 +165,7 @@ const ViewQueue = () => {
         }
       }
       // Invoke SignalR method to exit the queue
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "")
+      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "",-1,"")
         .then(() => {
           toast.success("Served Line Member.");
           getEventQueues();
@@ -190,49 +197,6 @@ const ViewQueue = () => {
     getEventQueues();
   };
 
-  // Calculate total attendees
-  // const totalAttendees = queueHistory.length;
-
-  // // Calculate total served
-  // totalServed = queueHistory.filter(m => m.status === "served" || m.status === "served by Admin").length;
-
-  // // Calculate drop-off rate
-  // const leftBeforeServed = queueHistory.filter(m => m.status === "left").length;
-  // const dropOffRate = ((leftBeforeServed / totalAttendees) * 100).toFixed(1);
-
-  // // Calculate served percentage
-  // const servedPercentage = ((totalServed / totalAttendees) * 100).toFixed(1);
-
-  // // Group data by time for charts
-
-  // // Calculate peak hours
-  // const arrivalHoursData = Array.from({ length: 24 }, (_, i) => {
-  //   const hour = `${i}:00`;
-  //   const count = queueHistory.filter(m =>
-  //     new Date(m.createdAt).getHours() === i
-  //   ).length;
-  //   return { hour, count };
-  // });
-
-  // const events=[
-  //   { id: 1, title: "Event 1", status: "served" },
-  //   { id: 2, title: "Event 2", status: "left" },
-  //   { id: 3, title: "Event 3", status: "served by Admin" },
-  // ]
-  // // Event comparison data (if you have multiple events)
-  // const eventComparisonData = events.map(event => {
-  //   const eventHistory = queueHistory.filter(m => m.eventId === event.id);
-  //   const total = eventHistory.length;
-  //   const served = eventHistory.filter(m => m.status === "served" || m.status === "served by Admin").length;
-  //   const dropped = eventHistory.filter(m => m.status === "left").length;
-
-  //   return {
-  //     event: event.title,
-  //     totalAttendees: total,
-  //     totalServed: served,
-  //     dropOffRate: total > 0 ? ((dropped / total) * 100).toFixed(1) : 0
-  //   };
-  // });
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="rounded-xl shadow-lg border border-sage-100 overflow-hidden">
@@ -330,7 +294,7 @@ const ViewQueue = () => {
                     Drop-off Rate
                   </p>
                   <p className="text-lg font-semibold text-sage-700 dark:text-sage-300">
-                    {dropOffRate}% 
+                    {dropOffRate}%
                   </p>
                 </div>
               </div>
@@ -415,7 +379,7 @@ const ViewQueue = () => {
                         </td>
                         <td className="px-4 py-3">
                           <button
-                            onClick={() => onSkip(user.lineMember.id)}
+                            onClick={() => onSkip(user.id)}
                             disabled={isPaused}
                             className={`flex items-center px-3 py-1 rounded text-sm font-medium ${
                               isPaused
@@ -531,12 +495,12 @@ const ViewQueue = () => {
             )
           ) : (
             <div>
-              <LineChart 
-              isForDropOff={false} 
-              attendanceData={attendanceData} 
-              /> 
-              <DropOffChart dropOffRateTrend={dropOffRateTrend}/>
-              <BarChart />
+              <LineChart isForDropOff={false} attendanceData={attendanceData} />
+              <DropOffChart
+                dropOffRateTrend={dropOffRateTrend}
+                dropOffReasons={dropOffReasons}
+              />
+              <BarChart peakArrivalPeriodData={peakArrivalPeriodData} />
             </div>
           )}
         </div>
