@@ -11,24 +11,30 @@ import {
   QrCode,
   QrCodeIcon,
   Share2Icon,
+  BarChart2, // Import for a chart icon
 } from "lucide-react";
 import EventQRCode from "../common/EventQRCode";
 import { showToast } from "../../services/utils/ToastHelper";
 import { Copy, Eye, Share } from "react-bootstrap-icons";
 import { format } from "date-fns";
+import StackedBarChart from "./StackedBarChart";
 
 const MyEvents = () => {
   const [userEvents, setUserEvents] = useState([]);
   const navigate = useNavigate();
+  
+  const { userId, userName, setShowAuthModal } = useOutletContext();
+
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [EventComparisonData, setEventComparisonData] = useState(null);
+  const [showEventsAnalytics, setShowEventsAnalytics] = useState(false);
 
   useEffect(() => {
     getUserEvents();
   }, []);
 
-  const { userId, userName, setShowAuthModal } = useOutletContext();
 
-  const [showQRCode, setShowQRCode] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
   function handleNavigation() {
     if (
       !userId ||
@@ -46,7 +52,6 @@ const MyEvents = () => {
   }
 
   function handleDeleteEvent(eventId) {
-    // Implement delete event logic here
     const answer = confirm("Are you sure you want to delete this event?");
     if (answer) {
       deleteEvent(eventId)
@@ -84,13 +89,21 @@ const MyEvents = () => {
     }
     UserEvents()
       .then((response) => {
-        setUserEvents(response.data.data);
+        setUserEvents(response.data.data.events);
+        setEventComparisonData(response.data.data.eventComparisonData);
       })
       .catch((error) => {
         setShowAuthModal("login");
         console.log(error);
       });
   }
+
+  // New function to navigate to the analytics dashboard
+  const handleViewAnalytics = () => {
+    setShowEventsAnalytics(!showEventsAnalytics) // Adjust this route to your analytics dashboard route
+  };
+
+  
   return (
     <div className="min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -99,12 +112,23 @@ const MyEvents = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
             My Events
           </h2>
-          <button
-            onClick={() => handleNavigation()}
-            className="bg-sage-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
-          >
-            Create New Event
-          </button>
+          <div className="flex gap-3"> {/* Container for buttons */}
+            {userEvents.length > 0 && (
+              <button
+                onClick={handleViewAnalytics}
+                className="text-white px-6 py-2 rounded-lg font-medium  flex items-center gap-2"
+              >
+                <BarChart2 className="w-5 h-5" />
+                <span>{showEventsAnalytics ? "Hide Event Insights" : "Show Event Insights"}</span>
+              </button>
+            )}
+            <button
+              onClick={() => handleNavigation()}
+              className="bg-sage-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+            >
+              Create New Event
+            </button>
+          </div>
         </div>
 
         {/* Events Grid */}
@@ -116,25 +140,23 @@ const MyEvents = () => {
           </div>
         )}
 
-        {userEvents.length > 0 && (
+        {userEvents.length > 0 && !showEventsAnalytics ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
-              <div key={event.id} class="relative border rounded-lg shadow-md p-6">
-               
-                {/* Delete Button (Subtler) */}
+              <div key={event.id} className="relative border rounded-lg shadow-md p-6"> {/* Changed class to className */}
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
                   className="absolute top-3 right-3 text-gray-400 hover:text-red-500 rounded-full p-1 transition-colors"
                   aria-label="Delete event"
                 >
-                  <FiTrash2 class="w-5 h-5" />
+                  <FiTrash2 className="w-5 h-5" /> {/* Changed class to className */}
                 </button>
 
                 {/* Title and Description */}
-                <h3 class="text-xl font-semibold dark:text-white mb-2">
+                <h3 className="text-xl font-semibold dark:text-white mb-2"> {/* Changed class to className */}
                   {event.title}
                 </h3>
-                <p class="mb-4">{event.description}</p>
+                <p className="mb-4">{event.description}</p> {/* Changed class to className */}
 
                 {/* Main Action Button */}
                 <button
@@ -143,18 +165,18 @@ const MyEvents = () => {
                   }
                   className="w-full py-2 px-4 bg-sage-500 text-white rounded-lg font-medium hover:bg-sage-600 transition-colors flex items-center justify-center gap-2"
                 >
-                  <Eye class="w-5 h-5" />
+                  <Eye className="w-5 h-5" /> {/* Changed class to className */}
                   <span>View Queue</span>
                 </button>
 
                 {/* Secondary Actions (as icons or in a dropdown) */}
-                <div class="flex justify-end gap-2 mt-4">
+                <div className="flex justify-end gap-2 mt-4"> {/* Changed class to className */}
                   <button
                     onClick={() => handleShare(event.title)}
                     className="p-2 text-gray-500 dark:text-gray-400 hover:text-sage-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                     aria-label="Share event"
                   >
-                    <CopyIcon class="w-5 h-5" />
+                    <CopyIcon className="w-5 h-5" /> {/* Changed class to className */}
                   </button>
                   <button
                     onClick={() =>
@@ -163,7 +185,7 @@ const MyEvents = () => {
                     className="p-2 text-gray-500 dark:text-gray-400 hover:text-sage-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                     aria-label="Edit event"
                   >
-                    <Edit class="w-5 h-5" />
+                    <Edit className="w-5 h-5" /> {/* Changed class to className */}
                   </button>
                   <button
                     onClick={() => {
@@ -176,16 +198,17 @@ const MyEvents = () => {
                     <QrCodeIcon />
                   </button>
                 </div>
-                <div class="absolute bottom-3 left-3 text-gray-500 text-sm">
+                <div className="absolute bottom-3 left-3 text-gray-500 text-sm"> {/* Changed class to className */}
                   <div className="flex items-center gap-1">
                     <BadgePlus className="w-4 h-4" />
                     Created on: {format(new Date(event.createdAt), "dd/MM/yyyy")}
-                    
                   </div>
                 </div>
               </div>
             ))}
           </div>
+        ):(
+          <StackedBarChart EventComparisonData={EventComparisonData}/>
         )}
       </div>
       {showQRCode && selectedEvent && (
@@ -198,4 +221,5 @@ const MyEvents = () => {
     </div>
   );
 };
+
 export default MyEvents;

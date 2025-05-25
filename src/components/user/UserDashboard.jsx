@@ -5,14 +5,3 @@ import BarChart from "./BarChart";
 import StackedBarChart from "./StackedBarChart";
 import PerformanceMatrix from "./PerformanceMatrix";
 
-const UserDashboard = () => {
-  return (
-    <>
-      
-      <StackedBarChart />
-      <PerformanceMatrix />
-    </>
-  );
-};
-
-export default UserDashboard;
