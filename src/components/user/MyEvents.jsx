@@ -199,7 +199,7 @@ const MyEvents = () => {
                   </button>
                 </div>
                 <div className="absolute bottom-3 left-3 text-gray-500 text-sm"> {/* Changed class to className */}
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 mt-2">
                     <BadgePlus className="w-4 h-4" />
                     Created on: {format(new Date(event.createdAt), "dd/MM/yyyy")}
                   </div>
