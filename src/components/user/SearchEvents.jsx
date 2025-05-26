@@ -135,6 +135,8 @@ export const SearchEvents = () => {
         );
         
         saveAuthTokensFromSignalR(res);
+        await connection.stop(); // Stop if already connected
+        await connection.start();
 
         if(!res.status){
           showToast.error(res.message);
@@ -144,7 +146,8 @@ export const SearchEvents = () => {
         localStorage.setItem("showFeedbackForm", true);
         navigate("/myQueue");
       } catch (error) {
-        console.log(error);
+        showToast.error("Failed to join queue. please try again later. if the problem persists, please contact support.");
+        console.log("Error joining queue:", error);
       } finally {
         setIsReconnecting(false); // Hide loading indicator
       }

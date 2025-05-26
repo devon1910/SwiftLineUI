@@ -140,7 +140,7 @@ const MyEvents = () => {
           </div>
         )}
 
-        {userEvents.length > 0 && !showEventsAnalytics ? (
+        {userEvents.length > 0 ? !showEventsAnalytics ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
               <div key={event.id} className="relative border rounded-lg shadow-md p-6"> {/* Changed class to className */}
@@ -209,7 +209,7 @@ const MyEvents = () => {
           </div>
         ):(
           <StackedBarChart EventComparisonData={EventComparisonData}/>
-        )}
+        ): (<></>)}
       </div>
       {showQRCode && selectedEvent && (
         <EventQRCode

@@ -1,3 +1,5 @@
+import { connection } from "../api/SignalRConn";
+
 export const saveAuthTokens = (response,src="") => {
   
   if(src ==="google"){
@@ -25,7 +27,6 @@ export const saveAuthTokensFromSignalR = (response) => {
       localStorage.setItem('userName', username);
       localStorage.setItem('userId', JSON.stringify(userId));
     }
-
 };
 
 export const validatePassword = (password) => {
