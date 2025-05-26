@@ -21,7 +21,6 @@ import PaginationControls from "../common/PaginationControl";
 import { showToast } from "../../services/utils/ToastHelper";
 import { useTheme } from "../../services/utils/useTheme";
 import { Line } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
 
 import { Chart as ChartJS } from "chart.js/auto";
 import LineChart from "./LineChart";
