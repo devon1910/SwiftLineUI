@@ -52,7 +52,7 @@ const AuthForm = ({ setShowAuthModal }) => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white auth-card rounded-xl overflow-hidden">
+    <div className="w-full max-w-md auth-card rounded-xl overflow-hidden">
       <div className="p-4 md:p-6">
         {renderTabs()}
         <div className="auth-content">{renderContent()}</div>

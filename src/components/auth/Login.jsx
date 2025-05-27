@@ -4,7 +4,11 @@ import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { showToast } from "../../services/utils/ToastHelper";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
-import { handleAuthSuccess, saveAuthTokens } from "../../services/utils/authUtils";
+import {
+  handleAuthSuccess,
+  saveAuthTokens,
+} from "../../services/utils/authUtils";
+import FormInput from "./FormInput";
 
 const Login = ({ onResetPassword, setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -64,39 +68,26 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
         </div>
       </div>
       <form className="space-y-2" onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email address
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="username"
-            className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-            className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sage-500 focus:border-sage-500"
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <button type="button" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <Eye /> : <EyeSlashFill />}
-          </button>
-        </div>
+        <FormInput
+          id="email"
+          label="Email address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="username"
+        />
+
+        <FormInput
+          id="password"
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="new-password"
+          showPasswordToggle
+          showPassword={showPassword}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+        />
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"

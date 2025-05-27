@@ -112,7 +112,7 @@ const Navigation = ({
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <button
+              <div
                 onClick={() => navigate("/")}
                 className="flex items-center gap-2 focus:outline-none"
               >
@@ -124,11 +124,11 @@ const Navigation = ({
                   />
                 </div>
                 <span
-                  className={`text-lg font-semibold text-white hidden sm:block`}
+                  className={`text-lg font-semibold sm:block`}
                 >
                   SwiftLine
                 </span>
-              </button>
+              </div>
             </div>
 
             {/* Desktop Navigation */}
