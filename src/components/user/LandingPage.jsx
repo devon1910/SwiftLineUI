@@ -11,6 +11,7 @@ import { useNetworkStatus } from "../../services/utils/NetworkStatus";
 import { useTheme } from "../../services/utils/useTheme";
 import { saveAuthTokens } from "../../services/utils/authUtils";
 import { subscribeToPush } from "../../services/utils/pushNotificationsSetup";
+import { GetUserInfo } from "../../services/api/swiftlineService";
 
 function LandingPage() {
   //const [darkMode, setDarkMode] = useState(false);
@@ -27,6 +28,7 @@ function LandingPage() {
   const from = location.state?.from || localStorage.getItem("from") || null;
   const [loaded, setLoaded] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(null);
+   const alreadyCalledRef = useRef(false);
 
   // Load theme preference from local storage
   const { darkMode } = useTheme();
@@ -34,16 +36,14 @@ function LandingPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
 
-    // Check if we have auth data in the URL
-    const accessToken = urlParams.get("accessToken");
-    const refreshToken = urlParams.get("refreshToken");
-    const username = urlParams.get("username");
-    const userId = urlParams.get("userId");
+    const authCode = urlParams.get("authCode");
 
-    // If we have the access token, store everything in localStorage
-    if (accessToken) {
-      saveAuthTokens({ accessToken, refreshToken, username, userId }, "google");
+    if(authCode){
+      if (alreadyCalledRef.current) return;
+    alreadyCalledRef.current = true;
 
+    GetUserInfo(authCode).then((response) => {
+      saveAuthTokens(response);
       if (from) {
         localStorage.removeItem("from");
         window.location.href = from;
@@ -52,7 +52,12 @@ function LandingPage() {
           replace: true,
         });
       }
+    }).catch((error) => {
+      console.error("Error fetching user info:", error);
+      // Handle error appropriately, e.g., show a toast notification
+    });
     }
+     
     setLoaded(true);
   }, []);
 

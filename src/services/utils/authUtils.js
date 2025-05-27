@@ -1,20 +1,12 @@
 import { connection } from "../api/SignalRConn";
 
-export const saveAuthTokens = (response,src="") => {
+export const saveAuthTokens = (response) => {
   
-  if(src ==="google"){
-    const { accessToken, refreshToken, username, userId } = response;
-    localStorage.setItem('user', JSON.stringify(accessToken));
-    localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
-    localStorage.setItem('userName', username);
-    localStorage.setItem('userId', JSON.stringify(userId));
-  }else{
-    const { accessToken, refreshToken, username, userId } = response.data.data;
+  const { accessToken, refreshToken, username, userId } = response.data.data;
   localStorage.setItem('user', JSON.stringify(accessToken));
   localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
   localStorage.setItem('userName', username);
   localStorage.setItem('userId', JSON.stringify(userId));
-  }
   
 };
 export const saveAuthTokensFromSignalR = (response) => {
