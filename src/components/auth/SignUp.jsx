@@ -48,9 +48,7 @@ const SignUp = ({ setShowAuthModal }) => {
       }
     } catch (error) {
       console.error("Error during sign up:", error);
-      showToast.error(
-        error.response?.data?.message || "An unexpected error occurred during sign up."
-      );
+      
     } finally {
       setIsLoading(false);
     }
