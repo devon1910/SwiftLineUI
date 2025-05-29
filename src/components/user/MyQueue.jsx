@@ -100,6 +100,7 @@ export const MyQueue = () => {
       const onReceivePositionUpdate = (lineInfo, leaveQueueMessage) => {
         setMyQueue(lineInfo);
         setShowLeaveQueueMsg(leaveQueueMessage);
+        console.log("leaveQueueMessage: ",leaveQueueMessage)
         if (lineInfo.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
@@ -392,9 +393,6 @@ export const MyQueue = () => {
                 <h4 className="font-semibold mb-1">Served earlier!🕺🏽</h4>
                 <p className="text-sm">{showLeaveQueueMsg}</p>
               </div>
-              <button onClick={() => setShowLeaveQueueMsg("")} className={`ml-auto p-1 rounded-full ${darkMode ? "text-blue-400 hover:bg-blue-800" : "text-blue-500 hover:bg-blue-200"}`}>
-                <FiX className="w-4 h-4" />
-              </button>
             </div>
           )}
 

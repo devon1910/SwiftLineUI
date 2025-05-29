@@ -21,7 +21,15 @@
     --color-gray-700: #4A5568;
     --color-gray-800: #2D3748;
     --color-gray-900: #1A202C;
-    --color-blue-500: #4299E1;
-    --color-blue-600: #3182CE;
-    --color-blue-700: #2B6CB0;
+    --color-blue-50:  #eff6ff;
+    --color-blue-100: #dbeafe;
+    --color-blue-200: #bfdbfe;
+    --color-blue-300: #93c5fd;
+    --color-blue-400: #60a5fa;
+    --color-blue-500: #4299e1;  /* already given */
+    --color-blue-600: #3182ce;  /* already given */
+    --color-blue-700: #2b6cb0;  /* already given */
+    --color-blue-800: #2c5282;
+    --color-blue-900: #2a4365;
+    --color-blue-950: #1e3a8a;
 }

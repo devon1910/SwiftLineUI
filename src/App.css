@@ -736,15 +736,26 @@ input[type="range"]::-ms-thumb {
 }
 
 /* Custom Pulse Animation for Get Started Button */
-@keyframes pulseCustom {
-  0% { transform: scale(1); opacity: 0; }
-  50% { transform: scale(1.15); opacity: 0.3; }
-  100% { transform: scale(1.3); opacity: 0; }
+.animate-pulse-custom {
+  z-index: 1; /* Ensure the button text is above the pulse */
 }
 
-.animate-pulse-custom .animate-ping-once {
+/* Keyframes for the pulse animation */
+@keyframes pulseCustom {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1); /* Start very small and centered */
+    opacity: 0.7; /* Start with some opacity */
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2); /* Expand much larger than the button */
+    opacity: 0;
+  }
+}
+
+.animate-ping-once {
   animation: pulseCustom 1.5s ease-out forwards; /* Only run once */
-  animation-delay: 0.5s; /* Delay the ping slightly */
+  animation-delay: 0.2s; /* Slightly adjust delay if needed */
+  /* Remove w-full h-full from Tailwind and let the animation control size */
 }
 
 

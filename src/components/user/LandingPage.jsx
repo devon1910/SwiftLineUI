@@ -73,11 +73,11 @@ function LandingPage() {
       {/* Navigation */}
       <Navigation setShowAuthModal={setShowAuthModal} showAuthModal={showAuthModal} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 "> {/* Adjusted padding */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> {/* Adjusted padding */}
         {/* Guest Banner - only shown when user is not logged in */}
         {showGuestBanner && (
           <div className={`
-            mb-8 p-6 md:p-8 rounded-2xl text-center relative overflow-hidden
+            mb-8 p-6 md:p-8 rounded-2xl text-center relative overflow-hidden 
             ${darkMode
               ? "bg-gradient-to-br from-gray-800 to-gray-900 text-gray-300 border border-gray-700 shadow-xl" // Dark gradient, border, sharper shadow
               : "bg-gradient-to-br from-gray-50 to-gray-100 text-gray-700 border border-gray-200 shadow-xl" // Light gradient, border, sharper shadow
@@ -89,24 +89,22 @@ function LandingPage() {
                 <div className="text-base sm:text-lg md:text-xl font-medium mb-4 leading-relaxed"> {/* Larger, more relaxed text */}
                   Create an account or sign in to:
                   <ul className="mt-2 list-disc list-inside text-left mx-auto max-w-sm sm:max-w-md"> {/* Bullet points for clarity */}
-                    <li>Receive <b>reminder email and push notifications</b> before your turn.</li>
+                    <li>Receive <b>reminder email notifications</b> before your turn.</li>
                     <li><b>Create, view, and manage</b> your event queues.</li>
-                    <li>Access <b>all premium features</b>.</li>
+                    <li>Access <b>all premium featuress</b>.</li>
                   </ul>
                 </div>
-                <button
-                  onClick={() => setShowAuthModal('signup')}
-                  className={`
-                    relative mt-4 px-8 py-3 rounded-full text-lg font-semibold animate-pulse-custom 
-                    bg-testColor  hover:bg-sage-700 shadow-lg shadow-sage-600/40
+                 <button
+                   onClick={() => setShowAuthModal('signup')}
+                    className={`
+                     relative mt-4 px-8 py-3 rounded-full text-lg font-semibold animate-pulse-custom
+                     bg-sage-600 hover:bg-sage-700 text-white shadow-lg shadow-sage-600/40
                     focus:outline-none focus:ring-4 focus:ring-sage-500 focus:ring-offset-2
-                    ${darkMode ? "focus:ring-offset-gray-900" : "focus:ring-offset-white"}
-                    transition-all duration-300 ease-in-out transform hover:scale-105
-                  `}
-                >
-                  Get Started Today
-                  <span className="text-red-200 border absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full bg-sage-500 opacity-0 animate-ping-once"></span>
-                </button>
+                     ${darkMode ? "focus:ring-offset-gray-900" : "focus:ring-offset-white"}
+                     transition-all duration-300 ease-in-out transform hover:scale-105 animate-pulse `}>
+                 Get Started Today
+                  
+                 </button>
             </div>
           </div>
         )}
@@ -125,7 +123,6 @@ function LandingPage() {
           `}>
             Your streamlined queue experience starts here.
           </p>
-         
         </div>
         <Outlet context={{ email, userId, loaded, userName, setShowAuthModal, showAuthModal }} />
       </main>
