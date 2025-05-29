@@ -4,6 +4,9 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+   safelist: [
+    'bg-sage-400','bg-sage-500','hover:bg-sage-700','shadow-sage-600/40'
+  ],
   theme: {
     extend: {
       colors: {

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { createEvent } from "../../services/api/swiftlineService";
-import { updateEvent } from "../../services/api/swiftlineService";
+import { createEvent, updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -9,7 +8,6 @@ import {
   FiPlus,
   FiCheck,
   FiUsers,
-  FiUnlock,
   FiInfo,
   FiLock,
 } from "react-icons/fi";
@@ -22,9 +20,6 @@ const EventForm = () => {
   const navigator = useNavigate();
 
   const { darkMode } = useTheme();
-
-  const optionsbgColor = darkMode ? "#1f2937" : "#f3f4f6";
-  const optionsTextColor = darkMode ? "#f3f4f6" : "#4b5563";
 
   const editingEvent = location.state?.editingEvent;
 
@@ -51,6 +46,7 @@ const EventForm = () => {
   const [allowAnonymous, setAllowAnonymous] = useState(
     editingEvent ? editingEvent.allowAnonymousJoining : false
   );
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -70,22 +66,27 @@ const EventForm = () => {
 
       if (editingEvent) {
         updateEvent(newEvent)
-          .then(() => {})
-          .catch((error) => {
-            console.log(error);
-            toast.error(
-              "There was an error in editing events. Please try again later."
-            );
-          });
-        navigator("/myEvents");
-        //setEvents(updatedEvents);
-      } else {
-        createEvent(newEvent)
           .then(() => {
+            toast.success("Event updated successfully!"); // Added success toast
             navigator("/myEvents");
           })
           .catch((error) => {
-            console.log(error);
+            console.error("Error updating event:", error); // Use console.error
+            toast.error(
+              "There was an error updating the event. Please try again later."
+            );
+          });
+      } else {
+        createEvent(newEvent)
+          .then(() => {
+            toast.success("Event created successfully!"); // Added success toast
+            navigator("/myEvents");
+          })
+          .catch((error) => {
+            console.error("Error creating event:", error); // Use console.error
+            toast.error(
+              "There was an error creating the event. Please try again later."
+            );
           });
       }
     }
@@ -109,44 +110,50 @@ const EventForm = () => {
   // Improved validation
   const validateEventStartEnd = () => {
     if (!eventStartTime || !eventEndTime) {
-      toast.error("Please select both start and end times");
+      toast.error("Please select both start and end times.");
       return false;
     }
 
-    if (eventStartTime == eventEndTime) {
-      toast.error("Event start and end time can't be the same");
+    const start = new Date(`1970-01-01T${eventStartTime}`);
+    const end = new Date(`1970-01-01T${eventEndTime}`);
+
+    if (start >= end) {
+      toast.error("End time must be after start time.");
       return false;
     }
-
-    // const start = new Date(`1970-01-01T${eventStartTime}`);
-    // const end = new Date(`1970-01-01T${eventEndTime}`);
-
-    // if (start >= end) {
-    //   toast.error('End time must be after start time');
-    //   return false;
-    // }
     return true;
   };
 
   return (
     <form
-      className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
+      className={`mt-8 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-xl shadow-lg transition-colors duration-300
+        ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}
+      `}
       onSubmit={handleSubmit}
     >
-      <div className="flex items-center mb-4 grid grid-cols-2">
-        <ArrowReturnLeft
-          className="w-6 h-6 cursor-pointer col-span-1"
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          type="button"
           onClick={() => navigator("/myEvents")}
-        />
-        <h3 className="col-span-1 text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
+          className={`
+            p-2 rounded-full transition-all duration-200
+            ${darkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-600 hover:bg-gray-100"}
+          `}
+          aria-label="Go back to My Events"
+        >
+          <ArrowReturnLeft className="w-6 h-6" />
+        </button>
+        <h3 className={`text-2xl sm:text-3xl font-bold flex items-center gap-3
+          ${darkMode ? "text-white" : "text-gray-900"}
+        `}>
           {editingEvent ? (
             <>
-              <FiCheck className="w-6 h-6" />
+              <FiCheck className="w-7 h-7 text-sage-500" />
               Edit Event
             </>
           ) : (
             <>
-              <FiPlus className="w-6 h-6" />
+              <FiPlus className="w-7 h-7 text-sage-500" />
               Create New Event
             </>
           )}
@@ -154,54 +161,55 @@ const EventForm = () => {
       </div>
 
       {/* Title Input */}
-      <div className="mb-6 relative">
-        <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
-          Title
+      <div className="mb-6">
+        <label htmlFor="eventTitle" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          Title <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <input
             id="eventTitle"
             type="text"
-            placeholder="Tech Conference 2024"
+            placeholder="e.g., Tech Conference 2024"
             value={title}
-            disabled={editingEvent ? true : false}
+            disabled={!!editingEvent} 
             maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+            className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+              ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+              ${editingEvent ? "opacity-70 cursor-not-allowed" : ""}
+            `}
           />
         </div>
       </div>
+
       {/* Description Input */}
-      <div className="mb-6 relative">
-        <label
-          htmlFor="eventDescription"
-          className="block text-sm font-medium mb-1"
-        >
-          Description
+      <div className="mb-6">
+        <label htmlFor="eventDescription" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          Description <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <textarea
             id="eventDescription"
-            rows={5}
+            rows={4} // Reduced rows slightly for a compact look
             maxLength={300}
-            placeholder="Describe your event details..."
+            placeholder="Describe your event details, purpose, or what attendees can expect..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition resize-y"
+            className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200 resize-y
+              ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+            `}
           />
         </div>
       </div>
+
       {/* Input Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6"> {/* Increased gap */}
         {/* Average Wait Time */}
         <div className="relative">
-          <label
-            htmlFor="averageTime"
-            className="block text-sm font-medium mb-1"
-          >
-            Average Wait Time (mins)
+          <label htmlFor="averageTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+            Avg. Wait Time (mins) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <LoaderCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -214,19 +222,17 @@ const EventForm = () => {
               value={averageTime}
               onChange={(e) => setAverageTime(e.target.value)}
               required
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-              style={{ paddingLeft: "2.5rem" }}
+              className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+                ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+              `}
             />
           </div>
         </div>
 
         {/* Number of Staff */}
         <div className="relative">
-          <label
-            htmlFor="staffCount"
-            className="block text-sm font-medium mb-1"
-          >
-            Serving Staff No.
+          <label htmlFor="staffCount" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+            Serving Staff No. <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -239,21 +245,20 @@ const EventForm = () => {
               value={staffCount}
               onChange={(e) => setStaffCount(e.target.value)}
               required
-              style={{ paddingLeft: "2.5rem" }}
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+              className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+                ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+              `}
             />
           </div>
         </div>
-        <div className="mb-6">
-          <label
-            htmlFor="capacitySlider"
-            className="block text-sm font-medium mb-2"
-          >
-            Queue Capacity: <span className="font-bold">{capacity}</span>/75
-          </label>
 
+        {/* Capacity Slider */}
+        <div>
+          <label htmlFor="capacitySlider" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+            Queue Capacity: <span className="font-bold text-sage-500">{capacity}</span>/75
+          </label>
           <div className="flex items-center gap-3">
-            <FiUsers className="text-gray-400" />
+            <FiUsers className={`${darkMode ? "text-gray-400" : "text-gray-500"}`} />
             <input
               type="range"
               id="capacitySlider"
@@ -261,18 +266,25 @@ const EventForm = () => {
               max="75"
               value={capacity}
               onChange={(e) => setCapacity(parseInt(e.target.value))}
-              className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+              className={`w-full h-2 rounded-lg appearance-none cursor-pointer
+                ${darkMode ? "bg-gray-600 accent-sage-500" : "bg-gray-300 accent-sage-500"}
+              `}
+              style={{
+                '--range-thumb-bg': darkMode ? '#698474' : '#698474', // Tailwind 'sage-500'
+                '--range-track-bg': darkMode ? '#4b5563' : '#d1d5db', // Tailwind 'gray-600' or 'gray-300'
+              }}
             />
-            <FiUsers className="text-gray-400" />
+            <FiUsers className={`${darkMode ? "text-gray-400" : "text-gray-500"}`} />
           </div>
         </div>
       </div>
+
       {/* Time Selection Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6"> {/* Increased gap */}
         {/* Start Time */}
         <div className="relative">
-          <label htmlFor="startTime" className="block text-sm font-medium mb-1">
-            Start Time
+          <label htmlFor="startTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+            Start Time <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -280,38 +292,37 @@ const EventForm = () => {
               id="startTime"
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
+              className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+                ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}
+              `}
+              required
             >
               {timeOptions.map((option) => (
                 <option
                   key={option.value}
                   value={option.value}
-                  style={{
-                    background:
-                      option.value === eventStartTime
-                        ? "#698474"
-                        : optionsbgColor,
-                    color:
-                      option.value === eventStartTime
-                        ? "white"
-                        : optionsTextColor,
-                    padding: "0.5rem",
-                  }}
+                  className={`${
+                    option.value === eventStartTime
+                      ? "bg-sage-600 text-white"
+                      : darkMode
+                      ? "bg-gray-700 text-gray-200"
+                      : "bg-white text-gray-800"
+                  }`}
                 >
                   {option.label}
                 </option>
               ))}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              ▼
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
           </div>
         </div>
 
         {/* End Time */}
         <div className="relative">
-          <label htmlFor="endTime" className="block text-sm font-medium mb-1">
-            End Time
+          <label htmlFor="endTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+            End Time <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -319,87 +330,95 @@ const EventForm = () => {
               id="endTime"
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-emerald-500 transition"
+              className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+                ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}
+              `}
+              required
             >
               {timeOptions.map((option) => (
                 <option
                   key={option.value}
                   value={option.value}
-                  style={{
-                    background:
-                      option.value === eventEndTime
-                        ? "#698474"
-                        : optionsbgColor,
-                    color:
-                      option.value === eventEndTime
-                        ? "white"
-                        : optionsTextColor,
-                    padding: "0.5rem",
-                  }}
+                  className={`${
+                    option.value === eventEndTime
+                      ? "bg-sage-600 text-white"
+                      : darkMode
+                      ? "bg-gray-700 text-gray-200"
+                      : "bg-white text-gray-800"
+                  }`}
                 >
                   {option.label}
                 </option>
               ))}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              ▼
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
           </div>
         </div>
       </div>
-      {/* Allow Anonymous Joining */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between p-4 rounded-lg transition-all duration-300 ">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setAllowAnonymous(!allowAnonymous)}
-                className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                  allowAnonymous ? "bg-emerald-600" : "bg-gray-300"
-                }`}
-              >
-                <div
-                  className={` w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
-                    allowAnonymous ? "translate-x-6" : "translate-x-0"
-                  }`}
-                >
-                  {allowAnonymous ? (
-                    <LockKeyholeOpen className="w-full h-full p-1" />
-                  ) : (
-                    <FiLock className="w-full h-full p-1" />
-                  )}
-                </div>
-              </button>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">
-                Allow Anonymous Joining
-              </span>
-              <span className="text-xs">
-                {allowAnonymous
-                  ? "Guests can join without an account"
-                  : "Requires account to join"}
-              </span>
-            </div>
-          </div>
-          <div
-            className="relative group"
-            data-tip="Anonymous joining allows participants to enter the event without creating an account using a temporary guest access"
+
+      {/* Allow Anonymous Joining Toggle */}
+      <div className={`mb-8 p-4 rounded-lg flex items-center justify-between transition-colors duration-300
+        ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
+      `}>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setAllowAnonymous(!allowAnonymous)}
+            className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
+              focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
+              ${darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"}
+              ${allowAnonymous ? "bg-sage-500" : "bg-gray-400 dark:bg-gray-600"}
+            `}
+            aria-checked={allowAnonymous}
+            role="switch"
           >
-            <FiInfo className="w-5 h-5 text-gray-400 hover:text-emerald-600 cursor-pointer transition-colors" />
-            <div className="absolute hidden group-hover:block w-48 p-2 text-sm bg-gray-800 text-white rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2">
-              Allows participants to join using temporary guest access without
-              requiring account creation
-              <div className="absolute w-3 h-3 bg-gray-800 rotate-45 -bottom-1 left-1/2 -translate-x-1/2"></div>
-            </div>
+            <span
+              className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
+                ${allowAnonymous ? "translate-x-6 bg-white" : "translate-x-0 bg-white"}
+              `}
+            >
+              {allowAnonymous ? (
+                <LockKeyholeOpen className="w-4 h-4 text-sage-500" />
+              ) : (
+                <FiLock className="w-4 h-4 text-gray-500" />
+              )}
+            </span>
+          </button>
+          <div className="flex flex-col">
+            <span className={`text-base font-medium ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
+              Allow Anonymous Joining
+            </span>
+            <span className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+              {allowAnonymous
+                ? "Guests can join without an account"
+                : "Requires account to join"}
+            </span>
+          </div>
+        </div>
+        <div className="relative group flex-shrink-0">
+          <FiInfo className={`w-5 h-5 cursor-pointer transition-colors duration-200
+            ${darkMode ? "text-gray-400 hover:text-sage-400" : "text-gray-500 hover:text-sage-600"}
+          `} />
+          <div className={`
+            absolute hidden group-hover:block w-56 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
+            ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
+          `}>
+            Allows participants to join using temporary guest access without requiring account creation.
+            <div className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
+              ${darkMode ? "bg-gray-700" : "bg-gray-800"}
+            `}></div>
           </div>
         </div>
       </div>
+
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
+        className={`w-full text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-6 flex items-center justify-center gap-2
+          ${darkMode ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800 shadow-md hover:shadow-lg" : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white shadow-md hover:shadow-lg"}
+        `}
       >
         {editingEvent ? (
           <>
@@ -416,4 +435,5 @@ const EventForm = () => {
     </form>
   );
 };
+
 export default EventForm;

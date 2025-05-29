@@ -9,7 +9,7 @@ export const Footer = () => {
         <div className="container mx-auto px-4 text-center text-xs">
           <button 
             onClick={() => triggerFeedback(null)} 
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 animate-pulse transition duration-200 ease-in-out"
+            className="bg-sage-500 hover:bg-sage-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-sage-400 focus:ring-opacity-75 animate-pulse transition duration-200 ease-in-out"
           >
             Give Feedback
           </button>

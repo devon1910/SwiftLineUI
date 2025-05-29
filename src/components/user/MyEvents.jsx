@@ -105,11 +105,11 @@ const MyEvents = () => {
 
   
   return (
-    <div className="min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-sage-800 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl md:text-3xl font-bold">
             My Events
           </h2>
           <div className="flex gap-3"> {/* Container for buttons */}
@@ -134,7 +134,7 @@ const MyEvents = () => {
         {/* Events Grid */}
         {userEvents.length === 0 && (
           <div className="text-center py-12">
-            <p className="bg-sage-50 border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
+            <p className="border-l-4 border-sage-300 text-sage-700 p-6 rounded-lg mt-8">
               No events created yet. 📅
             </p>
           </div>

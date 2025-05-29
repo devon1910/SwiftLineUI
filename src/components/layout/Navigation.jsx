@@ -4,9 +4,7 @@ import {
   CircleUserRound,
   Clock,
   Home,
-  Menu,
   Search,
-  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
@@ -15,15 +13,10 @@ import AuthForm from "../auth/AuthForm";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../../services/utils/useTheme";
 
-const Navigation = ({
-  setShowAuthModal,
-  showAuthModal,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+const Navigation = ({ setShowAuthModal, showAuthModal }) => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const {darkMode, toggleDarkMode} = useTheme();
+  const { darkMode, toggleDarkMode } = useTheme();
   const isAuthenticated = localStorage.getItem("user");
   const userName = localStorage.getItem("userName");
 
@@ -43,25 +36,11 @@ const Navigation = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Listen for route changes to close the profile dropdown
-  useEffect(() => {
-    const handleRouteChange = () => {
-      setIsProfileOpen(false);
-      setIsOpen(false);
-    };
-
-    window.addEventListener("popstate", handleRouteChange);
-    return () => {
-      window.removeEventListener("popstate", handleRouteChange);
-    };
-  }, []);
-
   const handleNavigation = (path) => {
     navigate(`/${path}`);
-    setIsOpen(false);
-    setIsProfileOpen(false);
   };
 
+  // Get current path to determine active nav item
   const currentPath = window.location.pathname.split("/")[1] || "dashboard";
 
   const handleAuthAction = () => {
@@ -71,6 +50,7 @@ const Navigation = ({
       !userName.includes("Anonymous");
 
     if (isAUser) {
+      // For authenticated users, confirm logout
       const confirmLogout = window.confirm(
         "Are you sure you want to log out? Why would you wanna do that though?!🥲"
       );
@@ -88,9 +68,11 @@ const Navigation = ({
           })
           .catch((error) => {
             console.error("Error logging out:", error);
+            showToast.error("Logout failed. Please try again."); // Generic error for user
           });
       }
     } else {
+      // For unauthenticated/anonymous users, show login modal
       setShowAuthModal("login");
     }
   };
@@ -98,76 +80,102 @@ const Navigation = ({
   return (
     <header>
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled ? "py-2" : "py-4"
-        } ${
-          darkMode
-            ? `bg-gray-900 ${scrolled ? "shadow-md shadow-gray-800/20" : ""}`
-            : `bg-white ${scrolled ? "shadow-md shadow-gray-200/60" : ""}`
-        } border-b ${
-          darkMode ? "border-gray-800" : "border-gray-100"
-        } backdrop-blur-sm bg-opacity-95`}
+        className={`fixed w-full top-0 z-50 transition-all duration-300
+          ${scrolled ? "py-2" : "py-4"}
+          ${
+            darkMode
+              ? `bg-gray-950 ${scrolled ? "shadow-lg shadow-gray-900/50" : ""}`
+              : `bg-white ${scrolled ? "shadow-lg shadow-gray-100/50" : ""}`
+          }
+          border-b ${
+            darkMode ? "border-gray-800" : "border-gray-200"
+          }
+          backdrop-blur-xl bg-opacity-80
+        `}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between h-12 sm:h-14">
             {/* Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div
                 onClick={() => navigate("/")}
-                className="flex items-center gap-2 focus:outline-none"
+                className="flex items-center gap-2 cursor-pointer focus:outline-none"
+                aria-label="Home"
               >
-                <div className="relative w-8 h-8 overflow-hidden rounded-lg">
+                <div className="relative w-9 h-9 sm:w-10 sm:h-10 overflow-hidden rounded-xl shadow-md flex-shrink-0">
                   <img
                     className="w-full h-full object-cover"
                     src="/Swiftline_logo.jpeg"
-                    alt="Swiftline"
+                    alt="Swiftline Logo"
                   />
                 </div>
-                <span
-                  className={`text-lg font-semibold sm:block`}
-                >
-                  SwiftLine
+                <span className={`
+                  text-lg sm:text-xl font-bold tracking-tight
+                  ${darkMode ? "text-white" : "text-gray-900"}
+                  hidden sm:block
+                `}>
+                  Swiftline
                 </span>
               </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
+            {/* Navigation Buttons */}
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-3">
               {navItems.map((item) => {
                 const isActive = currentPath === item.path;
                 return (
                   <button
                     key={item.path}
                     onClick={() => handleNavigation(item.path)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      isActive
-                        ? darkMode
-                          ? "bg-sage-700 text-white ring-2 ring-sage-500"
-                          : "bg-sage-600 text-white ring-2 ring-black"
-                        : darkMode
-                        ? "text-white-300 hover:bg-gray-800 hover:text-white"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                    className={`
+                      relative flex items-center justify-center
+                      px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-full
+                      text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out
+                      focus:outline-none focus:ring-2 focus:ring-offset-2
+                      ${
+                        isActive
+                          ? darkMode
+                            ? "bg-sage-700 text-white shadow-sm shadow-sage-700/30 focus:ring-sage-500 focus:ring-offset-gray-900"
+                            : "bg-sage-600 text-white shadow-sm shadow-sage-600/30 focus:ring-sage-500 focus:ring-offset-white"
+                          : darkMode
+                          ? "text-gray-300 hover:bg-gray-800 hover:text-white focus:ring-gray-700 focus:ring-offset-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-200 focus:ring-offset-white"
+                      }
+                    `}
                     aria-current={isActive ? "page" : undefined}
                   >
                     <span className="flex items-center gap-1">
-                      {item.icon} {item.label}
+                      {item.icon}
+                      <span className="hidden sm:inline">
+                        {item.label}
+                      </span>
                     </span>
+                    {/* Active indicator */}
+                    {isActive && (
+                      <span className={`
+                        absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full
+                        ${darkMode ? "bg-white" : "bg-black"}
+                      `} />
+                    )}
                   </button>
                 );
               })}
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Theme Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className={`p-2 rounded-full transition-colors ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                className={`p-2 rounded-full transition-colors duration-200
+                  ${
+                    darkMode
+                      ? "bg-gray-800 text-gray-200 hover:bg-gray-700 shadow-sm shadow-gray-800/20"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-sm shadow-gray-100/20"
+                  }
+                  focus:outline-none focus:ring-2 focus:ring-offset-2
+                  ${darkMode ? "focus:ring-gray-700 focus:ring-offset-gray-900" : "focus:ring-gray-200 focus:ring-offset-white"}
+                `}
                 aria-label={
                   darkMode ? "Switch to light mode" : "Switch to dark mode"
                 }
@@ -179,88 +187,47 @@ const Navigation = ({
                 )}
               </button>
 
-              {/* Profile Menu */}
+              {/* Profile/Auth Button - Now shows text on small screens */}
               <div className="relative">
                 <button
                   onClick={() => handleAuthAction()}
-                  className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
-                    darkMode
-                      ? "text-gray-200 hover:bg-gray-800"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                  className={`flex items-center justify-center gap-1
+                    px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-full transition-colors duration-200
+                    text-xs sm:text-sm font-medium
+                    ${
+                      darkMode
+                        ? "text-gray-200 bg-gray-800 hover:bg-gray-700 shadow-sm shadow-gray-800/20"
+                        : "text-gray-700 bg-gray-100 hover:bg-gray-200 shadow-sm shadow-gray-100/20"
+                    }
+                    focus:outline-none focus:ring-2 focus:ring-offset-2
+                    ${darkMode ? "focus:ring-gray-700 focus:ring-offset-gray-900" : "focus:ring-gray-200 focus:ring-offset-white"}
+                    min-w-[70px] sm:min-w-0 {/* Ensure minimum width for text on small screens */}
+                  `}
                 >
-                  <CircleUserRound size={20} />
-                  <span className="hidden sm:block text-sm font-medium">
+                  <CircleUserRound size={18} className="flex-shrink-0" /> {/* Slightly smaller icon to fit text */}
+                  <span className="flex-grow-0 whitespace-nowrap">
                     {!isAuthenticated || userName.includes("Anonymous")
                       ? "Login"
-                      : "Log out"}
+                      : "Logout"} {/* Conditional text */}
                   </span>
                 </button>
               </div>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`md:hidden p-2 rounded-full ${
-                  darkMode
-                    ? "text-gray-200 hover:bg-gray-800"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-                aria-label="Toggle menu"
-              >
-                {isOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
             </div>
           </div>
-
-          {/* Mobile Menu */}
-          {isOpen && (
-            <div
-              className={`md:hidden mt-4 pb-4 rounded-lg ${
-                darkMode ? "bg-gray-800" : "bg-white"
-              }`}
-            >
-              <div className="flex flex-col gap-1">
-                {navItems.map((item) => {
-                  const isActive = currentPath === item.path;
-                  return (
-                    <button
-                      key={item.path}
-                      onClick={() => handleNavigation(item.path)}
-                      className={`px-4 py-3 rounded-lg text-left text-sm font-medium ${
-                        isActive
-                          ? darkMode
-                            ? "bg-sage-700 text-white"
-                            : "bg-sage-600 text-white"
-                          : darkMode
-                          ? "text-gray-300 hover:bg-gray-700"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      <span className="flex items-center gap-1">
-                        {item.icon} {item.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </nav>
 
       {/* Auth Modal */}
       {showAuthModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4"
           onClick={(e) => {
-            // Close modal only if clicking on the backdrop
             if (e.target === e.currentTarget) {
               setShowAuthModal(false);
             }
           }}
         >
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md relative">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-md relative animate-fade-in-up transform transition-all duration-300">
             <AuthForm setShowAuthModal={setShowAuthModal} />
           </div>
         </div>

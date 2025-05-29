@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { loginUser } from "../../services/api/swiftlineService";
-import { Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { showToast } from "../../services/utils/ToastHelper";
-import { BotCheck_Error_Message } from "../../services/utils/constants";
 import {
   handleAuthSuccess,
   saveAuthTokens,
 } from "../../services/utils/authUtils";
 import FormInput from "./FormInput";
+import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
 
 const Login = ({ onResetPassword, setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -17,6 +16,7 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   const navigator = useNavigate();
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
+  const { darkMode } = useTheme(); // Use the theme hook
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,8 +26,13 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
       saveAuthTokens(response);
       handleAuthSuccess(response, navigator, from);
       setShowAuthModal(null);
+      showToast.success("Logged in successfully!"); // Added success toast
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error); // Use console.error
+      // Enhanced error message based on common auth issues
+      showToast.error(
+        error.response?.data?.message || "Login failed. Please check your credentials."
+      );
     }
   };
 
@@ -37,15 +42,17 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="mt-6">
+    <div className="space-y-6"> {/* Increased space-y for better visual separation */}
+      <div>
         <button
           type="button"
-          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
           onClick={handleGoogleSignIn}
+          className={`w-full flex items-center justify-center px-4 py-2.5 border rounded-lg shadow-sm text-base font-medium transition-colors duration-200
+            ${darkMode ? "border-gray-600 bg-gray-700 text-gray-100 hover:bg-gray-600" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"}
+          `}
         >
           <svg
-            className="h-5 w-5 mr-2"
+            className="h-5 w-5 mr-3" // Increased margin
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 488 512"
           >
@@ -57,17 +64,19 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           Sign in with Google
         </button>
       </div>
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
+          <div className={`w-full border-t ${darkMode ? "border-gray-600" : "border-gray-300"}`}></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">
+          <span className={`px-2 ${darkMode ? "bg-gray-800 text-gray-400" : "bg-white text-gray-500"}`}>
             Or continue with email and password
           </span>
         </div>
       </div>
-      <form className="space-y-2" onSubmit={handleLogin}>
+
+      <form className="space-y-4" onSubmit={handleLogin}> {/* Increased space-y */}
         <FormInput
           id="email"
           label="Email address"
@@ -75,6 +84,7 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="username"
+          darkMode={darkMode} // Pass darkMode prop
         />
 
         <FormInput
@@ -83,14 +93,31 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="new-password"
+          autoComplete="current-password" // Changed to current-password for login
           showPasswordToggle
           showPassword={showPassword}
           onTogglePassword={() => setShowPassword(!showPassword)}
+          darkMode={darkMode} // Pass darkMode prop
         />
+
+        <div className="text-right">
+          <button
+            type="button"
+            onClick={onResetPassword}
+            className={`text-sm font-medium transition-colors duration-200
+              ${darkMode ? "text-sage-400 hover:text-sage-300" : "text-sage-600 hover:text-sage-700"}
+            `}
+          >
+            Forgot password?
+          </button>
+        </div>
+
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sage-600 hover:bg-sage-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500"
+          className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-md text-base font-medium text-white transition-all duration-200
+            ${darkMode ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800" : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white"}
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+          `}
         >
           Sign in
         </button>
