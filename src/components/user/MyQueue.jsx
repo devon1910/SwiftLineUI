@@ -100,8 +100,6 @@ export const MyQueue = () => {
       const onReceivePositionUpdate = (lineInfo, leaveQueueMessage) => {
         setMyQueue(lineInfo);
         setShowLeaveQueueMsg(leaveQueueMessage);
-        console.log("leaveQueueMessage: ",leaveQueueMessage)
-        console.log("lineInfo: ",lineInfo)
         if (lineInfo.position === -1 && showFeedbackForm === "true") {
           triggerFeedback(2);
           localStorage.removeItem("showFeedbackForm");
