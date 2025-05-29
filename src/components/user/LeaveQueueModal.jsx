@@ -32,7 +32,7 @@ const LeaveQueueModal = ({ onConfirm, onCancel }) => {
           {/* Reason Options */}
           <div className="space-y-3"> {/* Increased space for clarity */}
             {[
-              { value: 'Got served', label: 'Got served elsewhere', icon: '✅' }, // Changed icon to checkmark
+              { value: 'Got served', label: 'Got served already', icon: '✅' }, // Changed icon to checkmark
               { value: 'Too slow', label: 'Queue moving too slow', icon: '⏳' }, // Changed icon to hourglass
               { value: 'other', label: 'Other reason', icon: '💬' } // Changed icon to speech bubble
             ].map((option) => (

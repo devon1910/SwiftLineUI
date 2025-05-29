@@ -9,7 +9,7 @@ import { showToast } from "../utils/ToastHelper";
 
 const apiUrl = import.meta.env.VITE_API_SIGNALR_URL;
 export const connection = new HubConnectionBuilder()
-  .withUrl(apiUrl + `queueHub`, {
+  .withUrl(apiUrl + `queueHub?userId=${JSON.parse(localStorage.getItem("userId"))}`, {
     accessTokenFactory: () => {
       const token = localStorage.getItem("user");
       return token ? JSON.parse(token) : null;
