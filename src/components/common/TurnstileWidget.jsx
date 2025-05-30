@@ -4,7 +4,7 @@ import { VerifyTurnstileToken } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
 
-const TurnstileWidget = ({ setIsTurnstileVerified }) => {
+const TurnstileWidget = ({ setTurnstileToken }) => {
   const turnstile = useTurnstile();
   const turnstile_siteKey =  import.meta.env.VITE_TURNSTILE_SITE_KEY
   return (
@@ -22,7 +22,7 @@ const TurnstileWidget = ({ setIsTurnstileVerified }) => {
             showToast.error(BotCheck_Error_Message);
             turnstile.reset();
           }else{
-            setIsTurnstileVerified(true);
+            setTurnstileToken(true);
           }   
         });
       }}

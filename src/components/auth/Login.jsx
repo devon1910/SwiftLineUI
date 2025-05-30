@@ -8,11 +8,13 @@ import {
 } from "../../services/utils/authUtils";
 import FormInput from "./FormInput";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
+import TurnstileWidget from "../common/TurnstileWidget";
 
 const Login = ({ onResetPassword, setShowAuthModal }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const navigator = useNavigate();
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
@@ -21,8 +23,14 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    console.log("turnstileToken: ",turnstileToken)
+    if (!turnstileToken) {
+      showToast.error("Please complete the security check");
+      return;
+    }
+
     try {
-      const response = await loginUser({ email, password });
+      const response = await loginUser({ email, password, turnstileToken });
       saveAuthTokens(response);
       handleAuthSuccess(response, navigator, from);
       setShowAuthModal(null);
@@ -107,6 +115,10 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           >
             Forgot password?
           </button>
+        </div>
+
+        <div className="flex justify-center">
+          <TurnstileWidget setTurnstileToken={setTurnstileToken}   />
         </div>
 
         <button

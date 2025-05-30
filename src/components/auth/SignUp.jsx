@@ -5,8 +5,9 @@ import { showToast } from "../../services/utils/ToastHelper";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import FormInput from "./FormInput";
 import PasswordRequirements from "./PasswordRequirements"; // Ensure this component is themed
-import { validatePassword, saveAuthTokens, handleAuthSuccess } from "../../services/utils/authUtils";
+import { validatePassword, } from "../../services/utils/authUtils";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
+import TurnstileWidget from "../common/TurnstileWidget";
 
 const SignUp = ({ setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ const SignUp = ({ setShowAuthModal }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false); // This seems to control the success message view
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [turnstileToken, setTurnstileToken] = useState("");
   const location = useLocation(); // Use useLocation
   const from = location.state?.from || localStorage.getItem("from") || null;
   const { darkMode } = useTheme(); // Use the theme hook
@@ -23,6 +24,12 @@ const SignUp = ({ setShowAuthModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (!turnstileToken) {
+      showToast.error("Please complete the security check");
+      setIsLoading(false);
+      return;
+    }
 
     if (!validatePassword(password)) {
       showToast.error(
@@ -33,7 +40,7 @@ const SignUp = ({ setShowAuthModal }) => {
     }
 
     try {
-      const signUpRequest = { email, password, fullName };
+      const signUpRequest = { email, password, fullName, turnstileToken };
       const response = await SignUpUser(signUpRequest);
 
       // Assuming response.data.data.status is a boolean for success
@@ -113,6 +120,11 @@ const SignUp = ({ setShowAuthModal }) => {
           />
 
           <PasswordRequirements password={password} darkMode={darkMode} /> {/* Pass darkMode prop */}
+
+          <div className="flex justify-center">
+            <TurnstileWidget setTurnstileToken={setTurnstileToken}       
+            />
+          </div>
 
           <button
             type="submit"
