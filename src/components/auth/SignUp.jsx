@@ -37,13 +37,13 @@ const SignUp = ({ setShowAuthModal }) => {
       const response = await SignUpUser(signUpRequest);
 
       // Assuming response.data.data.status is a boolean for success
-      if (response.data?.data?.status === false) { // Check for explicit false
+      if (!response.data?.data?.status) { // Check for explicit false
         showToast.error(response.data.data.message || "Sign up failed.");
       } else {
-        saveAuthTokens(response);
-        handleAuthSuccess(response, navigate, from);
-        setShowAuthModal(null);
-        showToast.success("Welcome Aboard! Account created successfully! 🚀"); // Updated message
+        //saveAuthTokens(response);
+        //handleAuthSuccess(response, navigate, from);
+        //setShowAuthModal(null);
+        showToast.success("Almost done! Check your email (including spam folder) and follow the instructions."); // Updated message
         setIsFormSubmitted(true); // Show success message after successful sign up
       }
     } catch (error) {
@@ -63,7 +63,7 @@ const SignUp = ({ setShowAuthModal }) => {
           <CheckCircle className={`flex-shrink-0 mt-0.5 ${darkMode ? "text-sage-400" : "text-black"}`} />
           <div>
             <p className="text-sm">
-              Almost done! Check your email (including spam folder) for the welcome message and follow the instructions.
+              Almost done! Check your email (including spam folder) and follow the instructions.
               <br />
               Contact support if you need help.
             </p>

@@ -30,9 +30,6 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
     } catch (error) {
       console.error("Login error:", error); // Use console.error
       // Enhanced error message based on common auth issues
-      showToast.error(
-        error.response?.data?.message || "Login failed. Please check your credentials."
-      );
     }
   };
 
