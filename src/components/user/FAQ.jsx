@@ -5,35 +5,63 @@ import { useTheme } from '../../services/utils/useTheme'; // Assuming you have t
 const faqData = [
   {
     question: 'What is Swiftline and how does it work?',
-    answer: 'Swiftline is a modern queue management solution designed to streamline waiting lines for various events, businesses, and services. Users can join virtual queues from their devices, receive real-time updates on their position, and get notifications when it\'s their turn. Event organizers or service providers can manage queues efficiently, pause/resume queues, serve members, and gain insights through analytics.',
+    answer:
+      'Swiftline is a cutting-edge PWA (Progressive Web App) designed to revolutionize queue management for any event involving people and queues. It allows users to join virtual queues from anywhere, multitask, and efficiently use their time. Event organizers get powerful tools to manage queues, view real-time metrics, and optimize their operations. Swiftline is built with .NET for the backend, React for the frontend, PostgreSQL for the database, and is deployed on Vercel (UI), Azure (backend), and Neon (DB).',
   },
   {
     question: 'How do I create a new queue for my event?',
-    answer: 'To create a new queue, you need to sign in or create an account on Swiftline. Once logged in, navigate to your dashboard and look for an option like "Create New Event" or "Manage Queues." Follow the prompts to set up your event details, queue name, and any specific instructions for participants.',
+    answer:
+      'To create an event and manage its queue, you must be logged in as an event organizer. Simply navigate to your dashboard, select "Create New Event," and follow the prompts. You can specify event start and end times, average service time, and even choose whether users can join anonymously or if they need to sign up.',
   },
   {
     question: 'Can I join a queue without creating an account?',
-    answer: 'Yes, typically you can join a queue as a guest. However, creating an account allows you to receive personalized notifications, manage your queue positions across multiple events, and access other premium features like reminder emails.',
+    answer:
+      "Yes, you can often join a queue anonymously, depending on how the event organizer has configured the event. However, signing up and logging in offers a richer experience, including personalized push notifications, email reminders, and the ability to track your queue position across multiple events.",
+  },
+  {
+    question: 'How does Swiftline ensure the security of my account?',
+    answer:
+      'Swiftline prioritizes your security. Our login feature supports both email/password and "Continue with Google" options. We’ve also implemented an extra layer of security using Cloudflare Turnstile to mitigate bot attacks. Upon signing up, a verification link is sent to your email to verify it before account creation.',
+  },
+  {
+    question: 'How do I install Swiftline on my device as a PWA?',
+    answer:
+      'Swiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n**General Installation Steps (varies slightly by browser/device):**\n1. **Open Swiftline:** Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install Swiftline."\n\nOnce installed, Swiftline will appear on your home screen or app launcher like a native application.',
+  },
+  {
+    question: 'How do I ensure I receive push notifications from Swiftline?',
+    answer:
+      'Push notifications are a key feature for logged-in users on Swiftline, ensuring you get real-time updates when your turn is approaching. To receive them, please ensure the following:\n\n1.  **You are Logged In:** Push notifications are reserved for logged-in users only.\n2.  **Browser/Site Permissions:** When prompted by your browser, make sure you "Allow" notifications from www.theswiftline.com.\n3.  **Device Notification Settings:**\n    * **General:** Check your device\'s system settings (e.g., "Settings" > "Notifications") to ensure notifications are enabled for your browser or the installed Swiftline PWA.\n    * **Do Not Disturb (DND) / Focus Modes:** Ensure your device is not in "Do Not Disturb," "Focus Mode," or similar modes that might suppress notifications.\n    * **Specific iOS (iPhone/iPad) Considerations (for newer iOS versions):**\n        If you are having trouble receiving PWA notifications on iOS, you may need to enable a specific feature flag:\n        1.  Go to your iPhone/iPad **Settings**.\n        2.  Scroll down and select **Safari**.\n        3.  Tap on **Advanced**.\n        4.  Tap on **Feature Flags**.\n        5.  Scroll down and toggle **"Notifications"** to the **On** position.\n        After enabling this, you should be able to receive PWA push notifications once you\'ve added Swiftline to your Home Screen and allowed notification permissions.',
+  },
+  {
+    question: 'How does Swiftline provide real-time queue updates?',
+    answer:
+      "Our 'View Queue' page leverages **SignalR** for seamless WebSocket integration. This means you'll see your position and estimated wait time update in real-time. If someone leaves the queue earlier than expected, everyone else in the queue gets an immediate update to their position and estimated time, ensuring a smooth and dynamic experience.",
+  },
+  {
+    question: 'How is the estimated wait time calculated?',
+    answer:
+      'Swiftline uses a machine learning model trained with **ML.NET** to predict the estimated wait time for each user. This prediction currently considers factors such as the number of staff serving, the average time to serve each person, and your current position in the queue. We are continuously working to incorporate more factors for even more accurate predictions in the future.',
+  },
+  {
+    question: 'What features are available for event organizers on their dashboard?',
+    answer:
+      "Event organizers get a comprehensive dashboard. You can see all queue members in real-time, pause or resume the queue if there are delays, and even skip line members. The dashboard also provides valuable metrics like the total number of users served, average wait time, drop-off rates, and peak hours for each event, as well as an aggregated view of all your events.",
   },
   {
     question: 'What happens if I miss my turn in the queue?',
-    answer: 'If you miss your turn, the event organizer or service provider may have a policy in place. Some might allow you to rejoin at the end of the queue, while others may require you to start a new queue. It\'s best to pay attention to your notifications to avoid missing your slot.',
-  },
-  {
-    question: 'How does Swiftline handle unexpected delays or pauses in a queue?',
-    answer: 'Swiftline provides tools for event organizers to pause or resume queues as needed. If a queue is paused, you will receive a notification, and your position will be held until the queue resumes. This ensures fairness and keeps participants informed during unforeseen circumstances.',
+    answer:
+      'If you miss your turn, the event organizer may have a specific policy in place. Swiftline allows organizers to manage these situations, which might include letting you rejoin at the end of the queue or requiring you to start a new queue. It’s always best to keep an eye on your notifications to avoid missing your spot.',
   },
   {
     question: 'Is my personal information secure on Swiftline?',
-    answer: 'Yes, Swiftline prioritizes the security and privacy of your data. We use industry-standard encryption and security protocols to protect your personal information and queue data. Please refer to our Privacy Policy for more details.',
-  },
-  {
-    question: 'Can Swiftline be customized for specific business needs?',
-    answer: 'Swiftline is designed to be flexible. While the core features cater to a wide range of needs, we are continually developing new functionalities and integrations. For specific business customization inquiries, please contact our support team.',
+    answer:
+      'Absolutely. Swiftline prioritizes the security and privacy of your data. We utilize industry-standard encryption and robust security protocols to protect your personal information and queue data. For more details, please refer to our Privacy Policy.',
   },
   {
     question: 'How can I provide feedback or report an issue?',
-    answer: 'We appreciate your feedback! You can usually find a "Give Feedback" button in the footer or navigation of the Swiftline website. Alternatively, you can contact our support team directly via email or through the contact form on our website.',
+    answer:
+      'We welcome your feedback! You can usually find a "Give Feedback" option on the Swiftline website, or you can contact our support team directly via email or through the contact form available on our website.',
   },
 ];
 
@@ -46,7 +74,7 @@ const FAQPage = () => {
   };
 
   const sectionBgClass = darkMode ? 'bg-gray-900' : 'bg-gray-50';
-  const headingClass = darkMode ? 'text-gray-100' : 'text-gray-900';
+  const headingClass = darkMode ? 'text-white' : 'text-gray-700';
   const textColorClass = darkMode ? 'text-gray-300' : 'text-gray-700';
   const accordionBgClass = darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200';
   const accordionHoverClass = darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100';
@@ -58,7 +86,6 @@ const FAQPage = () => {
         <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`}>
           Frequently Asked Questions
         </h1>
-
         <div className="space-y-6">
           {faqData.map((item, index) => (
             <div
