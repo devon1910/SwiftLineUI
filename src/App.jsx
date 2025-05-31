@@ -17,6 +17,9 @@ import CustomToast from "./components/common/CustomToast";
 import { ThemeProvider } from "./services/context/ThemeProvider";
 import FeedbackForm from "./components/user/FeedbackForm";
 import { FeedbackProvider } from "./services/context/FeedbackProvider";
+import FAQPage from "./components/user/FAQ";
+import AboutUsPage from "./components/user/AboutUsPage";
+
 
 function App() {
   return (
@@ -33,8 +36,10 @@ function App() {
                   <Route path="newEvent" element={<EventForm />} />
                   <Route path="myQueue" element={<MyQueue />} />
                   <Route path="queueManagement" element={<ViewQueue />} />
-                  {/* <Route path="events/:eventId" element={<ViewEvent />} /> */}
+                  
                 </Route>
+                <Route path="/faq" element={<FAQPage />} /> 
+                <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/auth" element={<AuthForm />} />
                 <Route path="/VerifyToken" element={<VerifyToken />} />
               </Routes>
