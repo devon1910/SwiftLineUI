@@ -6,7 +6,7 @@ const faqData = [
   {
     question: 'What is Swiftline and how does it work?',
     answer:
-      'Swiftline is a cutting-edge PWA (Progressive Web App) designed to revolutionize queue management for any event involving people and queues. It allows users to join virtual queues from anywhere, multitask, and efficiently use their time. Event organizers get powerful tools to manage queues, view real-time metrics, and optimize their operations. Swiftline is built with .NET for the backend, React for the frontend, PostgreSQL for the database, and is deployed on Vercel (UI), Azure (backend), and Neon (DB).',
+      'Swiftline is a cutting-edge PWA (Progressive Web App) designed to revolutionize queue management for any event involving people and queues. It allows users to join virtual queues from anywhere, multitask, and efficiently use their time. Event organizers get powerful tools to manage queues, view real-time metrics, and optimize their operations.',
   },
   {
     question: 'How do I create a new queue for my event?',
@@ -26,7 +26,7 @@ const faqData = [
   {
     question: 'How do I install Swiftline on my device as a PWA?',
     answer:
-      'Swiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n**General Installation Steps (varies slightly by browser/device):**\n1. **Open Swiftline:** Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install Swiftline."\n\nOnce installed, Swiftline will appear on your home screen or app launcher like a native application.',
+      'Swiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n General Installation Steps (varies slightly by browser/device):\n1. Open Swiftline: Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install Swiftline."\n\nOnce installed, Swiftline will appear on your home screen or app launcher like a native application.',
   },
   {
     question: 'How do I ensure I receive push notifications from Swiftline?',
@@ -41,7 +41,7 @@ const faqData = [
   {
     question: 'How is the estimated wait time calculated?',
     answer:
-      'Swiftline uses a machine learning model trained with **ML.NET** to predict the estimated wait time for each user. This prediction currently considers factors such as the number of staff serving, the average time to serve each person, and your current position in the queue. We are continuously working to incorporate more factors for even more accurate predictions in the future.',
+      'Swiftline uses a machine learning model to predict the estimated wait time for each user. This prediction currently considers factors such as the number of staff serving, the average time to serve each person, and your current position in the queue. We are continuously working to incorporate more factors for even more accurate predictions in the future.',
   },
   {
     question: 'What features are available for event organizers on their dashboard?',
@@ -52,11 +52,6 @@ const faqData = [
     question: 'What happens if I miss my turn in the queue?',
     answer:
       'If you miss your turn, the event organizer may have a specific policy in place. Swiftline allows organizers to manage these situations, which might include letting you rejoin at the end of the queue or requiring you to start a new queue. It’s always best to keep an eye on your notifications to avoid missing your spot.',
-  },
-  {
-    question: 'Is my personal information secure on Swiftline?',
-    answer:
-      'Absolutely. Swiftline prioritizes the security and privacy of your data. We utilize industry-standard encryption and robust security protocols to protect your personal information and queue data. For more details, please refer to our Privacy Policy.',
   },
   {
     question: 'How can I provide feedback or report an issue?',
