@@ -10,7 +10,7 @@ export const Footer = () => {
   const footerBgClass = darkMode ? 'bg-gray-950' : 'bg-gray-50';
   const footerBorderClass = darkMode ? 'border-gray-700' : 'border-gray-200';
   const copyrightBgClass = darkMode ? 'bg-black text-gray-400' : 'bg-black text-white';
-  const linkClass = darkMode ? 'text-sage-400  hover:text-sage-300' : 'text-sage-500 hover:text-sage-600';
+  const linkClass = darkMode ? '!text-sage-400  hover:!text-sage-300' : '!text-sage-500 hover:!text-sage-600';
 
   return (
     <footer className={`${footerBgClass} ${footerBorderClass} border-t mt-auto transition-colors duration-300`}>
@@ -32,7 +32,13 @@ export const Footer = () => {
         {/* Copyright - visible on all screen sizes */}
         <div className={`${copyrightBgClass} py-3 mt-6 rounded-md`}> {/* Added mt-6 and rounded-md for separation */}
           <p className="text-xs">
-            © {new Date().getFullYear()} <span className="font-bold">theswiftline</span>. All rights reserved. Created by <a href="https://davidson-portfolio-davidsons-projects-2757da45.vercel.app/" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Davidson Ekpokpobe</a>
+            © {new Date().getFullYear()} <span className="font-bold">theswiftline</span>. All rights reserved. Created by{" "}
+             <Link 
+              className={`${linkClass} font-medium no-underline`} 
+              style={{ color: 'inherit' }} 
+              to="https://davidson-portfolio-davidsons-projects-2757da45.vercel.app/"
+              target="_blank" 
+              rel="noopener noreferrer">Davidson Ekpokpobe</Link>
           </p>
         </div>
       </div>
