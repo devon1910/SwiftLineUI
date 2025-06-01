@@ -16,7 +16,7 @@ const faqData = [
   {
     question: 'Can I join a queue without creating an account?',
     answer:
-      "Yes, you can often join a queue anonymously, depending on how the event organizer has configured the event. However, signing up and logging in offers a richer experience, including personalized push notifications, email reminders, and the ability to track your queue position across multiple events.",
+      'Yes, you can often join a queue anonymously, depending on how the event organizer has configured the event. However, signing up and logging in offers a richer experience, including personalized push notifications, email reminders, and the ability to track your queue position across multiple events.',
   },
   {
     question: 'How does theswiftline ensure the security of my account?',
@@ -25,18 +25,80 @@ const faqData = [
   },
   {
     question: 'How do I install theswiftline on my device as a PWA?',
-    answer:
-      'theswiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n General Installation Steps (varies slightly by browser/device):\n1. Open theswiftline: Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install theswiftline."\n\nOnce installed, theswiftline will appear on your home screen or app launcher like a native application.',
+    answer: (
+      <>
+        theswiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.
+        <br /><br />
+        <strong>General Installation Steps (varies slightly by browser/device):</strong>
+        <ol className="list-decimal list-inside ml-4">
+          <li>
+            <strong>Open theswiftline:</strong> Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).
+          </li>
+          <li>
+            <strong>Look for "Install" or "Add to Home Screen":</strong>
+            <ul className="list-disc list-inside ml-4">
+              <li>
+                <strong>Chrome (Android/Desktop):</strong> You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."
+              </li>
+              <li>
+                <strong>Safari (iOS/iPadOS):</strong> Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."
+              </li>
+              <li>
+                <strong>Edge (Desktop/Android):</strong> Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" &gt; "Install theswiftline."
+              </li>
+            </ul>
+          </li>
+        </ol>
+        Once installed, theswiftline will appear on your home screen or app launcher like a native application.
+      </>
+    ),
   },
   {
     question: 'How do I ensure I receive push notifications from theswiftline?',
-    answer:
-      'Push notifications are a key feature for logged-in users on theswiftline, ensuring you get real-time updates when your turn is approaching. To receive them, please ensure the following:\n\n1.  **You are Logged In:** Push notifications are reserved for logged-in users only.\n2.  **Browser/Site Permissions:** When prompted by your browser, make sure you "Allow" notifications from www.theswiftline.com.\n3.  **Device Notification Settings:**\n    * **General:** Check your device\'s system settings (e.g., "Settings" > "Notifications") to ensure notifications are enabled for your browser or the installed theswiftline PWA.\n    * **Do Not Disturb (DND) / Focus Modes:** Ensure your device is not in "Do Not Disturb," "Focus Mode," or similar modes that might suppress notifications.\n    * **Specific iOS (iPhone/iPad) Considerations (for newer iOS versions):**\n        If you are having trouble receiving PWA notifications on iOS, you may need to enable a specific feature flag:\n        1.  Go to your iPhone/iPad **Settings**.\n        2.  Scroll down and select **Safari**.\n        3.  Tap on **Advanced**.\n        4.  Tap on **Feature Flags**.\n        5.  Scroll down and toggle **"Notifications"** to the **On** position.\n        After enabling this, you should be able to receive PWA push notifications once you\'ve added theswiftline to your Home Screen and allowed notification permissions.',
+    answer: (
+      <>
+        Push notifications are a key feature for logged-in users on theswiftline, ensuring you get real-time updates when your turn is approaching. To receive them, please ensure the following:
+        <br /><br />
+        <ol className="list-decimal list-inside ml-4">
+          <li>
+            <strong>You are Logged In:</strong> Push notifications are reserved for logged-in users only.
+          </li>
+          <li>
+            <strong>Browser/Site Permissions:</strong> When prompted by your browser, make sure you "Allow" notifications from www.theswiftline.com.
+          </li>
+          <li>
+            <strong>Device Notification Settings:</strong>
+            <ul className="list-disc list-inside ml-4">
+              <li>
+                <strong>General:</strong> Check your device&apos;s system settings (e.g., "Settings" &gt; "Notifications") to ensure notifications are enabled for your browser or the installed theswiftline PWA.
+              </li>
+              <li>
+                <strong>Do Not Disturb (DND) / Focus Modes:</strong> Ensure your device is not in "Do Not Disturb," "Focus Mode," or similar modes that might suppress notifications.
+              </li>
+              <li>
+                <strong>Specific iOS (iPhone/iPad) Considerations (for newer iOS versions):</strong>
+                <br />
+                If you are having trouble receiving PWA notifications on iOS, you may need to enable a specific feature flag:
+                <ol className="list-decimal list-inside ml-4">
+                  <li>Go to your iPhone/iPad <strong>Settings</strong>.</li>
+                  <li>Scroll down and select <strong>Safari</strong> or <strong>Chrome</strong>.</li>
+                  <li>Tap on <strong>Advanced</strong>.</li>
+                  <li>Tap on <strong>Feature Flags</strong>.</li>
+                  <li>Scroll down and toggle <strong>"Notifications"</strong> to the <strong>On</strong> position.</li>
+                </ol>
+                After enabling this, you should be able to receive PWA push notifications once you&apos;ve added theswiftline to your Home Screen and allowed notification permissions.
+                For Android devices, the steps are very similar.
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </>
+    ),
   },
   {
     question: 'How does theswiftline provide real-time queue updates?',
     answer:
-      "Our 'View Queue' page leverages **SignalR** for seamless WebSocket integration. This means you'll see your position and estimated wait time update in real-time. If someone leaves the queue earlier than expected, everyone else in the queue gets an immediate update to their position and estimated time, ensuring a smooth and dynamic experience.",
+      "Our 'View Queue' page leverages SignalR for seamless WebSocket integration. This means you'll see your position and estimated wait time update in real-time. If someone leaves the queue earlier than expected, everyone else in the queue gets an immediate update to their position and estimated time, ensuring a smooth and dynamic experience.",
   },
   {
     question: 'How is the estimated wait time calculated?',
@@ -46,7 +108,7 @@ const faqData = [
   {
     question: 'What features are available for event organizers on their dashboard?',
     answer:
-      "Event organizers get a comprehensive dashboard. You can see all queue members in real-time, pause or resume the queue if there are delays, and even skip line members. The dashboard also provides valuable metrics like the total number of users served, average wait time, drop-off rates, and peak hours for each event, as well as an aggregated view of all your events.",
+      'Event organizers get a comprehensive dashboard. You can see all queue members in real-time, pause or resume the queue if there are delays, and even skip line members. The dashboard also provides valuable metrics like the total number of users served, average wait time, drop-off rates, and peak hours for each event, as well as an aggregated view of all your events.',
   },
   {
     question: 'What happens if I miss my turn in the queue?',
