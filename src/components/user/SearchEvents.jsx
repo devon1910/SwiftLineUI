@@ -196,7 +196,7 @@ export const SearchEvents = () => {
       {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
       {isCreatingAccount && <GlobalSpinner />} {/* Show spinner during account creation */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold ">Search Events</h2>
+        <h2 className="text-3xl font-bold ">Featured Events</h2>
         <div className="w-full md:max-w-xs">
           <input
             type="text"

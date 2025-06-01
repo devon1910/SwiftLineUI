@@ -105,8 +105,8 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
                 <div className="relative w-9 h-9 sm:w-10 sm:h-10 overflow-hidden rounded-xl shadow-md flex-shrink-0">
                   <img
                     className="w-full h-full object-cover"
-                    src="/Swiftline_logo.jpeg"
-                    alt="Swiftline Logo"
+                    src="/theSwiftlineLogo.png"
+                    alt="theswiftline Logo"
                   />
                 </div>
                 <span className={`
@@ -114,7 +114,7 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
                   ${darkMode ? "text-white" : "text-gray-900"}
                   hidden sm:block
                 `}>
-                  Swiftline
+                  theswiftline
                 </span>
               </div>
             </div>

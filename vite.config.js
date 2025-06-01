@@ -23,8 +23,8 @@ export default defineConfig({
         'maskable-icon.png',
       ],
       manifest: {
-        name: 'Swiftline',
-        short_name: 'swiftline',
+        name: 'theswiftline',
+        short_name: 'theswiftline',
         description:
           'A queue management system that allows users to create and manage events, view their queue status',
         icons: [

@@ -78,7 +78,7 @@ const FeedbackForm = () => {
             <div>
               <h3 className="text-xl font-bold">Your Feedback</h3>
               <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm mt-1`}>
-                SwiftLine is built for you and me—those of us who hate waiting
+                theswiftLine is built for you, me, everyone that detests waiting
                 in pointless queues. We value your feedback, so please let us
                 know your thoughts.
                 <br />

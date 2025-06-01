@@ -25,10 +25,10 @@ export const Header = () => {
           <Link to="/dashboard" className="flex items-center">
             <img 
               src="/logo.png" 
-              alt="Swiftline" 
+              alt="theswiftline" 
               className="h-8 md:h-10"
             />
-            <span className="ml-2 text-lg font-semibold hidden md:block text-gray-900">Swiftline</span>
+            <span className="ml-2 text-lg font-semibold hidden md:block text-gray-900">theswiftline</span>
           </Link>
           
           {/* Desktop Navigation */}

@@ -33,8 +33,8 @@ const Dashboard = () => {
           className="space-y-8" // Increased space-y for better element separation
         >
           <img
-            src="/Swiftline_logo.jpeg"
-            alt="SwiftLine Logo"
+            src="/theSwiftlineLogo.png" 
+            alt="theSwiftLine Logo"
             className="w-24 h-24 mx-auto mb-6 rounded-3xl shadow-xl border-2 border-sage-500/20" // Larger, more rounded, prominent shadow & border
             style={{ filter: "drop-shadow(0 0 8px rgba(105, 132, 116, 0.4))" }} // Soft sage glow
           />
@@ -48,14 +48,14 @@ const Dashboard = () => {
                   loaded ? "opacity-100" : "opacity-0 -translate-x-8"
                 }`}
               >
-                Welcome to Swift
+                Welcome to theswift
               </span>
               <span
                 className={`inline-block transition-all duration-700 delay-300 ${
                   loaded ? "opacity-100" : "opacity-0 translate-y-8"
                 }`}
               >
-                Line
+                line
               </span>
               <span
                 className={`text-sage-500 ml-3 inline-block transition-all duration-500 delay-500 ${

@@ -15,21 +15,21 @@ const AboutUsPage = () => {
     <div className={`min-h-screen ${sectionBgClass} transition-colors duration-300`}>
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`}>
-          About Swiftline
+          About theswiftline
         </h1>
         <div className={`${containerBgClass} rounded-lg shadow-xl p-8 md:p-10 transition-colors duration-300`}>
           <p className={`${paragraphClass} text-lg mb-6 leading-relaxed`}>
-            Welcome to <strong className={highlightClass}>Swiftline</strong>, your premier solution for modern queue management. In today's fast-paced world, waiting in long, inefficient lines is a thing of the past. We built Swiftline to transform the queueing experience, making it seamless, stress-free, and smart for everyone.
+            Welcome to <strong className={highlightClass}>theswiftline</strong>, your premier solution for modern queue management. In today's fast-paced world, waiting in long, inefficient lines is a thing of the past. We built theswiftline to transform the queueing experience, making it seamless, stress-free, and smart for everyone.
           </p>
 
           <h2 className={`${headingClass} text-2xl font-bold mb-4`}>Our Mission</h2>
           <p className={`${paragraphClass} mb-6 leading-relaxed`}>
-            Our mission is simple: to eliminate the frustration of waiting. We empower businesses, event organizers, and service providers to manage their queues with unparalleled efficiency, providing a superior experience for their customers and attendees. For users, Swiftline means more time for what matters, less time wasted in lines.
+            Our mission is simple: to eliminate the frustration of waiting. We empower businesses, event organizers, and service providers to manage their queues with unparalleled efficiency, providing a superior experience for their customers and attendees. For users, theswiftline means more time for what matters, less time wasted in lines.
           </p>
 
           <h2 className={`${headingClass} text-2xl font-bold mb-4`}>What We Do</h2>
           <p className={`${paragraphClass} mb-6 leading-relaxed`}>
-            Swiftline offers a comprehensive suite of tools for virtual queueing, real-time updates, and insightful analytics. From local businesses to large-scale events, our platform adapts to your needs, helping you:
+            theSwiftline offers a comprehensive suite of tools for virtual queueing, real-time updates, and insightful analytics. From local businesses to large-scale events, our platform adapts to your needs, helping you:
           </p>
           <ul className={`list-disc list-inside space-y-2 mb-6 ${paragraphClass}`}>
             <li>
@@ -48,7 +48,7 @@ const AboutUsPage = () => {
 
           <h2 className={`${headingClass} text-2xl font-bold mb-4`}>Our Vision</h2>
           <p className={`${paragraphClass} leading-relaxed`}>
-            We envision a world where waiting is no longer a burden. Swiftline is continuously evolving, incorporating cutting-edge technology to create even more intuitive and powerful solutions for queue management. Join us in building a future where efficiency and customer satisfaction go hand in hand.
+            We envision a world where waiting is no longer a burden. theswiftline is continuously evolving, incorporating cutting-edge technology to create even more intuitive and powerful solutions for queue management. Join us in building a future where efficiency and customer satisfaction go hand in hand.
           </p>
 
           <div className="mt-10 text-center">

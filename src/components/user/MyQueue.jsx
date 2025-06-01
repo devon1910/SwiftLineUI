@@ -554,7 +554,7 @@ export const MyQueue = () => {
                           <b> leaving</b> the queue.
                         </p>
                         <p className="mt-2">
-                          Thanks for using SwiftLine{" "}
+                          Thanks for using theswiftline{" "}
                           <FastForward className="inline-block align-middle ml-1 w-5 h-5 text-sage-500" />
                         </p>
                       </div>

@@ -4,9 +4,9 @@ import { useTheme } from '../../services/utils/useTheme'; // Assuming you have t
 
 const faqData = [
   {
-    question: 'What is Swiftline and how does it work?',
+    question: 'What is theswiftline and how does it work?',
     answer:
-      'Swiftline is a cutting-edge PWA (Progressive Web App) designed to revolutionize queue management for any event involving people and queues. It allows users to join virtual queues from anywhere, multitask, and efficiently use their time. Event organizers get powerful tools to manage queues, view real-time metrics, and optimize their operations.',
+      'theswiftline is a cutting-edge PWA (Progressive Web App) designed to revolutionize queue management for any event involving people and queues. It allows users to join virtual queues from anywhere, multitask, and efficiently use their time. Event organizers get powerful tools to manage queues, view real-time metrics, and optimize their operations.',
   },
   {
     question: 'How do I create a new queue for my event?',
@@ -19,29 +19,29 @@ const faqData = [
       "Yes, you can often join a queue anonymously, depending on how the event organizer has configured the event. However, signing up and logging in offers a richer experience, including personalized push notifications, email reminders, and the ability to track your queue position across multiple events.",
   },
   {
-    question: 'How does Swiftline ensure the security of my account?',
+    question: 'How does theswiftline ensure the security of my account?',
     answer:
-      'Swiftline prioritizes your security. Our login feature supports both email/password and "Continue with Google" options. We’ve also implemented an extra layer of security using Cloudflare Turnstile to mitigate bot attacks. Upon signing up, a verification link is sent to your email to verify it before account creation.',
+      'theswiftline prioritizes your security. Our login feature supports both email/password and "Continue with Google" options. We’ve also implemented an extra layer of security using Cloudflare Turnstile to mitigate bot attacks. Upon signing up, a verification link is sent to your email to verify it before account creation.',
   },
   {
-    question: 'How do I install Swiftline on my device as a PWA?',
+    question: 'How do I install theswiftline on my device as a PWA?',
     answer:
-      'Swiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n General Installation Steps (varies slightly by browser/device):\n1. Open Swiftline: Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install Swiftline."\n\nOnce installed, Swiftline will appear on your home screen or app launcher like a native application.',
+      'theswiftline is a Progressive Web App (PWA), meaning you can install it directly from your web browser to get an app-like experience without visiting an app store. This gives you quick access and allows for push notifications.\n\n General Installation Steps (varies slightly by browser/device):\n1. Open theswiftline: Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).\n2. **Look for "Install" or "Add to Home Screen":**\n   * **Chrome (Android/Desktop):** You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."\n   * **Safari (iOS/iPadOS):** Tap the "Share" icon (a square with an upward arrow) in the browser toolbar. Then, scroll down and select "Add to Home Screen."\n   * **Edge (Desktop/Android):** Look for an "App available" icon in the address bar or open the browser menu (three dots) and select "Apps" > "Install theswiftline."\n\nOnce installed, theswiftline will appear on your home screen or app launcher like a native application.',
   },
   {
-    question: 'How do I ensure I receive push notifications from Swiftline?',
+    question: 'How do I ensure I receive push notifications from theswiftline?',
     answer:
-      'Push notifications are a key feature for logged-in users on Swiftline, ensuring you get real-time updates when your turn is approaching. To receive them, please ensure the following:\n\n1.  **You are Logged In:** Push notifications are reserved for logged-in users only.\n2.  **Browser/Site Permissions:** When prompted by your browser, make sure you "Allow" notifications from www.theswiftline.com.\n3.  **Device Notification Settings:**\n    * **General:** Check your device\'s system settings (e.g., "Settings" > "Notifications") to ensure notifications are enabled for your browser or the installed Swiftline PWA.\n    * **Do Not Disturb (DND) / Focus Modes:** Ensure your device is not in "Do Not Disturb," "Focus Mode," or similar modes that might suppress notifications.\n    * **Specific iOS (iPhone/iPad) Considerations (for newer iOS versions):**\n        If you are having trouble receiving PWA notifications on iOS, you may need to enable a specific feature flag:\n        1.  Go to your iPhone/iPad **Settings**.\n        2.  Scroll down and select **Safari**.\n        3.  Tap on **Advanced**.\n        4.  Tap on **Feature Flags**.\n        5.  Scroll down and toggle **"Notifications"** to the **On** position.\n        After enabling this, you should be able to receive PWA push notifications once you\'ve added Swiftline to your Home Screen and allowed notification permissions.',
+      'Push notifications are a key feature for logged-in users on theswiftline, ensuring you get real-time updates when your turn is approaching. To receive them, please ensure the following:\n\n1.  **You are Logged In:** Push notifications are reserved for logged-in users only.\n2.  **Browser/Site Permissions:** When prompted by your browser, make sure you "Allow" notifications from www.theswiftline.com.\n3.  **Device Notification Settings:**\n    * **General:** Check your device\'s system settings (e.g., "Settings" > "Notifications") to ensure notifications are enabled for your browser or the installed theswiftline PWA.\n    * **Do Not Disturb (DND) / Focus Modes:** Ensure your device is not in "Do Not Disturb," "Focus Mode," or similar modes that might suppress notifications.\n    * **Specific iOS (iPhone/iPad) Considerations (for newer iOS versions):**\n        If you are having trouble receiving PWA notifications on iOS, you may need to enable a specific feature flag:\n        1.  Go to your iPhone/iPad **Settings**.\n        2.  Scroll down and select **Safari**.\n        3.  Tap on **Advanced**.\n        4.  Tap on **Feature Flags**.\n        5.  Scroll down and toggle **"Notifications"** to the **On** position.\n        After enabling this, you should be able to receive PWA push notifications once you\'ve added theswiftline to your Home Screen and allowed notification permissions.',
   },
   {
-    question: 'How does Swiftline provide real-time queue updates?',
+    question: 'How does theswiftline provide real-time queue updates?',
     answer:
       "Our 'View Queue' page leverages **SignalR** for seamless WebSocket integration. This means you'll see your position and estimated wait time update in real-time. If someone leaves the queue earlier than expected, everyone else in the queue gets an immediate update to their position and estimated time, ensuring a smooth and dynamic experience.",
   },
   {
     question: 'How is the estimated wait time calculated?',
     answer:
-      'Swiftline uses a machine learning model to predict the estimated wait time for each user. This prediction currently considers factors such as the number of staff serving, the average time to serve each person, and your current position in the queue. We are continuously working to incorporate more factors for even more accurate predictions in the future.',
+      'theswiftline uses a machine learning model to predict the estimated wait time for each user. This prediction currently considers factors such as the number of staff serving, the average time to serve each person, and your current position in the queue. We are continuously working to incorporate more factors for even more accurate predictions in the future.',
   },
   {
     question: 'What features are available for event organizers on their dashboard?',
@@ -51,12 +51,12 @@ const faqData = [
   {
     question: 'What happens if I miss my turn in the queue?',
     answer:
-      'If you miss your turn, the event organizer may have a specific policy in place. Swiftline allows organizers to manage these situations, which might include letting you rejoin at the end of the queue or requiring you to start a new queue. It’s always best to keep an eye on your notifications to avoid missing your spot.',
+      'If you miss your turn, the event organizer may have a specific policy in place. theswiftline allows organizers to manage these situations, which might include letting you rejoin at the end of the queue or requiring you to start a new queue. It’s always best to keep an eye on your notifications to avoid missing your spot.',
   },
   {
     question: 'How can I provide feedback or report an issue?',
     answer:
-      'We welcome your feedback! You can usually find a "Give Feedback" option on the Swiftline website, or you can contact our support team directly via email or through the contact form available on our website.',
+      'We welcome your feedback! You can usually find a "Give Feedback" option on the theswiftline website, or you can contact our support team directly via email or through the contact form available on our website.',
   },
 ];
 
