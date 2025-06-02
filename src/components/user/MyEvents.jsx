@@ -116,7 +116,7 @@ const MyEvents = () => {
             {userEvents.length > 0 && (
               <button
                 onClick={handleViewAnalytics}
-                className="text-white px-6 py-2 rounded-lg font-medium  flex items-center gap-2"
+                className="text-white bg-sage-500 hover:bg-sage-600 px-6 py-2 rounded-lg font-medium  flex items-center gap-2"
               >
                 <BarChart2 className="w-5 h-5" />
                 <span>{showEventsAnalytics ? "Hide Event Insights" : "Show Event Insights"}</span>

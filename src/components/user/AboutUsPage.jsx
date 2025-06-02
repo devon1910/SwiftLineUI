@@ -7,14 +7,14 @@ const AboutUsPage = () => {
 
   const sectionBgClass = darkMode ? 'bg-gray-900' : 'bg-gray-50';
   const containerBgClass = darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200';
-  const headingClass = darkMode ? 'text-gray-100' : 'text-gray-900';
-  const paragraphClass = darkMode ? 'text-gray-300' : 'text-gray-700';
-  const highlightClass = darkMode ? 'text-sage-400' : 'text-sage-600';
+  const headingClass = darkMode ? '!text-gray-100' : '!text-gray-900';
+  const paragraphClass = darkMode ? '!text-gray-300' : '!text-gray-700';
+  const highlightClass = darkMode ? '!text-sage-400' : '!text-sage-600';
 
   return (
     <div className={`min-h-screen ${sectionBgClass} transition-colors duration-300`}>
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`}>
+        <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`} style={{ color: 'inherit' }}>
           About theswiftline
         </h1>
         <div className={`${containerBgClass} rounded-lg shadow-xl p-8 md:p-10 transition-colors duration-300`}>
@@ -52,8 +52,8 @@ const AboutUsPage = () => {
           </p>
 
           <div className="mt-10 text-center">
-            <p className={`${paragraphClass} text-lg font-semibold`}>
-              Questions? Visit our <Link to="/faq" className={`${highlightClass} hover:underline`}>FAQs</Link> or <Link to="/contact" className={`${highlightClass} hover:underline`}>Contact Us</Link>.
+            <p className={`${paragraphClass} text-lg font-semibold`} >
+              Questions? Visit our <Link to="/faq" className={`${highlightClass} hover:underline`} style={{ color: 'inherit' }}>FAQs</Link> 
             </p>
           </div>
         </div>
