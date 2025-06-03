@@ -31,12 +31,14 @@ import firstPositionSound from "../../sounds/tv-talk-show-intro.mp3"; // Renamed
 import nextPositionSound from "../../sounds/audience-cheering-clapping.mp3";
 import LeaveQueueModal from "./LeaveQueueModal.jsx";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
+import QueueQuizGame from "./QuizPage.jsx";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [myQueue, setMyQueue] = useState({});
   const [queueActivity, setQueueActivity] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(true);
   const showConfetti = myQueue.position === 1;
 
   // Track window dimensions for the Confetti component.
@@ -185,6 +187,8 @@ export const MyQueue = () => {
       nextPositionSoundRef.current?.play().catch((error) => {
         console.error("Next Position Audio playback failed:", error);
       });
+      //switch btw game and did you know
+      setShowQuiz(!showQuiz);
       setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 3000);
     }
@@ -530,9 +534,7 @@ export const MyQueue = () => {
                 </div>
               </div>
 
-              {myQueue.position !== 1 ? (
-                <DidYouKnowSlider darkMode={darkMode} />
-              ) : (
+              {myQueue.position !== 1 ? (showQuiz ? <QueueQuizGame/> : <DidYouKnowSlider /> ): (
                 <>
                   {/* Subtle reminder about queue progression */}
                   <div className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
