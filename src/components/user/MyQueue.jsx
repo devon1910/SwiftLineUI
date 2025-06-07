@@ -31,7 +31,12 @@ import firstPositionSound from "../../sounds/tv-talk-show-intro.mp3"; // Renamed
 import nextPositionSound from "../../sounds/audience-cheering-clapping.mp3";
 import LeaveQueueModal from "./LeaveQueueModal.jsx";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
-import QueueQuizGame from "./QuizPage.jsx";
+import QueueQuizGame from "./WordChain.jsx";
+import TheQueueFlowArchitectGame from "./WordChain.jsx";
+import TheSwiftLineDispatchGame from "./WordChain.jsx";
+import LineJumper from "./WordChain.jsx";
+import QueueBubblePop from "./WordChain.jsx";
+import WordChain from "./WordChain.jsx";
 
 export const MyQueue = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -533,10 +538,10 @@ export const MyQueue = () => {
                   </span>
                 </div>
               </div>
-
-              {myQueue.position !== 1 ? (showQuiz ? <QueueQuizGame/> : <DidYouKnowSlider /> ): (
+              
+              {myQueue.position !== 1 ? (showQuiz ? <WordChain/> : <DidYouKnowSlider /> ): (
                 <>
-                  {/* Subtle reminder about queue progression */}
+                  
                   <div className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
                     ${darkMode ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-100 border-gray-200 text-gray-700"}
                   `}>
