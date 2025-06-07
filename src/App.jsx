@@ -20,14 +20,13 @@ import { FeedbackProvider } from "./services/context/FeedbackProvider";
 import FAQPage from "./components/user/FAQ";
 import AboutUsPage from "./components/user/AboutUsPage";
 
-
 function App() {
   return (
     <>
       <BrowserRouter>
         <ThemeProvider>
           <LoadingProvider>
-            <FeedbackProvider>        
+            <FeedbackProvider>
               <Routes>
                 <Route path="/*" element={<LandingPage />}>
                   <Route index element={<Dashboard />} />
@@ -36,12 +35,20 @@ function App() {
                   <Route path="newEvent" element={<EventForm />} />
                   <Route path="myQueue" element={<MyQueue />} />
                   <Route path="queueManagement" element={<ViewQueue />} />
-                  
+                  <Route
+                  path="*"
+                  element={
+                    <h1 className="text-center text-3xl font-bold">
+                      404 - Page Not Found
+                    </h1>
+                  }
+                />
                 </Route>
-                <Route path="/faq" element={<FAQPage />} /> 
+                <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/auth" element={<AuthForm />} />
                 <Route path="/VerifyToken" element={<VerifyToken />} />
+                
               </Routes>
               <CustomToast />
               <Footer />
