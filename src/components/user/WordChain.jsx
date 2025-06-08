@@ -549,7 +549,9 @@ const WordChain = () => {
                       key={index}
                       className="flex items-center gap-2 text-sm bg-white p-2 rounded border"
                     >
-                      <span className="font-medium text-black">{link.from}</span>
+                      <span className="font-medium text-black">
+                        {link.from}
+                      </span>
                       <span className="text-gray-400">→</span>
                       <span className="font-medium text-black">{link.to}</span>
                       <span className="ml-auto text-green-600 font-bold">
@@ -562,55 +564,55 @@ const WordChain = () => {
             )}
 
             {/* Power-ups */}
-            <div className="border-t pt-3">
+            <div className="border-t pt-3 text-black">
               <div className="text-sm font-semibold text-gray-700 mb-2">
                 Power-ups:
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-3">
                 <button
                   onClick={getHint}
                   disabled={powerUps.hints === 0}
-                  className={`p-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`p-2 sm:p-3 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     powerUps.hints > 0
                       ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
                       : "bg-gray-100 text-gray-400 border border-gray-200"
                   }`}
                 >
                   <div className="flex items-center justify-center gap-1">
-                    <span>💡</span>
-                    <span>Hint</span>
+                    <span className="text-sm sm:text-base">💡</span>
+                    <span>Hint <div className="text-xs inline">({powerUps.hints})</div></span>
                   </div>
-                  <div className="text-xs">({powerUps.hints})</div>
+                 
                 </button>
                 <button
                   onClick={useTimeBoost}
                   disabled={powerUps.timeBoost === 0}
-                  className={`p-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`p-2 sm:p-3 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     powerUps.timeBoost > 0
                       ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
                       : "bg-gray-100 text-gray-400 border border-gray-200"
                   }`}
                 >
                   <div className="flex items-center justify-center gap-1">
-                    <span>⏰</span>
-                    <span>+Time</span>
+                    <span className="text-sm sm:text-base">⏰</span>
+                    <span>+Time <div className="text-xs inline">({powerUps.timeBoost})</div></span>
                   </div>
-                  <div className="text-xs">({powerUps.timeBoost})</div>
+                 
                 </button>
                 <button
                   onClick={skipWord}
                   disabled={powerUps.skipWord === 0}
-                  className={`p-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`p-2 sm:p-3 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     powerUps.skipWord > 0
                       ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
                       : "bg-gray-100 text-gray-400 border border-gray-200"
                   }`}
                 >
                   <div className="flex items-center justify-center gap-1">
-                    <span>⏭️</span>
-                    <span>Skip</span>
+                    <span className="text-sm sm:text-base">⏭️</span>
+                    <span>Skip <div className="text-xs inline">({powerUps.skipWord})</div></span>
                   </div>
-                  <div className="text-xs">({powerUps.skipWord})</div>
+                  
                 </button>
               </div>
             </div>
@@ -618,18 +620,18 @@ const WordChain = () => {
 
           {/* Pause Overlay */}
           {gameState === "paused" && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white rounded-lg p-6 text-center m-4">
-                <Pause className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg p-4 sm:p-6 text-center w-full max-w-sm mx-auto">
+                <Pause className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
                   Game Paused
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-3 sm:mb-4">
                   Your progress is safe!
                 </p>
                 <button
                   onClick={pauseGame}
-                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  className="bg-green-600 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
                 >
                   Resume
                 </button>
@@ -638,10 +640,10 @@ const WordChain = () => {
           )}
 
           {/* Game Controls */}
-          <div className="bg-white border-t border-gray-200 p-4 flex justify-center gap-3">
+          <div className="bg-white border-t border-gray-200 p-3 sm:p-4 flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
             <button
               onClick={pauseGame}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto"
             >
               {gameState === "paused" ? (
                 <Play className="w-4 h-4" />
@@ -652,7 +654,7 @@ const WordChain = () => {
             </button>
             <button
               onClick={resetGame}
-              className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto"
             >
               <RotateCcw className="w-4 h-4" />
               Reset

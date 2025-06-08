@@ -538,10 +538,9 @@ export const MyQueue = () => {
                   </span>
                 </div>
               </div>
-              
-              {myQueue.position !== 1 ? (showQuiz ? <WordChain/> : <DidYouKnowSlider /> ): (
-                <>
-                  
+              <WordChain/>
+              {/* {myQueue.position !== 1 ? (showQuiz ? <WordChain/> : <DidYouKnowSlider /> ): (
+                <>            
                   <div className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
                     ${darkMode ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-100 border-gray-200 text-gray-700"}
                   `}>
@@ -568,7 +567,7 @@ export const MyQueue = () => {
                     </div>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </div>
