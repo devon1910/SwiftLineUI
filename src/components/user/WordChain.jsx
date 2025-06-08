@@ -211,6 +211,7 @@ const WordChain = () => {
     return [...easyWords, ...mediumWords, ...hardWords];
   };
 
+
   const getRandomWord = useCallback(() => {
     const wordList = getWordList();
     const availableWords = wordList.filter(
@@ -262,6 +263,18 @@ const WordChain = () => {
     return lastLetter === firstLetter;
   };
 
+  async function isValidEnglishWord(word) {
+  try {
+    setFeedback("Checking word...");
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+    console.log("Response status:", response);
+    return response.status==200;
+  } catch (error) {
+    console.error("Error checking word validity:", error);
+    return false;
+  }
+}
+
   const getHint = () => {
     if (powerUps.hints > 0) {
       setPowerUps((prev) => ({ ...prev, hints: prev.hints - 1 }));
@@ -295,7 +308,7 @@ const WordChain = () => {
     }
   };
 
-  const submitWord = () => {
+  const submitWord = async () => {
     const word = userInput.trim().toLowerCase();
 
     if (!word) return;
@@ -316,6 +329,15 @@ const WordChain = () => {
       setStreak(0);
       setCombo(0);
       setTimeout(() => setFeedback(""), 2000);
+      setUserInput("");
+      return;
+    }
+    var result = await isValidEnglishWord(word);
+    if(!result) {
+      setFeedback("❌ Not a valid English word!");
+      setStreak(0);
+      setCombo(0);
+      setTimeout(() => setFeedback(""), 3000);
       setUserInput("");
       return;
     }
