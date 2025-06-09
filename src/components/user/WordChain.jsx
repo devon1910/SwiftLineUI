@@ -580,7 +580,7 @@ const WordChain = () => {
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
               <div className="bg-white rounded-lg p-4 sm:p-6 text-center w-full max-w-sm mx-auto">
                 <Pause className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
-                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-600 mb-2">
                   Game Paused
                 </h3>
                 <p className="text-gray-600 text-sm mb-3 sm:mb-4">
