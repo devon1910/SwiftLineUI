@@ -64,39 +64,6 @@ const WordChain = () => {
     "jump",
     "swim",
     "great",
-    "greet",
-    "take",
-    "run",
-    "boy",
-    "girl",
-    "toy",
-    "bag",
-    "pen",
-    "key",
-    "bed",
-    "jam",
-    "box",
-    "cup",
-    "snow",
-    "bird",
-    "milk",
-    "road",
-    "rain",
-    "door",
-    "ship",
-    "duck",
-    "frog",
-    "star",
-    "fire",
-    "cold",
-    "moon",
-    "sock",
-    "kite",
-    "book",
-    "gold",
-    "rock",
-    "leaf",
-    "tent",
   ];
 
   const mediumWords = [
@@ -129,32 +96,6 @@ const WordChain = () => {
     "tornado",
     "glacier",
     "graveyard",
-    "monster",
-    "teacher",
-    "battery",
-    "sunrise",
-    "airport",
-    "balloon",
-    "festival",
-    "giraffe",
-    "fortune",
-    "library",
-    "picture",
-    "desert",
-    "harvest",
-    "journey",
-    "treetop",
-    "weather",
-    "pyramid",
-    "holiday",
-    "pattern",
-    "science",
-    "factory",
-    "volcano",
-    "sandbox",
-    "justice",
-    "fortune",
-    "explore",
   ];
 
   const hardWords = [
@@ -182,27 +123,6 @@ const WordChain = () => {
     "consciousness",
     "biodiversity",
     "simultaneous",
-    "mathematical",
-    "biotechnology",
-    "cryptography",
-    "counterattack",
-    "complication",
-    "unbelievable",
-    "transmission",
-    "misunderstood",
-    "multicultural",
-    "hypothetical",
-    "hallucination",
-    "acceleration",
-    "exaggeration",
-    "invisibility",
-    "authenticity",
-    "revolutionize",
-    "classification",
-    "experimentation",
-    "intellectual",
-    "responsibility",
-    "characteristics",
   ];
 
   const getWordList = () => {
@@ -210,7 +130,6 @@ const WordChain = () => {
     if (level <= 6) return [...easyWords, ...mediumWords];
     return [...easyWords, ...mediumWords, ...hardWords];
   };
-
 
   const getRandomWord = useCallback(() => {
     const wordList = getWordList();
@@ -264,16 +183,18 @@ const WordChain = () => {
   };
 
   async function isValidEnglishWord(word) {
-  try {
-    setFeedback("Checking word...");
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
-    console.log("Response status:", response);
-    return response.status==200;
-  } catch (error) {
-    console.error("Error checking word validity:", error);
-    return false;
+    try {
+      setFeedback("Checking word...");
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`
+      );
+      console.log("Response status:", response);
+      return response.status == 200;
+    } catch (error) {
+      console.error("Error checking word validity:", error);
+      return false;
+    }
   }
-}
 
   const getHint = () => {
     if (powerUps.hints > 0) {
@@ -333,7 +254,7 @@ const WordChain = () => {
       return;
     }
     var result = await isValidEnglishWord(word);
-    if(!result) {
+    if (!result) {
       setFeedback("❌ Not a valid English word!");
       setStreak(0);
       setCombo(0);
@@ -512,7 +433,7 @@ const WordChain = () => {
             {/* Current Word */}
             <div className="text-center mb-6">
               <div className="text-sm text-gray-600 mb-2">Current Word:</div>
-              <div className="text-3xl font-bold text-gray-800 bg-white rounded-lg p-4 shadow-sm border-2 border-green-200">
+              <div className="text-3xl font-bold text-gray-800 bg-white rounded-lg p-4 shadow-sm border-2 border-green-200 break-words">
                 {currentWord.toUpperCase()}
               </div>
               <div className="text-sm text-green-600 mt-2">
@@ -569,14 +490,18 @@ const WordChain = () => {
                   {chain.slice(-3).map((link, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 text-sm bg-white p-2 rounded border"
+                      className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm bg-white p-2 rounded border"
                     >
-                      <span className="font-medium text-black">
-                        {link.from}
-                      </span>
-                      <span className="text-gray-400">→</span>
-                      <span className="font-medium text-black">{link.to}</span>
-                      <span className="ml-auto text-green-600 font-bold">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="font-medium text-black break-words">
+                          {link.from}
+                        </span>
+                        <span className="text-gray-400">→</span>
+                        <span className="font-medium text-black break-words">
+                          {link.to}
+                        </span>
+                      </div>
+                      <span className="text-green-600 font-bold self-start sm:self-center">
                         +{link.points}
                       </span>
                     </div>
@@ -602,9 +527,11 @@ const WordChain = () => {
                 >
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-sm sm:text-base">💡</span>
-                    <span>Hint <div className="text-xs inline">({powerUps.hints})</div></span>
+                    <span>
+                      Hint{" "}
+                      <div className="text-xs inline">({powerUps.hints})</div>
+                    </span>
                   </div>
-                 
                 </button>
                 <button
                   onClick={useTimeBoost}
@@ -617,9 +544,13 @@ const WordChain = () => {
                 >
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-sm sm:text-base">⏰</span>
-                    <span>+Time <div className="text-xs inline">({powerUps.timeBoost})</div></span>
+                    <span>
+                      +Time{" "}
+                      <div className="text-xs inline">
+                        ({powerUps.timeBoost})
+                      </div>
+                    </span>
                   </div>
-                 
                 </button>
                 <button
                   onClick={skipWord}
@@ -632,9 +563,13 @@ const WordChain = () => {
                 >
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-sm sm:text-base">⏭️</span>
-                    <span>Skip <div className="text-xs inline">({powerUps.skipWord})</div></span>
+                    <span>
+                      Skip{" "}
+                      <div className="text-xs inline">
+                        ({powerUps.skipWord})
+                      </div>
+                    </span>
                   </div>
-                  
                 </button>
               </div>
             </div>
