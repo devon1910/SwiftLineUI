@@ -111,7 +111,7 @@ const HowItWorks = () => {
                     <p className={`${paragraphClass} text-lg font-semibold`}>
                         Ready to experience the future of queue management?
                         <br />
-                        <Link to="/auth" className={`${highlightClass} hover:underline ml-2`} style={{ color: 'inherit' }}>Get Started Today</Link> or <Link to="/search" className={`${highlightClass} hover:underline`} style={{ color: 'inherit' }}>Find an Event</Link>
+                        <Link to="/" className={`${highlightClass} hover:underline ml-2`} style={{ color: 'inherit' }}>Get Started Today</Link> or <Link to="/search" className={`${highlightClass} hover:underline`} style={{ color: 'inherit' }}>Find an Event</Link>
                     </p>
                 </div>
             </div>

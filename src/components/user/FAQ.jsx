@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FiPlus, FiMinus } from 'react-icons/fi'; // For the accordion icons
 import { useTheme } from '../../services/utils/useTheme'; // Assuming you have this hook for dark mode
+import { ArrowReturnLeft } from 'react-bootstrap-icons';
+import { useNavigate } from 'react-router-dom';
 
 const faqData = [
   {
@@ -125,6 +127,7 @@ const faqData = [
 const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const { darkMode } = useTheme();
+  const navigate = useNavigate(); 
 
   const toggleAccordion = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -140,6 +143,18 @@ const FAQPage = () => {
   return (
     <div className={`min-h-screen ${sectionBgClass} transition-colors duration-300`}>
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      
+      <button
+                type="button"
+                onClick={() => navigate("/")}
+                className={`
+                  p-2 rounded-full transition-all duration-200
+                  ${darkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-600 hover:bg-gray-100"}
+                `}
+                aria-label="Go back"
+              >
+                <ArrowReturnLeft className="w-6 h-6" />
+              </button>
         <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`}>
           Frequently Asked Questions
         </h1>

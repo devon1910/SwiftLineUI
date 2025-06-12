@@ -1,9 +1,11 @@
 import React from 'react';
 import { useTheme } from '../../services/utils/useTheme'; // Assuming you have this hook
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowReturnLeft } from 'react-bootstrap-icons';
 
 const AboutUsPage = () => {
   const { darkMode } = useTheme();
+  const navigate = useNavigate();
 
   const sectionBgClass = darkMode ? 'bg-gray-900' : 'bg-gray-50';
   const containerBgClass = darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200';
@@ -14,6 +16,17 @@ const AboutUsPage = () => {
   return (
     <div className={`min-h-screen ${sectionBgClass} transition-colors duration-300`}>
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <button
+                        type="button"
+                        onClick={() => navigate("/")}
+                        className={`
+                          p-2 rounded-full transition-all duration-200
+                          ${darkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-600 hover:bg-gray-100"}
+                        `}
+                        aria-label="Go back"
+                      >
+                        <ArrowReturnLeft className="w-6 h-6" />
+                      </button>
         <h1 className={`${headingClass} text-4xl font-extrabold text-center mb-12`} style={{ color: 'inherit' }}>
           About theswiftline
         </h1>
