@@ -19,6 +19,7 @@ import FeedbackForm from "./components/user/FeedbackForm";
 import { FeedbackProvider } from "./services/context/FeedbackProvider";
 import FAQPage from "./components/user/FAQ";
 import AboutUsPage from "./components/user/AboutUsPage";
+import HowItWorks from "./components/user/HowItWorks";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/auth" element={<AuthForm />} />
+                <Route path="/howitworks" element={<HowItWorks/>}/>
                 <Route path="/VerifyToken" element={<VerifyToken />} />
                 
               </Routes>

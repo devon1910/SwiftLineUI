@@ -18,7 +18,8 @@ export const Footer = () => {
         {/* Navigation links in footer */}
         <div className="flex justify-center space-x-6 mb-6">
           <Link to="/about" className={`${linkClass} font-medium no-underline`} style={{ color: 'inherit' }}>About</Link>
-          <Link to="/faq" className={`${linkClass} font-medium no-underline`} style={{ color: 'inherit' }}>FAQs</Link> {/* Link to your new FAQ page */}   
+          <Link to="/faq" className={`${linkClass} font-medium no-underline`} style={{ color: 'inherit' }}>FAQs</Link> 
+          <Link to="/howitworks" className={`${linkClass} font-medium no-underline`} style={{ color: 'inherit' }}>How It Works</Link>
         </div>
 
         {/* Feedback Button */}

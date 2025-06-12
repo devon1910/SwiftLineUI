@@ -91,7 +91,7 @@ function LandingPage() {
                   <ul className="mt-2 list-disc list-inside text-left mx-auto max-w-sm sm:max-w-md"> {/* Bullet points for clarity */}
                     <li>Receive <b>reminder email notifications</b> before your turn.</li>
                     <li><b>Create, view, and manage</b> your event queues.</li>
-                    <li>Access <b>all premium featuress</b>.</li>
+                    <li>Access all <b>premium features</b>.</li>
                   </ul>
                 </div>
                  <button
