@@ -74,10 +74,10 @@ const Dashboard = () => {
                 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
               `}
             >
-              <span className="inline-block">Bypass the Wait,</span>{" "}
-              <span className="inline-block">Reclaim Your Day –</span>{" "}
+              <span className="inline-block">Your Time,</span>{" "}
+              <span className="inline-block">Your Control.</span>{" "}
               <span className="inline-block font-semibold text-sage-500">
-                Time Liberation, Guaranteed.
+                Join Any Queue, Anywhere.
               </span>
             </p>
           </div>
