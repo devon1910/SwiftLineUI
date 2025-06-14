@@ -77,7 +77,7 @@ const Dashboard = () => {
               <span className="inline-block">Your Time,</span>{" "}
               <span className="inline-block">Your Control.</span>{" "}
               <span className="inline-block font-semibold text-sage-500">
-                Join Any Queue, Anywhere.
+                Join Any Queue, anywhere.
               </span>
             </p>
           </div>
