@@ -47,7 +47,7 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
     const isAUser =
       isAuthenticated &&
       isAuthenticated !== "" &&
-      !userName.includes("Anonymous");
+      !userName?.includes("Anonymous");
 
     if (isAUser) {
       // For authenticated users, confirm logout
@@ -206,7 +206,7 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
                 >
                   <CircleUserRound size={18} className="flex-shrink-0" /> {/* Slightly smaller icon to fit text */}
                   <span className="flex-grow-0 whitespace-nowrap">
-                    {!isAuthenticated || userName.includes("Anonymous")
+                    {!isAuthenticated || userName?.includes("Anonymous")
                       ? "Login"
                       : "Logout"} {/* Conditional text */}
                   </span>
