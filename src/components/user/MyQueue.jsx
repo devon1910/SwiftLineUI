@@ -9,22 +9,11 @@ import {
 } from "../../services/api/SignalRConn.js";
 import { GetUserLineInfo } from "../../services/api/swiftlineService";
 
-import {
-  FiArrowUp,
-  FiPause,
-  FiRefreshCw,
-  FiUserCheck,
-} from "react-icons/fi";
+import { FiArrowUp, FiPause, FiRefreshCw, FiUserCheck } from "react-icons/fi";
 import { FiLogOut, FiX } from "react-icons/fi"; // Added FiX for close button
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate } from "react-router-dom";
-import {
-  Bot,
-  Clock,
-  FastForward,
-  Info,
-  MapPin,
-} from "lucide-react";
+import { Bot, Clock, FastForward, Info, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import firstPositionSound from "../../sounds/tv-talk-show-intro.mp3"; // Renamed for clarity
@@ -70,7 +59,10 @@ export const MyQueue = () => {
   const { triggerFeedback } = useFeedback();
   const conn = useSignalRConnection();
   const positionElementRef = useRef(null);
-  const userToken = localStorage.getItem("user") === "undefined" ? null : localStorage.getItem("user");
+  const userToken =
+    localStorage.getItem("user") === "undefined"
+      ? null
+      : localStorage.getItem("user");
 
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveQueueReason = useRef(""); // Use useRef for mutable value
@@ -170,7 +162,8 @@ export const MyQueue = () => {
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   // Fallback polling every 60s if disconnected
@@ -188,7 +181,10 @@ export const MyQueue = () => {
     if (myQueue.position === undefined || myQueue.position === null) return;
 
     // Handle position change
-    if (prevPositionRef.current !== null && myQueue.position < prevPositionRef.current) {
+    if (
+      prevPositionRef.current !== null &&
+      myQueue.position < prevPositionRef.current
+    ) {
       nextPositionSoundRef.current?.play().catch((error) => {
         console.error("Next Position Audio playback failed:", error);
       });
@@ -199,7 +195,10 @@ export const MyQueue = () => {
     }
 
     // Handle time change
-    if (prevTimeRef.current !== null && myQueue.timeTillYourTurn < prevTimeRef.current) {
+    if (
+      prevTimeRef.current !== null &&
+      myQueue.timeTillYourTurn < prevTimeRef.current
+    ) {
       setShowWaitTimeArrow(true);
       setTimeout(() => setShowWaitTimeArrow(false), 3000);
     }
@@ -220,7 +219,9 @@ export const MyQueue = () => {
       if (positionElementRef.current) {
         positionElementRef.current.classList.add("first-place-celebration");
         setTimeout(() => {
-          positionElementRef.current.classList.remove("first-place-celebration");
+          positionElementRef.current.classList.remove(
+            "first-place-celebration"
+          );
         }, 7000);
       }
     }
@@ -234,7 +235,6 @@ export const MyQueue = () => {
     // Update refs for the next render
     prevPositionRef.current = myQueue.position;
     prevTimeRef.current = myQueue.timeTillYourTurn;
-
   }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg]);
 
   // Function to fetch current queue position
@@ -315,9 +315,11 @@ export const MyQueue = () => {
   }
 
   return (
-    <div className={`max-w-2xl mx-auto p-4 font-sans transition-colors duration-300
+    <div
+      className={`max-w-2xl mx-auto p-4 font-sans transition-colors duration-300
       ${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"}
-    `}>
+    `}
+    >
       {showLeaveModal && (
         <LeaveQueueModal
           darkMode={darkMode}
@@ -337,14 +339,22 @@ export const MyQueue = () => {
               ${isConnected ? "text-green-500" : "text-red-500"}
             `}
           >
-            <span className={`w-2.5 h-2.5 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${
+                isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
+              }`}
+            />
             {isConnected ? "Live" : "Offline"}
           </span>
           {!isConnected && (
             <button
               onClick={handleManualRefresh}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200
-                ${darkMode ? "bg-gray-700 text-gray-200 hover:bg-gray-600" : "bg-sage-100 text-sage-800 hover:bg-sage-200"}
+                ${
+                  darkMode
+                    ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                    : "bg-sage-100 text-sage-800 hover:bg-sage-200"
+                }
               `}
               disabled={isRefreshing}
             >
@@ -361,14 +371,24 @@ export const MyQueue = () => {
 
       {/* Not in Queue Message */}
       {(myQueue.position === -1 || userToken === null) && (
-        <div className={`border-l-4 p-6 rounded-lg mt-8 shadow-md transition-colors duration-300
-          ${darkMode ? "bg-gray-800 border-sage-700 text-gray-200" : "bg-sage-50 border-sage-300 text-sage-700"}
-        `}>
+        <div
+          className={`border-l-4 p-6 rounded-lg mt-8 shadow-md transition-colors duration-300
+          ${
+            darkMode
+              ? "bg-gray-800 border-sage-700 text-gray-200"
+              : "bg-sage-50 border-sage-300 text-sage-700"
+          }
+        `}
+        >
           <p className="font-medium">You're currently not in any queue.</p>
           <button
             onClick={() => navigate("/search")}
             className={`mt-4 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200
-              ${darkMode ? "bg-sage-600 text-white hover:bg-sage-700" : "bg-sage-500 text-white hover:bg-sage-600"}
+              ${
+                darkMode
+                  ? "bg-sage-600 text-white hover:bg-sage-700"
+                  : "bg-sage-500 text-white hover:bg-sage-600"
+              }
             `}
           >
             Find a Queue
@@ -377,9 +397,15 @@ export const MyQueue = () => {
       )}
 
       {myQueue.position > 0 && (
-        <div className={`border-2 rounded-xl shadow-lg overflow-hidden relative transition-colors duration-300
-          ${darkMode ? "border-gray-700 bg-gray-800 text-gray-100" : "border-sage-400 bg-white text-gray-900"}
-        `}>
+        <div
+          className={`border-2 rounded-xl shadow-lg overflow-hidden relative transition-colors duration-300
+          ${
+            darkMode
+              ? "border-gray-700 bg-gray-800 text-gray-100"
+              : "border-sage-400 bg-white text-gray-900"
+          }
+        `}
+        >
           {/* Header */}
           <div className="bg-sage-500 px-6 py-4 flex justify-between items-center text-white">
             <h3 className="text-xl font-semibold">{myQueue.eventTitle}</h3>
@@ -394,9 +420,15 @@ export const MyQueue = () => {
 
           {/* Served Earlier Message */}
           {showLeaveQueueMsg && (
-            <div className={`animate-slide-in border-l-4 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md transition-colors duration-300
-              ${darkMode ? "bg-blue-900/30 border-blue-400 text-blue-300" : "bg-blue-100 border-blue-500 text-blue-700"}
-            `}>
+            <div
+              className={`animate-slide-in border-l-4 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md transition-colors duration-300
+              ${
+                darkMode
+                  ? "bg-blue-900/30 border-blue-400 text-blue-300"
+                  : "bg-blue-100 border-blue-500 text-blue-700"
+              }
+            `}
+            >
               <div>
                 <h4 className="font-semibold mb-1">Served earlier!🕺🏽</h4>
                 <p className="text-sm">{showLeaveQueueMsg}</p>
@@ -406,9 +438,15 @@ export const MyQueue = () => {
 
           {/* Queue Paused Message */}
           {!queueActivity && (
-            <div className={`animate-slide-in border-l-4 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md transition-colors duration-300
-              ${darkMode ? "bg-amber-900/30 border-amber-400 text-amber-200" : "bg-amber-100 border-amber-500 text-amber-700"}
-            `}>
+            <div
+              className={`animate-slide-in border-l-4 p-4 mb-6 rounded-lg flex items-center gap-3 shadow-md transition-colors duration-300
+              ${
+                darkMode
+                  ? "bg-amber-900/30 border-amber-400 text-amber-200"
+                  : "bg-amber-100 border-amber-500 text-amber-700"
+              }
+            `}
+            >
               <div className="animate-pulse flex-shrink-0">
                 <FiPause className="w-6 h-6" />
               </div>
@@ -431,7 +469,14 @@ export const MyQueue = () => {
               numberOfPieces={1200}
               gravity={0.2}
               tweenDuration={10000}
-              colors={['#86efac', '#34d399', '#10b981', '#059669', '#14b8a6', '#0d9488']}
+              colors={[
+                "#86efac",
+                "#34d399",
+                "#10b981",
+                "#059669",
+                "#14b8a6",
+                "#0d9488",
+              ]}
             />
           )}
 
@@ -440,11 +485,19 @@ export const MyQueue = () => {
               {/* Your Position */}
               <div
                 ref={positionElementRef}
-                className={`flex items-center gap-4 pb-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"} transition-colors duration-300`}
+                className={`flex items-center gap-4 pb-4 border-b ${
+                  darkMode ? "border-gray-700" : "border-gray-200"
+                } transition-colors duration-300`}
               >
                 <MapPin className="text-emerald-500 h-7 w-7 flex-shrink-0" />
                 <div className="flex flex-col">
-                  <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Your Position</span>
+                  <span
+                    className={`text-sm ${
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    Your Position
+                  </span>
                   <div className="flex items-center">
                     <span className="text-4xl font-extrabold relative">
                       {myQueue.positionRank}
@@ -462,27 +515,53 @@ export const MyQueue = () => {
               </div>
 
               {/* AI Prediction: Wait Time */}
-              <div className={`flex items-start gap-4 pb-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"} transition-colors duration-300`}>
-                <div className={`relative h-14 w-14 flex items-center justify-center rounded-xl flex-shrink-0
-                  ${darkMode ? "bg-blue-950/50" : "bg-gradient-to-br from-blue-50 to-indigo-100"}
-                `}>
+              <div
+                className={`flex items-start gap-4 pb-4 border-b ${
+                  darkMode ? "border-gray-700" : "border-gray-200"
+                } transition-colors duration-300`}
+              >
+                <div
+                  className={`relative h-14 w-14 flex items-center justify-center rounded-xl flex-shrink-0
+                  ${
+                    darkMode
+                      ? "bg-blue-950/50"
+                      : "bg-gradient-to-br from-blue-50 to-indigo-100"
+                  }
+                `}
+                >
                   {queueActivity && (
-                    <div className={`absolute top-0 left-0 w-full h-full border-2 rounded-xl animate-pulse
+                    <div
+                      className={`absolute top-0 left-0 w-full h-full border-2 rounded-xl animate-pulse
                       ${darkMode ? "border-blue-700/40" : "border-blue-400/40"}
-                    `} />
+                    `}
+                    />
                   )}
-                  <Bot className={`h-8 w-8 relative z-10 ${darkMode ? "text-blue-400" : "text-blue-600"}`} />
+                  <Bot
+                    className={`h-8 w-8 relative z-10 ${
+                      darkMode ? "text-blue-400" : "text-blue-600"
+                    }`}
+                  />
                 </div>
 
                 <div className="flex flex-col flex-1">
                   {/* AI Badge Header */}
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-sm font-medium ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+                    <span
+                      className={`text-sm font-medium ${
+                        darkMode ? "text-blue-400" : "text-blue-600"
+                      }`}
+                    >
                       AI Prediction
                     </span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-                      ${darkMode ? "bg-gradient-to-r from-blue-700 to-indigo-700 text-blue-100" : "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"}
-                    `}>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium
+                      ${
+                        darkMode
+                          ? "bg-gradient-to-r from-blue-700 to-indigo-700 text-blue-100"
+                          : "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                      }
+                    `}
+                    >
                       Beta
                     </span>
                   </div>
@@ -492,7 +571,11 @@ export const MyQueue = () => {
                     {myQueue.timeTillYourTurnAI > 2 &&
                       `${myQueue.timeTillYourTurnAI - 2} - `}
                     {myQueue.timeTillYourTurnAI}
-                    <span className={`text-xl ml-1 mt-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    <span
+                      className={`text-xl ml-1 mt-2 ${
+                        darkMode ? "text-gray-300" : "text-gray-600"
+                      }`}
+                    >
                       min{myQueue.timeTillYourTurnAI > 1 ? "s" : ""}
                     </span>
                     {showWaitTimeArrow && (
@@ -501,14 +584,26 @@ export const MyQueue = () => {
                   </div>
 
                   {/* Subtitle */}
-                  <div className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"} mb-3`}>
+                  <div
+                    className={`text-sm ${
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    } mb-3`}
+                  >
                     Estimated wait time
                   </div>
 
                   {/* Regular Estimate - Smaller, Secondary */}
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className={`h-4 w-4 ${darkMode ? "text-gray-400" : "text-gray-500"}`} />
-                    <span className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                    <Clock
+                      className={`h-4 w-4 ${
+                        darkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    />
+                    <span
+                      className={`${
+                        darkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
                       Standard estimate: {myQueue.timeTillYourTurn} min
                       {myQueue.timeTillYourTurn > 1 ? "s" : ""}
                     </span>
@@ -516,10 +611,16 @@ export const MyQueue = () => {
 
                   {/* Footer Note */}
                   <div className="flex items-start gap-2 mt-3">
-                    <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0
                       ${darkMode ? "bg-blue-600" : "bg-blue-400"}
-                    `}></div>
-                    <p className={`text-xs leading-relaxed ${darkMode ? "text-gray-400" : "text-gray-400"}`}>
+                    `}
+                    ></div>
+                    <p
+                      className={`text-xs leading-relaxed ${
+                        darkMode ? "text-gray-400" : "text-gray-400"
+                      }`}
+                    >
                       AI predictions learn from real-time patterns and improve
                       with each event
                     </p>
@@ -531,41 +632,70 @@ export const MyQueue = () => {
               <div className="flex items-center gap-4">
                 <FiUserCheck className="text-amber-500 h-7 w-7 flex-shrink-0" />
                 <div className="flex flex-col">
-                  <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Staff Serving</span>
+                  <span
+                    className={`text-sm ${
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    Staff Serving
+                  </span>
                   <span className="text-xl font-bold">
                     {myQueue.staffServing} staff member
                     {myQueue.staffServing !== 1 ? "s" : ""}
                   </span>
                 </div>
               </div>
-              {myQueue.position !== 1 ? (showQuiz ? <WordChain/> : <DidYouKnowSlider /> ): (
-                <>            
-                  <div className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
-                    ${darkMode ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-100 border-gray-200 text-gray-700"}
-                  `}>
+              {myQueue.position !== 1 ? (
+                showQuiz ? (
+                  <WordChain />
+                ) : (
+                  <DidYouKnowSlider />
+                )
+              ) : (
+                <div
+                  className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
+                    ${
+                      darkMode
+                        ? "bg-gray-700 border-gray-600 text-gray-200"
+                        : "bg-gray-100 border-gray-200 text-gray-700"
+                    }
+                  `}
+                >
+                  <div className="flex flex-col gap-3">
                     <div className="flex items-start gap-3">
-                      <Info className={`h-4 w-4 mt-0.5 flex-shrink-0 ${darkMode ? "text-gray-400" : "text-gray-500"}`} />
-                      <div>
-                        <p className="font-semibold mb-1">
-                          You're next in line! 🎉
-                        </p>
-                        <p>
-                          The system will automatically move you out of the
-                          queue in{" "}
-                          <span className="font-bold">
-                            {myQueue.averageWait} minutes
-                          </span>
-                          . If you get served sooner, please help others by
-                          <b> leaving</b> the queue.
-                        </p>
-                        <p className="mt-2">
-                          Thanks for using theswiftline{" "}
-                          <FastForward className="inline-block align-middle ml-1 w-5 h-5 text-sage-500" />
-                        </p>
-                      </div>
+                      <Info
+                        className={`h-4 w-4 mt-0.5 flex-shrink-0 ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      />
+                      <p className="font-semibold mb-1">
+                        You're next in line! 🎉
+                      </p>
                     </div>
+
+                    {myQueue.allowAutomaticSkips ? (
+                      <p>
+                        The system will automatically move you out of the queue
+                        in{" "}
+                        <span className="font-bold">
+                          {myQueue.averageWait} minutes
+                        </span>
+                        . If you get served sooner, please help others by
+                        <b> leaving</b> the queue.
+                      </p>
+                    ) : (
+                      <p>
+                        This Event is setup for manual skips. The Organizer will
+                        move you out of the queue when you are done.
+                      </p>
+                    )}
+
+                    <p className="mt-2">
+                      Thanks for using theswiftline{" "}
+                      <FastForward className="inline-block align-middle ml-1 w-5 h-5 text-sage-500" />
+                    </p>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>

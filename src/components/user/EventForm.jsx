@@ -10,6 +10,8 @@ import {
   FiUsers,
   FiInfo,
   FiLock,
+  FiPlay,
+  FiPause,
 } from "react-icons/fi";
 import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 import { useTheme } from "../../services/utils/useTheme";
@@ -47,6 +49,10 @@ const EventForm = () => {
     editingEvent ? editingEvent.allowAnonymousJoining : false
   );
 
+  const [allowAutomaticSkips, setAllowAutomaticSkips] = useState(
+    editingEvent ? editingEvent.allowAutomaticSkips : true
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -62,7 +68,9 @@ const EventForm = () => {
         staffCount,
         capacity,
         allowAnonymousJoining: allowAnonymous,
+        allowAutomaticSkips,
       };
+
 
       if (editingEvent) {
         updateEvent(newEvent)
@@ -137,15 +145,21 @@ const EventForm = () => {
           onClick={() => navigator("/myEvents")}
           className={`
             p-2 rounded-full transition-all duration-200
-            ${darkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-600 hover:bg-gray-100"}
+            ${
+              darkMode
+                ? "text-gray-400 hover:bg-gray-700"
+                : "text-gray-600 hover:bg-gray-100"
+            }
           `}
           aria-label="Go back to My Events"
         >
           <ArrowReturnLeft className="w-6 h-6" />
         </button>
-        <h3 className={`text-2xl sm:text-3xl font-bold flex items-center gap-3
+        <h3
+          className={`text-2xl sm:text-3xl font-bold flex items-center gap-3
           ${darkMode ? "text-white" : "text-gray-900"}
-        `}>
+        `}
+        >
           {editingEvent ? (
             <>
               <FiCheck className="w-7 h-7 text-sage-500" />
@@ -162,7 +176,12 @@ const EventForm = () => {
 
       {/* Title Input */}
       <div className="mb-6">
-        <label htmlFor="eventTitle" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+        <label
+          htmlFor="eventTitle"
+          className={`block text-sm font-medium mb-2 ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
           Title <span className="text-red-500">*</span>
         </label>
         <div className="relative">
@@ -171,12 +190,16 @@ const EventForm = () => {
             type="text"
             placeholder="e.g., Tech Conference 2024"
             value={title}
-            disabled={!!editingEvent} 
+            disabled={!!editingEvent}
             maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
             required
             className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
-              ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+              ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+              }
               ${editingEvent ? "opacity-70 cursor-not-allowed" : ""}
             `}
           />
@@ -185,7 +208,12 @@ const EventForm = () => {
 
       {/* Description Input */}
       <div className="mb-6">
-        <label htmlFor="eventDescription" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+        <label
+          htmlFor="eventDescription"
+          className={`block text-sm font-medium mb-2 ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
           Description <span className="text-red-500">*</span>
         </label>
         <div className="relative">
@@ -198,17 +226,28 @@ const EventForm = () => {
             onChange={(e) => setDescription(e.target.value)}
             required
             className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200 resize-y
-              ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+              ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+              }
             `}
           />
         </div>
       </div>
 
       {/* Input Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6"> {/* Increased gap */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+        {" "}
+        {/* Increased gap */}
         {/* Average Wait Time */}
         <div className="relative">
-          <label htmlFor="averageTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          <label
+            htmlFor="averageTime"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             Avg. Wait Time (mins) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -223,16 +262,24 @@ const EventForm = () => {
               onChange={(e) => setAverageTime(e.target.value)}
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
-                ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+                ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                    : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+                }
               `}
               style={{ paddingLeft: "2.5rem" }}
             />
           </div>
         </div>
-
         {/* Number of Staff */}
         <div className="relative">
-          <label htmlFor="staffCount" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          <label
+            htmlFor="staffCount"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             Serving Staff No. <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -247,20 +294,31 @@ const EventForm = () => {
               onChange={(e) => setStaffCount(e.target.value)}
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
-                ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}
+                ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                    : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+                }
               `}
               style={{ paddingLeft: "2.5rem" }}
             />
           </div>
         </div>
-
         {/* Capacity Slider */}
         <div>
-          <label htmlFor="capacitySlider" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
-            Queue Capacity: <span className="font-bold text-sage-500">{capacity}</span>/1000
+          <label
+            htmlFor="capacitySlider"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            Queue Capacity:{" "}
+            <span className="font-bold text-sage-500">{capacity}</span>/1000
           </label>
           <div className="flex items-center gap-3">
-            <FiUsers className={`${darkMode ? "text-gray-400" : "text-gray-500"}`} />
+            <FiUsers
+              className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}
+            />
             <input
               type="range"
               id="capacitySlider"
@@ -269,23 +327,36 @@ const EventForm = () => {
               value={capacity}
               onChange={(e) => setCapacity(parseInt(e.target.value))}
               className={`w-full h-2 rounded-lg appearance-none cursor-pointer
-                ${darkMode ? "bg-gray-600 accent-sage-500" : "bg-gray-300 accent-sage-500"}
+                ${
+                  darkMode
+                    ? "bg-gray-600 accent-sage-500"
+                    : "bg-gray-300 accent-sage-500"
+                }
               `}
               style={{
-                '--range-thumb-bg': darkMode ? '#698474' : '#698474', // Tailwind 'sage-500'
-                '--range-track-bg': darkMode ? '#4b5563' : '#d1d5db', // Tailwind 'gray-600' or 'gray-300'
+                "--range-thumb-bg": darkMode ? "#698474" : "#698474", // Tailwind 'sage-500'
+                "--range-track-bg": darkMode ? "#4b5563" : "#d1d5db", // Tailwind 'gray-600' or 'gray-300'
               }}
             />
-            <FiUsers className={`${darkMode ? "text-gray-400" : "text-gray-500"}`} />
+            <FiUsers
+              className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}
+            />
           </div>
         </div>
       </div>
 
       {/* Time Selection Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6"> {/* Increased gap */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        {" "}
+        {/* Increased gap */}
         {/* Start Time */}
         <div className="relative">
-          <label htmlFor="startTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          <label
+            htmlFor="startTime"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             Start Time <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -295,7 +366,11 @@ const EventForm = () => {
               value={eventStartTime}
               onChange={(e) => setStartTime(e.target.value)}
               className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
-                ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}
+                ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-gray-50 border-gray-300 text-gray-900"
+                }
               `}
               required
             >
@@ -316,14 +391,31 @@ const EventForm = () => {
               ))}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
             </div>
           </div>
         </div>
-
         {/* End Time */}
         <div className="relative">
-          <label htmlFor="endTime" className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+          <label
+            htmlFor="endTime"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             End Time <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -333,7 +425,11 @@ const EventForm = () => {
               value={eventEndTime}
               onChange={(e) => setEndTime(e.target.value)}
               className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
-                ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}
+                ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-gray-50 border-gray-300 text-gray-900"
+                }
               `}
               required
             >
@@ -354,31 +450,60 @@ const EventForm = () => {
               ))}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
             </div>
           </div>
         </div>
       </div>
 
       {/* Allow Anonymous Joining Toggle */}
-      <div className={`mb-8 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
+      <div
+        className={`mb-8 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
         ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
-      `}>
+      `}
+      >
         <div className="flex items-center  gap-4">
           <button
             type="button"
             onClick={() => setAllowAnonymous(!allowAnonymous)}
             className={`relative w-14 h-8 rounded-full p-1  transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
-              ${darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"}
-              ${allowAnonymous ? "bg-sage-700" :  darkMode ? "bg-gray-900" : "bg-gray-400"} }}
+              ${
+                darkMode
+                  ? "focus:ring-offset-gray-700"
+                  : "focus:ring-offset-gray-100"
+              }
+              ${
+                allowAnonymous
+                  ? "bg-sage-700"
+                  : darkMode
+                  ? "bg-gray-900"
+                  : "bg-gray-400"
+              } }}
             `}
             aria-checked={allowAnonymous}
             role="switch"
           >
             <span
               className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
-                ${allowAnonymous ? "translate-x-6 bg-white" : "translate-x-0 bg-white"}
+                ${
+                  allowAnonymous
+                    ? "translate-x-6 bg-white"
+                    : "translate-x-0 bg-white"
+                }
               `}
             >
               {allowAnonymous ? (
@@ -389,10 +514,18 @@ const EventForm = () => {
             </span>
           </button>
           <div className="flex flex-col">
-            <span className={`text-base font-medium ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
+            <span
+              className={`text-base font-medium ${
+                darkMode ? "text-gray-100" : "text-gray-800"
+              }`}
+            >
               {allowAnonymous ? "Allow Anonymous Joining" : "Require Account"}
             </span>
-            <span className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <span
+              className={`text-xs ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               {allowAnonymous
                 ? "Guests can join without an account"
                 : "Requires account to join"}
@@ -400,17 +533,120 @@ const EventForm = () => {
           </div>
         </div>
         <div className="relative group flex-shrink-0">
-          <FiInfo className={`w-5 h-5 cursor-pointer transition-colors duration-200
-            ${darkMode ? "text-gray-400 hover:text-sage-400" : "text-gray-500 hover:text-sage-600"}
-          `} />
-          <div className={`
+          <FiInfo
+            className={`w-5 h-5 cursor-pointer transition-colors duration-200
+            ${
+              darkMode
+                ? "text-gray-400 hover:text-sage-400"
+                : "text-gray-500 hover:text-sage-600"
+            }
+          `}
+          />
+          <div
+            className={`
             absolute hidden group-hover:block w-56 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
             ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
-          `}>
-            {allowAnonymous ? "Anyone can join queue without an account" : "Requires account creation to join queue"}
-            <div className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
+          `}
+          >
+            {allowAnonymous
+              ? "Anyone can join queue without an account"
+              : "Requires account creation to join queue"}
+            <div
+              className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
               ${darkMode ? "bg-gray-700" : "bg-gray-800"}
-            `}></div>
+            `}
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Allow Automatic Skips Toggle */}
+      <div
+        className={`mb-8 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
+  ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
+`}
+      >
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setAllowAutomaticSkips(!allowAutomaticSkips)}
+            className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
+        focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
+        ${
+          darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"
+        }
+        ${
+          allowAutomaticSkips
+            ? "bg-sage-700"
+            : darkMode
+            ? "bg-gray-900"
+            : "bg-gray-400"
+        }
+      `}
+            aria-checked={allowAutomaticSkips}
+            role="switch"
+          >
+            <span
+              className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
+          ${
+            allowAutomaticSkips
+              ? "translate-x-6 bg-white"
+              : "translate-x-0 bg-white"
+          }
+        `}
+            >
+              {allowAutomaticSkips ? (
+                <FiPlay className="w-4 h-4 text-sage-500" />
+              ) : (
+                <FiPause className="w-4 h-4 text-gray-500" />
+              )}
+            </span>
+          </button>
+          <div className="flex flex-col">
+            <span
+              className={`text-base font-medium ${
+                darkMode ? "text-gray-100" : "text-gray-800"
+              }`}
+            >
+              {allowAutomaticSkips
+                ? "Automatic Queue Processing"
+                : "Manual Queue Processing"}
+            </span>
+            <span
+              className={`text-xs ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              {allowAutomaticSkips
+                ? "System automatically moves to next person"
+                : "Manually mark users as served"}
+            </span>
+          </div>
+        </div>
+        <div className="relative group flex-shrink-0">
+          <FiInfo
+            className={`w-5 h-5 cursor-pointer transition-colors duration-200
+      ${
+        darkMode
+          ? "text-gray-400 hover:text-sage-400"
+          : "text-gray-500 hover:text-sage-600"
+      }
+    `}
+          />
+          <div
+            className={`
+      absolute hidden group-hover:block w-56 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
+      ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
+    `}
+          >
+            {allowAutomaticSkips
+              ? "Queue automatically advances after a set time period or when service is complete"
+              : "Queue administrator must manually mark each person as served before advancing"}
+            <div
+              className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
+        ${darkMode ? "bg-gray-700" : "bg-gray-800"}
+      `}
+            ></div>
           </div>
         </div>
       </div>
@@ -419,7 +655,11 @@ const EventForm = () => {
       <button
         type="submit"
         className={`w-full text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-6 flex items-center justify-center gap-2
-          ${darkMode ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800 shadow-md hover:shadow-lg" : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white shadow-md hover:shadow-lg"}
+          ${
+            darkMode
+              ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800 shadow-md hover:shadow-lg"
+              : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white shadow-md hover:shadow-lg"
+          }
         `}
       >
         {editingEvent ? (
