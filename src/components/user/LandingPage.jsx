@@ -89,9 +89,10 @@ function LandingPage() {
                 <div className="text-base sm:text-lg md:text-xl font-medium mb-4 leading-relaxed"> {/* Larger, more relaxed text */}
                   Create an account or sign in to:
                   <ul className="mt-2 list-disc list-inside text-left mx-auto max-w-sm sm:max-w-md"> {/* Bullet points for clarity */}
-                    <li>Receive <b>reminder email notifications</b> before your turn.</li>
                     <li><b>Create, view, and manage</b> your event queues.</li>
-                    <li>Access all <b>premium features</b>.</li>
+                    <li>Receive <b>reminder email notifications</b> before your turn.</li>
+                    <li>Get <b>real-time updates</b> on your queue status.</li>
+                    <li>Access your <b>queue history</b> and analytics.</li>
                   </ul>
                 </div>
                  <button
