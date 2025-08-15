@@ -20,11 +20,6 @@ import firstPositionSound from "../../sounds/tv-talk-show-intro.mp3"; // Renamed
 import nextPositionSound from "../../sounds/audience-cheering-clapping.mp3";
 import LeaveQueueModal from "./LeaveQueueModal.jsx";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
-import QueueQuizGame from "./WordChain.jsx";
-import TheQueueFlowArchitectGame from "./WordChain.jsx";
-import TheSwiftLineDispatchGame from "./WordChain.jsx";
-import LineJumper from "./WordChain.jsx";
-import QueueBubblePop from "./WordChain.jsx";
 import WordChain from "./WordChain.jsx";
 
 export const MyQueue = () => {
@@ -113,7 +108,7 @@ export const MyQueue = () => {
           showToast.success("Queue is active. You're back in line!");
         }
       };
-
+  
       const handleConnectionStateChange = () => {
         setIsConnected(conn.state === "Connected");
       };
