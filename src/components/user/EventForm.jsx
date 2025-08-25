@@ -122,13 +122,13 @@ const EventForm = () => {
       return false;
     }
 
-    const start = new Date(`1970-01-01T${eventStartTime}`);
-    const end = new Date(`1970-01-01T${eventEndTime}`);
+    // const start = new Date(`1970-01-01T${eventStartTime}`);
+    // const end = new Date(`1970-01-01T${eventEndTime}`);
 
-    if (start >= end) {
-      toast.error("End time must be after start time.");
-      return false;
-    }
+    // if (start >= end) {
+    //   toast.error("End time must be after start time.");
+    //   return false;
+    // }
     return true;
   };
 
