@@ -65,15 +65,17 @@ export const MyQueue = () => {
   const { darkMode } = useTheme(); // Use the theme hook
 
   // Audio references
-  const firstPositionSoundRef = useRef(null);
+  
+  
+  //const firstPositionSoundRef = useRef(null);
   const nextPositionSoundRef = useRef(null);
 
   // Initialize audio on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      firstPositionSoundRef.current = new Audio(firstPositionSound);
+      //firstPositionSoundRef.current = new Audio(firstPositionSound);
       nextPositionSoundRef.current = new Audio(nextPositionSound);
-      firstPositionSoundRef.current.volume = 1;
+      //firstPositionSoundRef.current.volume = 1;
       nextPositionSoundRef.current.volume = 1;
     }
   }, []);
@@ -200,16 +202,16 @@ export const MyQueue = () => {
 
     // Special handling for reaching first position
     if (myQueue.position === 1 && prevPositionRef.current !== 1) {
-      const playFirstPositionSound = () => {
-        firstPositionSoundRef.current?.play().catch((error) => {
-          console.error("First Position Audio playback failed:", error);
-        });
-      };
-      playFirstPositionSound();
-      const intervalId = setInterval(playFirstPositionSound, 3000);
-      setTimeout(() => {
-        clearInterval(intervalId);
-      }, 15000);
+      // const playFirstPositionSound = () => {
+      //   firstPositionSoundRef.current?.play().catch((error) => {
+      //     console.error("First Position Audio playback failed:", error);
+      //   });
+      // };
+      // playFirstPositionSound();
+      // const intervalId = setInterval(playFirstPositionSound, 3000);
+      // setTimeout(() => {
+      //   clearInterval(intervalId);
+      // }, 15000);
 
       if (positionElementRef.current) {
         positionElementRef.current.classList.add("first-place-celebration");
