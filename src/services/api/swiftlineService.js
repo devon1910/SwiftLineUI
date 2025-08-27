@@ -12,11 +12,26 @@ export const LogOut = () => API.post(`${apiUrl}Auth/Logout`);
 export const GetUserInfo = (authData) => API.get(`${apiUrl}Auth/GetAuthData?authCode=${authData}`);
 
 // Events
-export const eventsList = (page, eventsPerPage, search = "") => 
-    API.get(`${apiUrl}Event/SearchEvents?Page=${page}&Size=${eventsPerPage}&Query=${search}`);
+export const eventsList = (page, eventsPerPage, search = "")=> {
+  const params = new URLSearchParams();
+  params.append('Page', page);
+  params.append('Size', eventsPerPage);
+  params.append('Query', search);
+  return API.get(`${apiUrl}Event/SearchEvents?${params.toString()}`);
+}
+    
 export const createEvent = (event) => API.post(`${apiUrl}Event/CreateEvent`, event);
-export const getQueueHistory = (currentPage, historyPage, size, eventId) => 
-    API.get(`${apiUrl}Event/GetEventQueue?CurrentMembersPage=${currentPage}&PastMembersPage=${historyPage}&Size=${size}&EventId=${eventId}`);
+export const getQueueHistory = (currentPage, historyPage, size, eventId) => {
+
+  const params = new URLSearchParams();
+  params.append('CurrentMembersPage', currentPage);
+  params.append('PastMembersPage', historyPage);
+  params.append('Size', size);
+  params.append('EventId', eventId);
+
+  return API.get(`${apiUrl}Event/GetEventQueue?${params.toString()}`);
+}
+    
 export const UserEvents = () => API.get(`${apiUrl}Event/GetUserEvents`);
 export const updateEvent = (event) => API.put(`${apiUrl}Event/EditEvent`, event);
 export const deleteEvent = (id) => API.delete(`${apiUrl}Event/DeleteEvent/${id}`);
