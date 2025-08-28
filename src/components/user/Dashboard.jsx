@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const handleNavigation = (path) => {
     if (isGuest && path === "newEvent") {
-      showToast.error("Please create an account to create new events.");
+      showToast.error("Please create an account to set up an event.");
       setShowAuthModal('signup'); // Prompt signup if guest tries to create event
       return;
     }

@@ -23,7 +23,6 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("turnstileToken: ",turnstileToken)
     if (!turnstileToken) {
       showToast.error("Please complete the security check");
       return;
@@ -42,6 +41,10 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   };
 
   const handleGoogleSignIn = () => {
+     if (!turnstileToken) {
+      showToast.error("Please complete the security check");
+      return;
+    }
     const apiUrl = import.meta.env.VITE_API_URL;
     window.location.href = `${apiUrl}Auth/LoginWithGoogle`;
   };

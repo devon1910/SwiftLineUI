@@ -43,7 +43,7 @@ const EventForm = () => {
     editingEvent ? editingEvent.staffCount : 1
   );
   const [capacity, setCapacity] = useState(
-    editingEvent ? editingEvent.capacity : 50
+    editingEvent ? editingEvent.capacity : 10
   );
   const [allowAnonymous, setAllowAnonymous] = useState(
     editingEvent ? editingEvent.allowAnonymousJoining : false
@@ -305,7 +305,38 @@ const EventForm = () => {
           </div>
         </div>
         {/* Capacity Slider */}
-        <div>
+        <div className="relative">
+          <label
+            htmlFor="capacityCount"
+            className={`block text-sm font-medium mb-2 ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            Queue Capacity <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              id="staffCount"
+              type="number"
+              placeholder=""
+              min="10"
+              max="1000"
+              value={capacity}
+              onChange={(e) => setCapacity(e.target.value)}
+              required
+              className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
+                ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                    : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+                }
+              `}
+              style={{ paddingLeft: "2.5rem" }}
+            />
+          </div>
+        </div>
+        {/* <div>
           <label
             htmlFor="capacitySlider"
             className={`block text-sm font-medium mb-2 ${
@@ -322,8 +353,9 @@ const EventForm = () => {
             <input
               type="range"
               id="capacitySlider"
-              min="1"
+              min="10"
               max="1000"
+              step="10"
               value={capacity}
               onChange={(e) => setCapacity(parseInt(e.target.value))}
               className={`w-full h-2 rounded-lg appearance-none cursor-pointer
@@ -342,7 +374,7 @@ const EventForm = () => {
               className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Time Selection Row */}

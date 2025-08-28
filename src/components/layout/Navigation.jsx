@@ -52,7 +52,7 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
     if (isAUser) {
       // For authenticated users, confirm logout
       const confirmLogout = window.confirm(
-        "Are you sure you want to log out? Why would you wanna do that though?!🥲"
+        "Are you sure you want to log out?"
       );
 
       if (confirmLogout) {
