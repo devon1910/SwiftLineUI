@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { createEvent, updateEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
@@ -12,6 +12,8 @@ import {
   FiLock,
   FiPlay,
   FiPause,
+  FiMapPin,
+  FiTarget,
 } from "react-icons/fi";
 import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 import { useTheme } from "../../services/utils/useTheme";
@@ -20,6 +22,8 @@ import { ArrowReturnLeft } from "react-bootstrap-icons";
 const EventForm = () => {
   const location = useLocation();
   const navigator = useNavigate();
+  const locationInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   const { darkMode } = useTheme();
 
@@ -53,11 +57,124 @@ const EventForm = () => {
     editingEvent ? editingEvent.allowAutomaticSkips : true
   );
 
+  // New geographic restriction states
+  const [enableGeographicRestriction, setEnableGeographicRestriction] = useState(
+    editingEvent ? editingEvent.enableGeographicRestriction || false : false
+  );
+  const [eventLocation, setEventLocation] = useState(
+    editingEvent ? editingEvent.eventLocation || "" : ""
+  );
+  const [eventLatitude, setEventLatitude] = useState(
+    editingEvent ? editingEvent.eventLatitude || null : null
+  );
+  const [eventLongitude, setEventLongitude] = useState(
+    editingEvent ? editingEvent.eventLongitude || null : null
+  );
+  const [radiusInMeters, setRadiusInMeters] = useState(
+    editingEvent ? editingEvent.radiusInMeters || 100 : 100
+  );
+
+  // Initialize Google Places Autocomplete with new API
+  useEffect(() => {
+    const initMap = async () => {
+      console.log("window: ", window);
+      if (enableGeographicRestriction && window.google && locationInputRef.current) {
+        try {
+          // Request needed libraries
+          await window.google.maps.importLibrary("places");
+          
+          // Create the PlaceAutocompleteElement
+          const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement();
+          placeAutocomplete.id = 'place-autocomplete';
+          
+          // Style the autocomplete element to match your design
+          placeAutocomplete.style.width = '100%';
+          placeAutocomplete.style.height = '42px';
+          placeAutocomplete.style.borderRadius = '0.5rem';
+          placeAutocomplete.style.border = darkMode ? '1px solid #6b7280' : '1px solid #d1d5db';
+          placeAutocomplete.style.backgroundColor = darkMode ? '#374151' : '#ffffff';
+          placeAutocomplete.style.color = darkMode ? '#ffffff' : '#111827';
+          placeAutocomplete.style.paddingLeft = '2.5rem';
+          placeAutocomplete.style.fontSize = '14px';
+          
+          // Clear the container and add the new element
+          if (locationInputRef.current) {
+            locationInputRef.current.innerHTML = '';
+            locationInputRef.current.appendChild(placeAutocomplete);
+          }
+
+          // Add the place select listener
+          placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
+            try {
+              const place = placePrediction.toPlace();
+              await place.fetchFields({ 
+                fields: ['displayName', 'formattedAddress', 'location'] 
+              });
+              
+              const placeData = place.toJSON();
+              const lat = placeData.location?.lat;
+              const lng = placeData.location?.lng;
+              
+              if (lat && lng) {
+                setEventLocation(placeData.formattedAddress || placeData.displayName);
+                setEventLatitude(lat);
+                setEventLongitude(lng);
+                
+                console.log('Selected location:', {
+                  address: placeData.formattedAddress || placeData.displayName,
+                  lat,
+                  lng
+                });
+              }
+            } catch (error) {
+              console.error('Error fetching place details:', error);
+              toast.error('Error loading place details. Please try again.');
+            }
+          });
+
+          autocompleteRef.current = placeAutocomplete;
+        } catch (error) {
+          console.error('Error initializing Places API:', error);
+          toast.error('Failed to initialize location search. Please refresh the page.');
+        }
+      }
+    };
+    
+    if (enableGeographicRestriction && window.google) {
+      initMap();
+    }
+
+    return () => {
+      if (autocompleteRef.current && locationInputRef.current) {
+        locationInputRef.current.innerHTML = '';
+      }
+    };
+  }, [enableGeographicRestriction, darkMode]);
+
+  // Load Google Maps API
+  useEffect(() => {
+    if (enableGeographicRestriction && !window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_CLIENT_KEY}&libraries=places&loading=async`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+      
+      script.onload = () => {
+        console.log('Google Maps API loaded successfully');
+      };
+      
+      script.onerror = () => {
+        toast.error('Failed to load Google Maps. Please check your API key and internet connection.');
+      };
+    }
+  }, [enableGeographicRestriction]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const eventId = editingEvent ? editingEvent.id : 0;
-    if (validateEventStartEnd()) {
+    if (validateEventStartEnd() && validateGeographicSettings()) {
       const newEvent = {
         eventId,
         title,
@@ -69,17 +186,21 @@ const EventForm = () => {
         capacity,
         allowAnonymousJoining: allowAnonymous,
         allowAutomaticSkips,
+        enableGeographicRestriction,
+        eventLocation: enableGeographicRestriction ? eventLocation : null,
+        eventLatitude: enableGeographicRestriction ? eventLatitude : null,
+        eventLongitude: enableGeographicRestriction ? eventLongitude : null,
+        radiusInMeters: enableGeographicRestriction ? radiusInMeters : null,
       };
-
 
       if (editingEvent) {
         updateEvent(newEvent)
           .then(() => {
-            toast.success("Event updated successfully!"); // Added success toast
+            toast.success("Event updated successfully!");
             navigator("/myEvents");
           })
           .catch((error) => {
-            console.error("Error updating event:", error); // Use console.error
+            console.error("Error updating event:", error);
             toast.error(
               "There was an error updating the event. Please try again later."
             );
@@ -87,17 +208,31 @@ const EventForm = () => {
       } else {
         createEvent(newEvent)
           .then(() => {
-            toast.success("Event created successfully!"); // Added success toast
+            toast.success("Event created successfully!");
             navigator("/myEvents");
           })
           .catch((error) => {
-            console.error("Error creating event:", error); // Use console.error
+            console.error("Error creating event:", error);
             toast.error(
               "There was an error creating the event. Please try again later."
             );
           });
       }
     }
+  };
+
+  const validateGeographicSettings = () => {
+    if (enableGeographicRestriction) {
+      if (!eventLocation || !eventLatitude || !eventLongitude) {
+        toast.error("Please select a valid location for geographic restrictions.");
+        return false;
+      }
+      if (radiusInMeters < 10 || radiusInMeters > 10000) {
+        toast.error("Radius must be between 10 and 10,000 meters.");
+        return false;
+      }
+    }
+    return true;
   };
 
   const generateTimeOptions = () => {
@@ -115,21 +250,19 @@ const EventForm = () => {
 
   const timeOptions = generateTimeOptions();
 
-  // Improved validation
   const validateEventStartEnd = () => {
     if (!eventStartTime || !eventEndTime) {
       toast.error("Please select both start and end times.");
       return false;
     }
-
-    // const start = new Date(`1970-01-01T${eventStartTime}`);
-    // const end = new Date(`1970-01-01T${eventEndTime}`);
-
-    // if (start >= end) {
-    //   toast.error("End time must be after start time.");
-    //   return false;
-    // }
     return true;
+  };
+
+  const formatRadiusText = (radius) => {
+    if (radius >= 1000) {
+      return `${(radius / 1000).toFixed(1)} km`;
+    }
+    return `${radius} m`;
   };
 
   return (
@@ -219,7 +352,7 @@ const EventForm = () => {
         <div className="relative">
           <textarea
             id="eventDescription"
-            rows={4} // Reduced rows slightly for a compact look
+            rows={4}
             maxLength={300}
             placeholder="Describe your event details, purpose, or what attendees can expect..."
             value={description}
@@ -238,8 +371,6 @@ const EventForm = () => {
 
       {/* Input Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-        {" "}
-        {/* Increased gap */}
         {/* Average Wait Time */}
         <div className="relative">
           <label
@@ -304,7 +435,7 @@ const EventForm = () => {
             />
           </div>
         </div>
-        {/* Capacity Slider */}
+        {/* Capacity */}
         <div className="relative">
           <label
             htmlFor="capacityCount"
@@ -317,7 +448,7 @@ const EventForm = () => {
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
-              id="staffCount"
+              id="capacityCount"
               type="number"
               placeholder=""
               min="10"
@@ -336,51 +467,10 @@ const EventForm = () => {
             />
           </div>
         </div>
-        {/* <div>
-          <label
-            htmlFor="capacitySlider"
-            className={`block text-sm font-medium mb-2 ${
-              darkMode ? "text-gray-200" : "text-gray-700"
-            }`}
-          >
-            Queue Capacity:{" "}
-            <span className="font-bold text-sage-500">{capacity}</span>/1000
-          </label>
-          <div className="flex items-center gap-3">
-            <FiUsers
-              className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}
-            />
-            <input
-              type="range"
-              id="capacitySlider"
-              min="10"
-              max="1000"
-              step="10"
-              value={capacity}
-              onChange={(e) => setCapacity(parseInt(e.target.value))}
-              className={`w-full h-2 rounded-lg appearance-none cursor-pointer
-                ${
-                  darkMode
-                    ? "bg-gray-600 accent-sage-500"
-                    : "bg-gray-300 accent-sage-500"
-                }
-              `}
-              style={{
-                "--range-thumb-bg": darkMode ? "#698474" : "#698474", // Tailwind 'sage-500'
-                "--range-track-bg": darkMode ? "#4b5563" : "#d1d5db", // Tailwind 'gray-600' or 'gray-300'
-              }}
-            />
-            <FiUsers
-              className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}
-            />
-          </div>
-        </div> */}
       </div>
 
       {/* Time Selection Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-        {" "}
-        {/* Increased gap */}
         {/* Start Time */}
         <div className="relative">
           <label
@@ -501,17 +591,208 @@ const EventForm = () => {
         </div>
       </div>
 
+      {/* Geographic Restriction Toggle */}
+      <div
+        className={`mb-6 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
+        ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
+      `}
+      >
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setEnableGeographicRestriction(!enableGeographicRestriction)}
+            className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
+              focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
+              ${
+                darkMode
+                  ? "focus:ring-offset-gray-700"
+                  : "focus:ring-offset-gray-100"
+              }
+              ${
+                enableGeographicRestriction
+                  ? "bg-sage-700"
+                  : darkMode
+                  ? "bg-gray-900"
+                  : "bg-gray-400"
+              }
+            `}
+            aria-checked={enableGeographicRestriction}
+            role="switch"
+          >
+            <span
+              className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
+                ${
+                  enableGeographicRestriction
+                    ? "translate-x-6 bg-white"
+                    : "translate-x-0 bg-white"
+                }
+              `}
+            >
+              <FiMapPin className={`w-4 h-4 ${enableGeographicRestriction ? "text-sage-500" : "text-gray-500"}`} />
+            </span>
+          </button>
+          <div className="flex flex-col">
+            <span
+              className={`text-base font-medium ${
+                darkMode ? "text-gray-100" : "text-gray-800"
+              }`}
+            >
+              {enableGeographicRestriction ? "Location-Based Queue" : "Open Location Queue"}
+            </span>
+            <span
+              className={`text-xs ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              {enableGeographicRestriction
+                ? "Users must be nearby to join"
+                : "No location restrictions"}
+            </span>
+          </div>
+        </div>
+        <div className="relative group flex-shrink-0">
+          <FiInfo
+            className={`w-5 h-5 cursor-pointer transition-colors duration-200
+            ${
+              darkMode
+                ? "text-gray-400 hover:text-sage-400"
+                : "text-gray-500 hover:text-sage-600"
+            }
+          `}
+          />
+          <div
+            className={`
+            absolute hidden group-hover:block w-60 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
+            ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
+          `}
+          >
+            {enableGeographicRestriction
+              ? "Users can only join the queue if they're within the specified distance from your event location"
+              : "Anyone can join the queue regardless of their location"}
+            <div
+              className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
+              ${darkMode ? "bg-gray-700" : "bg-gray-800"}
+            `}
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Geographic Restriction Settings */}
+      {enableGeographicRestriction && (
+        <div className={`mb-6 p-4 rounded-lg border transition-all duration-300 space-y-4
+          ${darkMode ? "bg-gray-700 border-gray-600" : "bg-gray-50 border-gray-300"}
+        `}>
+          <h4 className={`text-lg font-semibold flex items-center gap-2
+            ${darkMode ? "text-gray-100" : "text-gray-800"}
+          `}>
+            <FiTarget className="w-5 h-5 text-sage-500" />
+            Location Settings
+          </h4>
+          
+          {/* Event Location Input */}
+          <div className="space-y-2">
+            <label
+              htmlFor="eventLocation"
+              className={`block text-sm font-medium ${
+                darkMode ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
+              Event Location <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <FiMapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
+              <div
+                ref={locationInputRef}
+                className={`w-full min-h-[42px] border rounded-lg focus-within:ring-2 focus-within:ring-sage-500 focus-within:border-sage-500 transition duration-200 relative
+                  ${
+                    darkMode
+                      ? "bg-gray-600 border-gray-500"
+                      : "bg-white border-gray-300"
+                  }
+                `}
+              >
+                {/* Placeholder div when Google Maps isn't loaded yet */}
+                {!window.google && (
+                  <input
+                    type="text"
+                    placeholder="Loading location search..."
+                    disabled
+                    className={`w-full pl-10 pr-3 py-2 border-0 rounded-lg bg-transparent focus:outline-none
+                      ${darkMode ? "text-gray-400" : "text-gray-500"}
+                    `}
+                    style={{ paddingLeft: "2.5rem" }}
+                  />
+                )}
+              </div>
+            </div>
+            {eventLatitude && eventLongitude && (
+              <div className={`text-sm flex items-center gap-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                <FiMapPin className="w-4 h-4" />
+                <span>Coordinates: {eventLatitude.toFixed(6)}, {eventLongitude.toFixed(6)}</span>
+              </div>
+            )}
+            {eventLocation && (
+              <div className={`text-sm flex items-center gap-2 ${darkMode ? "text-sage-400" : "text-sage-600"}`}>
+                <FiCheck className="w-4 h-4" />
+                <span>Selected: {eventLocation}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Distance Radius Input */}
+          <div className="space-y-2">
+            <label
+              htmlFor="radiusInMeters"
+              className={`block text-sm font-medium ${
+                darkMode ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
+              Maximum Distance <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-3">
+              <input
+                type="range"
+                min="10"
+                max="5000"
+                value={radiusInMeters}
+                onChange={(e) => setRadiusInMeters(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                style={{
+                  background: `linear-gradient(to right, #10b981 0%, #10b981 ${
+                    ((radiusInMeters - 10) / (5000 - 10)) * 100
+                  }%, #e5e7eb ${((radiusInMeters - 10) / (5000 - 10)) * 100}%, #e5e7eb 100%)`
+                }}
+              />
+              <div className="flex justify-between items-center">
+                <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                  10m
+                </span>
+                <div className={`px-3 py-1 rounded-full text-sm font-medium
+                  ${darkMode ? "bg-sage-600 text-white" : "bg-sage-100 text-sage-800"}
+                `}>
+                  {formatRadiusText(radiusInMeters)}
+                </div>
+                <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                  5km
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Allow Anonymous Joining Toggle */}
       <div
         className={`mb-8 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
         ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
       `}
       >
-        <div className="flex items-center  gap-4">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => setAllowAnonymous(!allowAnonymous)}
-            className={`relative w-14 h-8 rounded-full p-1  transition-colors duration-300 flex-shrink-0
+            className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
               ${
                 darkMode
@@ -524,7 +805,7 @@ const EventForm = () => {
                   : darkMode
                   ? "bg-gray-900"
                   : "bg-gray-400"
-              } }}
+              }
             `}
             aria-checked={allowAnonymous}
             role="switch"
@@ -595,37 +876,37 @@ const EventForm = () => {
       {/* Allow Automatic Skips Toggle */}
       <div
         className={`mb-8 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
-  ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
-`}
+        ${darkMode ? "bg-gray-700 shadow-inner" : "bg-gray-100 shadow-sm"}
+      `}
       >
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => setAllowAutomaticSkips(!allowAutomaticSkips)}
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
-        focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
-        ${
-          darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"
-        }
-        ${
-          allowAutomaticSkips
-            ? "bg-sage-700"
-            : darkMode
-            ? "bg-gray-900"
-            : "bg-gray-400"
-        }
-      `}
+              focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
+              ${
+                darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"
+              }
+              ${
+                allowAutomaticSkips
+                  ? "bg-sage-700"
+                  : darkMode
+                  ? "bg-gray-900"
+                  : "bg-gray-400"
+              }
+            `}
             aria-checked={allowAutomaticSkips}
             role="switch"
           >
             <span
               className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
-          ${
-            allowAutomaticSkips
-              ? "translate-x-6 bg-white"
-              : "translate-x-0 bg-white"
-          }
-        `}
+                ${
+                  allowAutomaticSkips
+                    ? "translate-x-6 bg-white"
+                    : "translate-x-0 bg-white"
+                }
+              `}
             >
               {allowAutomaticSkips ? (
                 <FiPlay className="w-4 h-4 text-sage-500" />
@@ -658,26 +939,26 @@ const EventForm = () => {
         <div className="relative group flex-shrink-0">
           <FiInfo
             className={`w-5 h-5 cursor-pointer transition-colors duration-200
-      ${
-        darkMode
-          ? "text-gray-400 hover:text-sage-400"
-          : "text-gray-500 hover:text-sage-600"
-      }
-    `}
+            ${
+              darkMode
+                ? "text-gray-400 hover:text-sage-400"
+                : "text-gray-500 hover:text-sage-600"
+            }
+          `}
           />
           <div
             className={`
-      absolute hidden group-hover:block w-56 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
-      ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
-    `}
+            absolute hidden group-hover:block w-56 p-3 text-sm rounded-lg bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 shadow-lg
+            ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
+          `}
           >
             {allowAutomaticSkips
               ? "Queue automatically advances after a set time period or when service is complete"
               : "Queue administrator must manually mark each person as served before advancing"}
             <div
               className={`absolute w-3 h-3 rotate-45 -bottom-1 left-1/2 -translate-x-1/2
-        ${darkMode ? "bg-gray-700" : "bg-gray-800"}
-      `}
+              ${darkMode ? "bg-gray-700" : "bg-gray-800"}
+            `}
             ></div>
           </div>
         </div>
