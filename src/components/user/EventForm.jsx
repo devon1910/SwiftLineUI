@@ -74,11 +74,33 @@ const EventForm = () => {
     editingEvent ? editingEvent.radiusInMeters || 100 : 100
   );
 
+  const [isMapApiLoaded, setIsMapApiLoaded] = useState(false);
+    // Load Google Maps API
+  useEffect(() => {
+    if (enableGeographicRestriction && !window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_CLIENT_KEY}&loading=async`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+      
+      script.onload = () => {
+        console.log('Google Maps API loaded successfully');
+        setIsMapApiLoaded(true);
+      };
+      
+      script.onerror = () => {
+        toast.error('Failed to load Google Maps. Please check your API key and internet connection.');
+      };
+    }
+  }, [enableGeographicRestriction]);
+
+
   // Initialize Google Places Autocomplete with new API
   useEffect(() => {
     const initMap = async () => {
-      console.log("window: ", window);
-      if (enableGeographicRestriction && window.google && locationInputRef.current) {
+ 
+      if (enableGeographicRestriction && isMapApiLoaded && locationInputRef.current) {
         try {
           // Request needed libraries
           await window.google.maps.importLibrary("places");
@@ -86,16 +108,18 @@ const EventForm = () => {
           // Create the PlaceAutocompleteElement
           const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement();
           placeAutocomplete.id = 'place-autocomplete';
-          
+         // placeAutocomplete.setComponentRestrictions({ country: ['ng'] });
           // Style the autocomplete element to match your design
-          placeAutocomplete.style.width = '100%';
-          placeAutocomplete.style.height = '42px';
-          placeAutocomplete.style.borderRadius = '0.5rem';
-          placeAutocomplete.style.border = darkMode ? '1px solid #6b7280' : '1px solid #d1d5db';
-          placeAutocomplete.style.backgroundColor = darkMode ? '#374151' : '#ffffff';
-          placeAutocomplete.style.color = darkMode ? '#ffffff' : '#111827';
-          placeAutocomplete.style.paddingLeft = '2.5rem';
-          placeAutocomplete.style.fontSize = '14px';
+        //   placeAutocomplete.style.width = '100%';
+        //   placeAutocomplete.style.height = '42px';
+           placeAutocomplete.style.borderRadius = '0.5rem';
+           placeAutocomplete.style.border = darkMode ? '1px solid #6b7280' : '1px solid #d1d5db';
+           placeAutocomplete.style.backgroundColor =  '#6B7D6B' 
+           //placeAutocomplete.style.color = darkMode ? '#ffffff !important' : '#111827 !important';
+        //  // placeAutocomplete.style.paddingLeft = '2.5rem';
+        //   placeAutocomplete.style.fontSize = '14px';
+        //   placeAutocomplete.placeholder = 'Search for event location...';
+          
           
           // Clear the container and add the new element
           if (locationInputRef.current) {
@@ -140,35 +164,16 @@ const EventForm = () => {
       }
     };
     
-    if (enableGeographicRestriction && window.google) {
-      initMap();
-    }
+    initMap();
 
     return () => {
       if (autocompleteRef.current && locationInputRef.current) {
         locationInputRef.current.innerHTML = '';
       }
     };
-  }, [enableGeographicRestriction, darkMode]);
+  }, [enableGeographicRestriction, darkMode, isMapApiLoaded]);
 
-  // Load Google Maps API
-  useEffect(() => {
-    if (enableGeographicRestriction && !window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_CLIENT_KEY}&libraries=places&loading=async`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-      
-      script.onload = () => {
-        console.log('Google Maps API loaded successfully');
-      };
-      
-      script.onerror = () => {
-        toast.error('Failed to load Google Maps. Please check your API key and internet connection.');
-      };
-    }
-  }, [enableGeographicRestriction]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -701,7 +706,6 @@ const EventForm = () => {
               Event Location <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <FiMapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
               <div
                 ref={locationInputRef}
                 className={`w-full min-h-[42px] border rounded-lg focus-within:ring-2 focus-within:ring-sage-500 focus-within:border-sage-500 transition duration-200 relative
@@ -713,7 +717,7 @@ const EventForm = () => {
                 `}
               >
                 {/* Placeholder div when Google Maps isn't loaded yet */}
-                {!window.google && (
+                {!isMapApiLoaded && (
                   <input
                     type="text"
                     placeholder="Loading location search..."
@@ -721,7 +725,6 @@ const EventForm = () => {
                     className={`w-full pl-10 pr-3 py-2 border-0 rounded-lg bg-transparent focus:outline-none
                       ${darkMode ? "text-gray-400" : "text-gray-500"}
                     `}
-                    style={{ paddingLeft: "2.5rem" }}
                   />
                 )}
               </div>
@@ -759,7 +762,7 @@ const EventForm = () => {
                 onChange={(e) => setRadiusInMeters(Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 style={{
-                  background: `linear-gradient(to right, #10b981 0%, #10b981 ${
+                  background: `linear-gradient(to right, #5A6A5B 0%, #5A6A5B ${
                     ((radiusInMeters - 10) / (5000 - 10)) * 100
                   }%, #e5e7eb ${((radiusInMeters - 10) / (5000 - 10)) * 100}%, #e5e7eb 100%)`
                 }}
