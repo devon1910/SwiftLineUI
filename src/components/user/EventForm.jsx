@@ -62,13 +62,13 @@ const EventForm = () => {
     editingEvent ? editingEvent.enableGeographicRestriction || false : false
   );
   const [eventLocation, setEventLocation] = useState(
-    editingEvent ? editingEvent.eventLocation || "" : ""
+    editingEvent ? editingEvent.address || "" : ""
   );
   const [eventLatitude, setEventLatitude] = useState(
-    editingEvent ? editingEvent.eventLatitude || null : null
+    editingEvent ? editingEvent.latitude || null : null
   );
   const [eventLongitude, setEventLongitude] = useState(
-    editingEvent ? editingEvent.eventLongitude || null : null
+    editingEvent ? editingEvent.longitude || null : null
   );
   const [radiusInMeters, setRadiusInMeters] = useState(
     editingEvent ? editingEvent.radiusInMeters || 100 : 100
@@ -84,10 +84,18 @@ const EventForm = () => {
       script.defer = true;
       document.head.appendChild(script);
       
-      script.onload = () => {
-        console.log('Google Maps API loaded successfully');
-        setIsMapApiLoaded(true);
+      const checkApiReady = () => {
+        if (window.google?.maps?.Data) {
+          setIsMapApiLoaded(true);
+        } else {
+          // Check again after a short delay
+          setTimeout(checkApiReady, 100);
+        }
       };
+      
+      script.onload = () =>{
+        checkApiReady();
+      }
       
       script.onerror = () => {
         toast.error('Failed to load Google Maps. Please check your API key and internet connection.');
@@ -110,13 +118,13 @@ const EventForm = () => {
           placeAutocomplete.id = 'place-autocomplete';
          // placeAutocomplete.setComponentRestrictions({ country: ['ng'] });
           // Style the autocomplete element to match your design
-        //   placeAutocomplete.style.width = '100%';
-        //   placeAutocomplete.style.height = '42px';
+         //   placeAutocomplete.style.width = '100%';
+         //   placeAutocomplete.style.height = '42px';
            placeAutocomplete.style.borderRadius = '0.5rem';
            placeAutocomplete.style.border = darkMode ? '1px solid #6b7280' : '1px solid #d1d5db';
            placeAutocomplete.style.backgroundColor =  '#6B7D6B' 
            //placeAutocomplete.style.color = darkMode ? '#ffffff !important' : '#111827 !important';
-        //  // placeAutocomplete.style.paddingLeft = '2.5rem';
+        //   placeAutocomplete.style.paddingLeft = '2.5rem';
         //   placeAutocomplete.style.fontSize = '14px';
         //   placeAutocomplete.placeholder = 'Search for event location...';
           
@@ -143,12 +151,7 @@ const EventForm = () => {
                 setEventLocation(placeData.formattedAddress || placeData.displayName);
                 setEventLatitude(lat);
                 setEventLongitude(lng);
-                
-                console.log('Selected location:', {
-                  address: placeData.formattedAddress || placeData.displayName,
-                  lat,
-                  lng
-                });
+
               }
             } catch (error) {
               console.error('Error fetching place details:', error);
@@ -192,9 +195,9 @@ const EventForm = () => {
         allowAnonymousJoining: allowAnonymous,
         allowAutomaticSkips,
         enableGeographicRestriction,
-        eventLocation: enableGeographicRestriction ? eventLocation : null,
-        eventLatitude: enableGeographicRestriction ? eventLatitude : null,
-        eventLongitude: enableGeographicRestriction ? eventLongitude : null,
+        address: enableGeographicRestriction ? eventLocation : null,
+        Latitude: enableGeographicRestriction ? eventLatitude : null,
+        Longitude: enableGeographicRestriction ? eventLongitude : null,
         radiusInMeters: enableGeographicRestriction ? radiusInMeters : null,
       };
 
@@ -448,7 +451,7 @@ const EventForm = () => {
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Queue Capacity <span className="text-red-500">*</span>
+            Queue Capacity (Min) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -729,12 +732,6 @@ const EventForm = () => {
                 )}
               </div>
             </div>
-            {eventLatitude && eventLongitude && (
-              <div className={`text-sm flex items-center gap-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-                <FiMapPin className="w-4 h-4" />
-                <span>Coordinates: {eventLatitude.toFixed(6)}, {eventLongitude.toFixed(6)}</span>
-              </div>
-            )}
             {eventLocation && (
               <div className={`text-sm flex items-center gap-2 ${darkMode ? "text-sage-400" : "text-sage-600"}`}>
                 <FiCheck className="w-4 h-4" />
