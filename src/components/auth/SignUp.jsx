@@ -24,6 +24,8 @@ const SignUp = ({ setShowAuthModal }) => {
   const location = useLocation(); // Use useLocation
   const from = location.state?.from || localStorage.getItem("from") || null;
   const { darkMode } = useTheme(); // Use the theme hook
+  const [showPasswordRequirements, setShowPasswordRequirements] =
+    useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,14 +84,13 @@ const SignUp = ({ setShowAuthModal }) => {
   };
 
   const handleGoogleSignIn = () => {
-
-     if (!turnstileToken) {
+    if (!turnstileToken) {
       showToast.error("Please complete the security check");
       setIsLoading(false);
       return;
     }
 
-     if (!hasAgreedToTermsOfServiceAndPrivacyPolicy) {
+    if (!hasAgreedToTermsOfServiceAndPrivacyPolicy) {
       showToast.error(
         "You must agree to the Terms of Service and Privacy Policy to sign up."
       );
@@ -220,11 +221,15 @@ const SignUp = ({ setShowAuthModal }) => {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
               showPasswordToggle
+              onBlur={() => !password && setShowPasswordRequirements(false)}
+              onFocus={() => setShowPasswordRequirements(true)}
               showPassword={showPassword}
               onTogglePassword={() => setShowPassword(!showPassword)}
               darkMode={darkMode} // Pass darkMode prop
             />
-            <PasswordRequirements password={password} darkMode={darkMode} />{" "}
+            {showPasswordRequirements && (
+              <PasswordRequirements password={password} darkMode={darkMode} />
+            )}
             {/* Pass darkMode prop */}
             <div className="flex justify-center">
               <TurnstileWidget setTurnstileToken={setTurnstileToken} />

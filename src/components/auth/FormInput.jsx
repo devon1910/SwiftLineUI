@@ -8,6 +8,8 @@ const FormInput = ({
   value,
   onChange,
   required = true,
+  onFocus,
+  onBlur,
   autoComplete,
   showPasswordToggle = false,
   showPassword,
@@ -30,6 +32,8 @@ const FormInput = ({
           value={value}
           onChange={onChange}
           required={required}
+          onFocus={onFocus}
+          onBlur={onBlur}
           autoComplete={autoComplete}
           className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
             ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}

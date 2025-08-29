@@ -1,29 +1,32 @@
-import React from 'react';
-import { CheckCircle } from 'react-bootstrap-icons';
-
 const PasswordRequirements = ({ password }) => {
-  const requirements = {
-    hasMinLength: password.length >= 6,
-    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    hasNumber: /[0-9]/.test(password),
-  };
+  const requirements = [
+    { label: "6+ characters", valid: password.length >= 6 },
+    { label: "Special char", valid: /[!@#$%^&*(),.?":{}|<>]/.test(password) },
+    { label: "Number", valid: /[0-9]/.test(password) },
+    { label: "Uppercase", valid: /[A-Z]/.test(password) }
+  ];
+
+  const allValid = requirements.every(r => r.valid);
 
   return (
-    <div className="grid grid-cols-3 gap-2 text-sm">
-      <div className={`flex items-center ${requirements.hasMinLength ? 'text-green-600' : 'text-red-600'}`}>
-        <CheckCircle className={`w-4 h-4 mr-1 ${requirements.hasMinLength ? 'visible' : 'invisible'}`} />
-        <span>6+ characters</span>
-      </div>
-      <div className={`flex items-center ${requirements.hasSpecialChar ? 'text-green-600' : 'text-red-600'}`}>
-        <CheckCircle className={`w-4 h-4 mr-1 ${requirements.hasSpecialChar ? 'visible' : 'invisible'}`} />
-        <span>Special char (e.g $)</span>
-      </div>
-      <div className={`flex items-center ${requirements.hasNumber ? 'text-green-600' : 'text-red-600'}`}>
-        <CheckCircle className={`w-4 h-4 mr-1 ${requirements.hasNumber ? 'visible' : 'invisible'}`} />
-        <span>Number</span>
-      </div>
+    <div className="mt-2 text-sm">
+      <p className={`${allValid ? "text-green-600" : "text-gray-500"}`}>
+        {allValid ? "✅ Strong password" : "🔒 Must meet the following:"}
+      </p>
+      {!allValid && (
+        <ul className="mt-1 ml-4 list-disc space-y-1">
+          {requirements.map((req, idx) => (
+            <li
+              key={idx}
+              className={req.valid ? "text-green-600" : "text-red-600"}
+            >
+              {req.label}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default PasswordRequirements; 
+export default PasswordRequirements;
