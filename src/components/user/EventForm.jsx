@@ -18,6 +18,7 @@ import {
 import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 import { useTheme } from "../../services/utils/useTheme";
 import { ArrowReturnLeft } from "react-bootstrap-icons";
+import { showToast } from "../../services/utils/ToastHelper";
 
 const EventForm = () => {
   const location = useLocation();
@@ -58,9 +59,10 @@ const EventForm = () => {
   );
 
   // New geographic restriction states
-  const [enableGeographicRestriction, setEnableGeographicRestriction] = useState(
-    editingEvent ? editingEvent.enableGeographicRestriction || false : false
-  );
+  const [enableGeographicRestriction, setEnableGeographicRestriction] =
+    useState(
+      editingEvent ? editingEvent.enableGeographicRestriction || false : false
+    );
   const [eventLocation, setEventLocation] = useState(
     editingEvent ? editingEvent.address || "" : ""
   );
@@ -75,108 +77,121 @@ const EventForm = () => {
   );
 
   const [isMapApiLoaded, setIsMapApiLoaded] = useState(false);
-    // Load Google Maps API
+  // Load Google Maps API
   useEffect(() => {
-    if (enableGeographicRestriction && !window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_CLIENT_KEY}&loading=async`;
+    if (enableGeographicRestriction && !window.google && !editingEvent) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${
+        import.meta.env.VITE_GOOGLE_CLIENT_KEY
+      }&loading=async`;
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);
-      
+
       const checkApiReady = () => {
-        if (window.google?.maps?.Data) {
+        if (window.google?.maps?.importLibrary) {
           setIsMapApiLoaded(true);
         } else {
           // Check again after a short delay
           setTimeout(checkApiReady, 100);
         }
       };
-      
-      script.onload = () =>{
+
+      script.onload = () => {
         checkApiReady();
-      }
-      
+      };
+
       script.onerror = () => {
-        toast.error('Failed to load Google Maps. Please check your API key and internet connection.');
+        toast.error(
+          "Failed to load Google Maps. Please check your API key and internet connection."
+        );
       };
     }
-  }, [enableGeographicRestriction]);
-
+  }, [enableGeographicRestriction, editingEvent]);
 
   // Initialize Google Places Autocomplete with new API
   useEffect(() => {
     const initMap = async () => {
- 
-      if (enableGeographicRestriction && isMapApiLoaded && locationInputRef.current) {
+      if (
+        enableGeographicRestriction &&
+        isMapApiLoaded &&
+        locationInputRef.current &&
+        !editingEvent
+      ) {
         try {
           // Request needed libraries
           await window.google.maps.importLibrary("places");
-          
+
           // Create the PlaceAutocompleteElement
-          const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement();
-          placeAutocomplete.id = 'place-autocomplete';
-         // placeAutocomplete.setComponentRestrictions({ country: ['ng'] });
+          const placeAutocomplete =
+            new window.google.maps.places.PlaceAutocompleteElement();
+          placeAutocomplete.id = "place-autocomplete";
+          // placeAutocomplete.setComponentRestrictions({ country: ['ng'] });
           // Style the autocomplete element to match your design
-         //   placeAutocomplete.style.width = '100%';
-         //   placeAutocomplete.style.height = '42px';
-           placeAutocomplete.style.borderRadius = '0.5rem';
-           placeAutocomplete.style.border = darkMode ? '1px solid #6b7280' : '1px solid #d1d5db';
-           placeAutocomplete.style.backgroundColor =  '#6B7D6B' 
-           //placeAutocomplete.style.color = darkMode ? '#ffffff !important' : '#111827 !important';
-        //   placeAutocomplete.style.paddingLeft = '2.5rem';
-        //   placeAutocomplete.style.fontSize = '14px';
-        //   placeAutocomplete.placeholder = 'Search for event location...';
-          
-          
+          //   placeAutocomplete.style.width = '100%';
+          //   placeAutocomplete.style.height = '42px';
+          placeAutocomplete.style.borderRadius = "0.5rem";
+          placeAutocomplete.style.border = darkMode
+            ? "1px solid #6b7280"
+            : "1px solid #d1d5db";
+          placeAutocomplete.style.backgroundColor = "#6B7D6B";
+          //placeAutocomplete.style.color = darkMode ? '#ffffff !important' : '#111827 !important';
+          //   placeAutocomplete.style.paddingLeft = '2.5rem';
+          //   placeAutocomplete.style.fontSize = '14px';
+          //   placeAutocomplete.placeholder = 'Search for event location...';
+
           // Clear the container and add the new element
           if (locationInputRef.current) {
-            locationInputRef.current.innerHTML = '';
+            locationInputRef.current.innerHTML = "";
             locationInputRef.current.appendChild(placeAutocomplete);
           }
 
           // Add the place select listener
-          placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
-            try {
-              const place = placePrediction.toPlace();
-              await place.fetchFields({ 
-                fields: ['displayName', 'formattedAddress', 'location'] 
-              });
-              
-              const placeData = place.toJSON();
-              const lat = placeData.location?.lat;
-              const lng = placeData.location?.lng;
-              
-              if (lat && lng) {
-                setEventLocation(placeData.formattedAddress || placeData.displayName);
-                setEventLatitude(lat);
-                setEventLongitude(lng);
+          placeAutocomplete.addEventListener(
+            "gmp-select",
+            async ({ placePrediction }) => {
+              try {
+                const place = placePrediction.toPlace();
+                await place.fetchFields({
+                  fields: ["displayName", "formattedAddress", "location"],
+                });
 
+                const placeData = place.toJSON();
+                const lat = placeData.location?.lat;
+                const lng = placeData.location?.lng;
+
+                if (lat && lng) {
+                  setEventLocation(
+                    placeData.formattedAddress || placeData.displayName
+                  );
+                  setEventLatitude(lat);
+                  setEventLongitude(lng);
+                }
+              } catch (error) {
+                console.error("Error fetching place details:", error);
+                toast.error("Error loading place details. Please try again.");
               }
-            } catch (error) {
-              console.error('Error fetching place details:', error);
-              toast.error('Error loading place details. Please try again.');
             }
-          });
+          );
 
           autocompleteRef.current = placeAutocomplete;
         } catch (error) {
-          console.error('Error initializing Places API:', error);
-          toast.error('Failed to initialize location search. Please refresh the page.');
+          console.error("Error initializing Places API:", error);
+          toast.error(
+            "Failed to initialize location search. Please refresh the page."
+          );
         }
       }
     };
-    
+
     initMap();
 
     return () => {
       if (autocompleteRef.current && locationInputRef.current) {
-        locationInputRef.current.innerHTML = '';
+        locationInputRef.current.innerHTML = "";
       }
     };
-  }, [enableGeographicRestriction, darkMode, isMapApiLoaded]);
-
-
+  }, [enableGeographicRestriction, darkMode, isMapApiLoaded, editingEvent]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -214,6 +229,16 @@ const EventForm = () => {
             );
           });
       } else {
+
+        if(enableGeographicRestriction){
+          if (!eventLocation || !eventLatitude || !eventLongitude) {
+            showToast.error(
+              "Please select a valid location for geographic restrictions."
+            );
+            return;
+          }
+
+        }
         createEvent(newEvent)
           .then(() => {
             toast.success("Event created successfully!");
@@ -232,7 +257,9 @@ const EventForm = () => {
   const validateGeographicSettings = () => {
     if (enableGeographicRestriction) {
       if (!eventLocation || !eventLatitude || !eventLongitude) {
-        toast.error("Please select a valid location for geographic restrictions.");
+        toast.error(
+          "Please select a valid location for geographic restrictions."
+        );
         return false;
       }
       if (radiusInMeters < 10 || radiusInMeters > 10000) {
@@ -608,7 +635,9 @@ const EventForm = () => {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            onClick={() => setEnableGeographicRestriction(!enableGeographicRestriction)}
+            onClick={() =>
+              setEnableGeographicRestriction(!enableGeographicRestriction)
+            }
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
               ${
@@ -636,7 +665,13 @@ const EventForm = () => {
                 }
               `}
             >
-              <FiMapPin className={`w-4 h-4 ${enableGeographicRestriction ? "text-sage-500" : "text-gray-500"}`} />
+              <FiMapPin
+                className={`w-4 h-4 ${
+                  enableGeographicRestriction
+                    ? "text-sage-500"
+                    : "text-gray-500"
+                }`}
+              />
             </span>
           </button>
           <div className="flex flex-col">
@@ -645,7 +680,9 @@ const EventForm = () => {
                 darkMode ? "text-gray-100" : "text-gray-800"
               }`}
             >
-              {enableGeographicRestriction ? "Location-Based Queue" : "Open Location Queue"}
+              {enableGeographicRestriction
+                ? "Location-Based Queue"
+                : "Open Location Queue"}
             </span>
             <span
               className={`text-xs ${
@@ -688,16 +725,24 @@ const EventForm = () => {
 
       {/* Geographic Restriction Settings */}
       {enableGeographicRestriction && (
-        <div className={`mb-6 p-4 rounded-lg border transition-all duration-300 space-y-4
-          ${darkMode ? "bg-gray-700 border-gray-600" : "bg-gray-50 border-gray-300"}
-        `}>
-          <h4 className={`text-lg font-semibold flex items-center gap-2
+        <div
+          className={`mb-6 p-4 rounded-lg border transition-all duration-300 space-y-4
+          ${
+            darkMode
+              ? "bg-gray-700 border-gray-600"
+              : "bg-gray-50 border-gray-300"
+          }
+        `}
+        >
+          <h4
+            className={`text-lg font-semibold flex items-center gap-2
             ${darkMode ? "text-gray-100" : "text-gray-800"}
-          `}>
+          `}
+          >
             <FiTarget className="w-5 h-5 text-sage-500" />
             Location Settings
           </h4>
-          
+
           {/* Event Location Input */}
           <div className="space-y-2">
             <label
@@ -720,11 +765,12 @@ const EventForm = () => {
                 `}
               >
                 {/* Placeholder div when Google Maps isn't loaded yet */}
-                {!isMapApiLoaded && (
+                {(!isMapApiLoaded || editingEvent) && (
                   <input
                     type="text"
                     placeholder="Loading location search..."
                     disabled
+                    value={eventLocation}
                     className={`w-full pl-10 pr-3 py-2 border-0 rounded-lg bg-transparent focus:outline-none
                       ${darkMode ? "text-gray-400" : "text-gray-500"}
                     `}
@@ -732,8 +778,12 @@ const EventForm = () => {
                 )}
               </div>
             </div>
-            {eventLocation && (
-              <div className={`text-sm flex items-center gap-2 ${darkMode ? "text-sage-400" : "text-sage-600"}`}>
+            {eventLocation && !editingEvent && (
+              <div
+                className={`text-sm flex items-center gap-2 ${
+                  darkMode ? "text-sage-400" : "text-sage-600"
+                }`}
+              >
                 <FiCheck className="w-4 h-4" />
                 <span>Selected: {eventLocation}</span>
               </div>
@@ -751,31 +801,26 @@ const EventForm = () => {
               Maximum Distance <span className="text-red-500">*</span>
             </label>
             <div className="space-y-3">
-              <input
-                type="range"
-                min="10"
-                max="5000"
-                value={radiusInMeters}
-                onChange={(e) => setRadiusInMeters(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                style={{
-                  background: `linear-gradient(to right, #5A6A5B 0%, #5A6A5B ${
-                    ((radiusInMeters - 10) / (5000 - 10)) * 100
-                  }%, #e5e7eb ${((radiusInMeters - 10) / (5000 - 10)) * 100}%, #e5e7eb 100%)`
-                }}
-              />
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-                  10m
-                </span>
-                <div className={`px-3 py-1 rounded-full text-sm font-medium
-                  ${darkMode ? "bg-sage-600 text-white" : "bg-sage-100 text-sage-800"}
-                `}>
-                  {formatRadiusText(radiusInMeters)}
-                </div>
-                <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-                  5km
-                </span>
+              <div className="flex flex-wrap gap-2">
+                {[10, 100, 500, 1000, 2000, 5000].map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setRadiusInMeters(val)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition
+          ${
+            radiusInMeters === val
+              ? darkMode
+                ? "bg-sage-600 text-white"
+                : "bg-sage-200 text-sage-900"
+              : darkMode
+              ? "bg-gray-800 text-gray-300 hover:bg-gray-400"
+              : "bg-gray-300 text-gray-600 hover:bg-gray-200"
+          }`}
+                  >
+                    {val >= 1000 ? `${val / 1000} km` : `${val} m`}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -886,7 +931,9 @@ const EventForm = () => {
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
               ${
-                darkMode ? "focus:ring-offset-gray-700" : "focus:ring-offset-gray-100"
+                darkMode
+                  ? "focus:ring-offset-gray-700"
+                  : "focus:ring-offset-gray-100"
               }
               ${
                 allowAutomaticSkips

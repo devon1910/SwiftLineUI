@@ -232,7 +232,7 @@ export const MyQueue = () => {
     // Update refs for the next render
     prevPositionRef.current = myQueue.position;
     prevTimeRef.current = myQueue.timeTillYourTurn;
-  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg]);
+  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg,showQuiz]);
 
   // Function to fetch current queue position
   const getCurrentPosition = () => {
@@ -567,7 +567,7 @@ export const MyQueue = () => {
                   <div className="text-4xl font-extrabold mb-1 flex items-center flex-1">
                     {myQueue.timeTillYourTurnAI > 2 &&
                       `${myQueue.timeTillYourTurnAI - 2} - `}
-                    {myQueue.timeTillYourTurnAI}
+                    {myQueue.timeTillYourTurnAI < 0 ? 0 : myQueue.timeTillYourTurnAI}
                     <span
                       className={`text-xl ml-1 mt-2 ${
                         darkMode ? "text-gray-300" : "text-gray-600"

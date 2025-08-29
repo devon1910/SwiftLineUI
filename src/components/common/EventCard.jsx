@@ -161,6 +161,12 @@ const EventCard = ({
               USERS
             </span>
           )}
+          {event.enableGeographicRestriction && (
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ?  "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
+              <FiLock className="w-3 h-3 mr-1" />
+              GEO-RESTRICTED
+            </span>            
+          )}
         </div>
 
         {/* Description with proper truncation */}

@@ -14,11 +14,11 @@ import { useDebounce } from "@uidotdev/usehooks";
 import PaginationControls from "../common/PaginationControl.jsx";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import {  saveAuthTokensFromSignalR } from "../../services/utils/authUtils.js";
+import { saveAuthTokensFromSignalR } from "../../services/utils/authUtils.js";
 import { eventsList } from "../../services/api/swiftlineService.js";
 
 export const SearchEvents = () => {
-  let  userId  = localStorage.getItem("userId") || null;
+  let userId = localStorage.getItem("userId") || null;
   const { userName, setShowAuthModal } = useOutletContext();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,9 +62,7 @@ export const SearchEvents = () => {
     } else {
       fetchEvents(currentPage, debouncedSearchTerm);
     }
-
   }, [currentPage, debouncedSearchTerm]);
-
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -75,7 +73,11 @@ export const SearchEvents = () => {
       const event = events.find((e) => e.id.toString() === eventId);
       if (event) {
         joinQueue(event);
-        window.history.replaceState({}, document.title, window.location.pathname); // Clear the URL parameter after joining
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        ); // Clear the URL parameter after joining
       }
     }
   }, [events]);
@@ -95,7 +97,6 @@ export const SearchEvents = () => {
 
   // Optimized joinQueue function with loading state
   const joinQueue = async (event) => {
-
     // if (!userId || !token) {
     //   if(event.allowAnonymousJoining){
     //     //create User
@@ -112,17 +113,76 @@ export const SearchEvents = () => {
     //     setShowAuthModal("login");
     //     return;
     //   }
-      
+
     // }
-    if(!userId && !event.allowAnonymousJoining){
-      showToast.error("The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue");
-      setShowAuthModal("login");
-      return;
-    }
     if (isUserInQueue) {
       showToast.error("You're already in a queue.");
       return;
     }
+    if (!userId && !event.allowAnonymousJoining) {
+      showToast.error(
+        "The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue"
+      );
+      setShowAuthModal("login");
+      return;
+    }
+    if (event.enableGeographicRestriction) {
+      if (navigator.geolocation) {
+        try {
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+
+          if (position) {
+            const { latitude, longitude } = position.coords;
+            const distance = calculateDistance(
+              event.latitude,
+              event.longitude,
+              latitude,
+              longitude
+            );
+
+            console.log(event);
+            if (distance > event.radiusInMeters) {
+              showToast.error(
+                `You are ${Math.round(distance,2)} meters away from the event Location. Please move closer to at least ${event.radiusInMeters} meters to join the queue.`
+              );
+              return;
+            }
+          }
+        } catch (error) {
+          if (error.code === error.PERMISSION_DENIED) {
+            showToast.error(
+              "You have denied access to your location. Please enable location services to join."
+            );
+          } else {
+            showToast.error(
+              "An error occurred while getting your location. Please try again."
+            );
+          }
+          return;
+        }
+      } else {
+        showToast.error("Your browser does not support geolocation.");
+        return;
+      }
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const toRad = (value) => (value * Math.PI) / 180;
+      const R = 6371; // Radius of the Earth in kilometers
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) *
+          Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Distance in kilometers
+    }
+
     const joinQueueLogic = async () => {
       try {
         setIsReconnecting(true); // Show loading indicator
@@ -133,25 +193,27 @@ export const SearchEvents = () => {
           event.id,
           JSON.parse(userId)
         );
-        
+
         saveAuthTokensFromSignalR(res);
         await connection.stop(); // Stop if already connected
         await connection.start();
 
-        if(!res.status){
+        if (!res.status) {
           showToast.error(res.message);
-          return
+          return;
         }
         showToast.success("Joined queue successfully");
         localStorage.setItem("showFeedbackForm", true);
         navigate("/myQueue");
       } catch (error) {
-        showToast.error("Failed to join queue. please try again later. if the problem persists, please contact support.");
+        showToast.error(
+          "Failed to join queue. please try again later. if the problem persists, please contact support."
+        );
         console.log("Error joining queue:", error);
       } finally {
         setIsReconnecting(false); // Hide loading indicator
       }
-    }
+    };
 
     if (!event.isActive) {
       const confirmValue = confirm(
@@ -160,8 +222,7 @@ export const SearchEvents = () => {
       if (confirmValue) {
         joinQueueLogic();
       }
-    } 
-    else {
+    } else {
       joinQueueLogic();
     }
   };
@@ -191,10 +252,15 @@ export const SearchEvents = () => {
   };
 
   return (
-    
-    <div className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${isReconnecting ? 'opacity-50 pointer-events-none' : ''}`}>
-      {isReconnecting && <GlobalSpinner />} {/* Show spinner during reconnection */}
-      {isCreatingAccount && <GlobalSpinner />} {/* Show spinner during account creation */}
+    <div
+      className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${
+        isReconnecting ? "opacity-50 pointer-events-none" : ""
+      }`}
+    >
+      {isReconnecting && <GlobalSpinner />}{" "}
+      {/* Show spinner during reconnection */}
+      {isCreatingAccount && <GlobalSpinner />}{" "}
+      {/* Show spinner during account creation */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold ">Featured Events</h2>
         <div className="w-full md:max-w-xs">
@@ -207,7 +273,6 @@ export const SearchEvents = () => {
           />
         </div>
       </div>
-
       {isLoading ? (
         <GlobalSpinner />
       ) : (
@@ -232,7 +297,6 @@ export const SearchEvents = () => {
           />
         </>
       )}
-
       {events.length === 0 && !isLoading && (
         <div className="text-center py-12 text-gray-500">
           No events found matching your search
