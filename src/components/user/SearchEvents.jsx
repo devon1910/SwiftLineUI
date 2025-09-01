@@ -153,7 +153,7 @@ export const SearchEvents = () => {
         } catch (error) {
           if (error.code === error.PERMISSION_DENIED) {
             showToast.error(
-              "You have denied access to your location. Please enable location services to join as this event is geographically restricted."
+              "Please enable location services to join as this event is geographically restricted."
             );
           } else {
             showToast.error(
