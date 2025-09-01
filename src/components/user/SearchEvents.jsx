@@ -115,115 +115,128 @@ export const SearchEvents = () => {
     //   }
 
     // }
-    if (isUserInQueue) {
-      showToast.error("You're already in a queue.");
-      return;
-    }
-    if (!userId && !event.allowAnonymousJoining) {
-      showToast.error(
-        "The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue"
-      );
-      setShowAuthModal("login");
-      return;
-    }
-    if (event.enableGeographicRestriction) {
-      if (navigator.geolocation) {
-        try {
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
-          });
 
-          if (position) {
-            const { latitude, longitude } = position.coords;
-            const distance = calculateDistance(
-              event.latitude,
-              event.longitude,
-              latitude,
-              longitude
-            );
-
-            console.log(event);
-            if (distance > event.radiusInMeters) {
-              showToast.error(
-                `You are ${Math.round(distance,2)} meters away from the event Location. Please move closer to at least ${event.radiusInMeters} meters to join the queue.`
-              );
-              return;
-            }
-          }
-        } catch (error) {
-          if (error.code === error.PERMISSION_DENIED) {
-            showToast.error(
-              "Please enable location services to join as this event is geographically restricted."
-            );
-          } else {
-            showToast.error(
-              "An error occurred while getting your location. Please try again."
-            );
-          }
-          return;
-        }
-      } else {
-        showToast.error("Your browser does not support geolocation.");
+    try {
+      setIsLoading(true);
+      if (isUserInQueue) {
+        showToast.error("You're already in a queue.");
         return;
       }
-    }
-
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-      const toRad = (value) => (value * Math.PI) / 180;
-      const R = 6371; // Radius of the Earth in kilometers
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) *
-          Math.cos(toRad(lat2)) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c; // Distance in kilometers
-    }
-
-    const joinQueueLogic = async () => {
-      try {
-        setIsReconnecting(true); // Show loading indicator
-        await ensureConnection();
-        const res = await invokeWithLoading(
-          connection,
-          "JoinQueueGroup",
-          event.id,
-          JSON.parse(userId)
+      if (!userId && !event.allowAnonymousJoining) {
+        showToast.error(
+          "The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue"
         );
+        setShowAuthModal("login");
+        return;
+      }
+      if (event.enableGeographicRestriction) {
+        if (navigator.geolocation) {
+          try {
+            const position = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
 
-        saveAuthTokensFromSignalR(res);
-        await connection.stop(); // Stop if already connected
-        await connection.start();
+            if (position) {
+              const { latitude, longitude } = position.coords;
+              const distance = calculateDistance(
+                event.latitude,
+                event.longitude,
+                latitude,
+                longitude
+              );
 
-        if (!res.status) {
-          showToast.error(res.message);
+              console.log(event);
+              if (distance > event.radiusInMeters) {
+                showToast.error(
+                  `You are ${Math.round(
+                    distance,
+                    2
+                  )} meters away from the event Location. Please move closer to at least ${
+                    event.radiusInMeters
+                  } meters to join the queue.`
+                );
+                return;
+              }
+            }
+          } catch (error) {
+            if (error.code === error.PERMISSION_DENIED) {
+              showToast.error(
+                "Please enable location services to join as this event is geographically restricted."
+              );
+            } else {
+              showToast.error(
+                "An error occurred while getting your location. Please try again."
+              );
+            }
+            return;
+          }
+        } else {
+          showToast.error("Your browser does not support geolocation.");
           return;
         }
-        showToast.success("Joined queue successfully");
-        localStorage.setItem("showFeedbackForm", true);
-        navigate("/myQueue");
-      } catch (error) {
-        showToast.error(
-          "Failed to join queue. please try again later. if the problem persists, please contact support."
-        );
-        console.log("Error joining queue:", error);
-      } finally {
-        setIsReconnecting(false); // Hide loading indicator
       }
-    };
 
-    if (!event.isActive) {
-      const confirmValue = confirm(
-        "This event has been paused by the Organizer. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
-      );
-      if (confirmValue) {
+      function calculateDistance(lat1, lon1, lat2, lon2) {
+        const toRad = (value) => (value * Math.PI) / 180;
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in kilometers
+      }
+
+      const joinQueueLogic = async () => {
+        try {
+          setIsReconnecting(true); // Show loading indicator
+          await ensureConnection();
+          const res = await invokeWithLoading(
+            connection,
+            "JoinQueueGroup",
+            event.id,
+            JSON.parse(userId)
+          );
+
+          saveAuthTokensFromSignalR(res);
+          await connection.stop(); // Stop if already connected
+          await connection.start();
+
+          if (!res.status) {
+            showToast.error(res.message);
+            return;
+          }
+          showToast.success("Joined queue successfully");
+          localStorage.setItem("showFeedbackForm", true);
+          navigate("/myQueue");
+        } catch (error) {
+          showToast.error(
+            "Failed to join queue. please try again later. if the problem persists, please contact support."
+          );
+          console.log("Error joining queue:", error);
+        } finally {
+          setIsReconnecting(false); // Hide loading indicator
+        }
+      };
+
+      if (!event.isActive) {
+        const confirmValue = confirm(
+          "This event has been paused by the Organizer. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
+        );
+        if (confirmValue) {
+          joinQueueLogic();
+        }
+      } else {
         joinQueueLogic();
       }
-    } else {
-      joinQueueLogic();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
