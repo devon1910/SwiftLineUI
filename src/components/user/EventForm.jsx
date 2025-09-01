@@ -79,7 +79,7 @@ const EventForm = () => {
   const [isMapApiLoaded, setIsMapApiLoaded] = useState(false);
   // Load Google Maps API
   useEffect(() => {
-    if (enableGeographicRestriction && !window.google && !editingEvent) {
+    if (enableGeographicRestriction && !window.google) {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${
         import.meta.env.VITE_GOOGLE_CLIENT_KEY
@@ -107,7 +107,7 @@ const EventForm = () => {
         );
       };
     }
-  }, [enableGeographicRestriction, editingEvent]);
+  }, [enableGeographicRestriction]);
 
   // Initialize Google Places Autocomplete with new API
   useEffect(() => {
@@ -115,8 +115,7 @@ const EventForm = () => {
       if (
         enableGeographicRestriction &&
         isMapApiLoaded &&
-        locationInputRef.current &&
-        !editingEvent
+        locationInputRef.current 
       ) {
         try {
           // Request needed libraries
@@ -191,7 +190,7 @@ const EventForm = () => {
         locationInputRef.current.innerHTML = "";
       }
     };
-  }, [enableGeographicRestriction, darkMode, isMapApiLoaded, editingEvent]);
+  }, [enableGeographicRestriction, darkMode, isMapApiLoaded]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -765,7 +764,7 @@ const EventForm = () => {
                 `}
               >
                 {/* Placeholder div when Google Maps isn't loaded yet */}
-                {(!isMapApiLoaded || editingEvent) && (
+                {(!isMapApiLoaded) && (
                   <input
                     type="text"
                     placeholder="Loading location search..."
@@ -778,7 +777,7 @@ const EventForm = () => {
                 )}
               </div>
             </div>
-            {eventLocation && !editingEvent && (
+            {eventLocation && (
               <div
                 className={`text-sm flex items-center gap-2 ${
                   darkMode ? "text-sage-400" : "text-sage-600"
