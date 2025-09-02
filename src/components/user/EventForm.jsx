@@ -212,7 +212,7 @@ const EventForm = () => {
         address: enableGeographicRestriction ? eventLocation : null,
         Latitude: enableGeographicRestriction ? eventLatitude : null,
         Longitude: enableGeographicRestriction ? eventLongitude : null,
-        radiusInMeters: enableGeographicRestriction ? radiusInMeters : null,
+        radiusInMeters: enableGeographicRestriction ? radiusInMeters : 0,
       };
 
       if (editingEvent) {
@@ -224,7 +224,7 @@ const EventForm = () => {
           .catch((error) => {
             console.error("Error updating event:", error);
             toast.error(
-              "There was an error updating the event. Please try again later."
+              "An error occured while updating your event. Please try again later."
             );
           });
       } else {
@@ -246,7 +246,7 @@ const EventForm = () => {
           .catch((error) => {
             console.error("Error creating event:", error);
             toast.error(
-              "There was an error creating the event. Please try again later."
+              "An error occured while creating your event. Please try again later."
             );
           });
       }

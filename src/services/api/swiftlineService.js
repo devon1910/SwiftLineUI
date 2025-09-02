@@ -39,6 +39,8 @@ export const fetchEventById = (eventId) => API.get(`${apiUrl}Event/GetEvent/${ev
 
 // Lines
 export const GetUserLineInfo = () => API.get(`${apiUrl}Line/GetUserLineInfo`);
+export const GetWordLengthLeaderboard = () => API.get(`${apiUrl}Line/Top10players`);
+export const UpdateUserScore = ({score, level}) => API.put(`${apiUrl}Line/UpdateUserScore`, {score, level}); 
 
 //Feedback
 export const createFeedback = (feedback) => API.post(`${apiUrl}Feedback/SubmitFeedback`, feedback);

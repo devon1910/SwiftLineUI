@@ -12,7 +12,7 @@ import { GetUserLineInfo } from "../../services/api/swiftlineService";
 import { FiArrowUp, FiPause, FiRefreshCw, FiUserCheck } from "react-icons/fi";
 import { FiLogOut, FiX } from "react-icons/fi"; // Added FiX for close button
 import { showToast } from "../../services/utils/ToastHelper.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { Bot, Clock, FastForward, Info, MapPin } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
@@ -63,9 +63,8 @@ export const MyQueue = () => {
   const leaveQueueReason = useRef(""); // Use useRef for mutable value
 
   const { darkMode } = useTheme(); // Use the theme hook
-
+const { userName } = useOutletContext();
   // Audio references
-  
   
   //const firstPositionSoundRef = useRef(null);
   const nextPositionSoundRef = useRef(null);
@@ -642,9 +641,9 @@ export const MyQueue = () => {
                   </span>
                 </div>
               </div>
-              {myQueue.position !== 1 ? (
+              {myQueue.position === 1 ? (
                 showQuiz ? (
-                  <WordChain />
+                  <WordChain prevHighScore={myQueue.highestScore} userName={userName} />
                 ) : (
                   <DidYouKnowSlider />
                 )
