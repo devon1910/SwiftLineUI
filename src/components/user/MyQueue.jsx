@@ -28,6 +28,7 @@ export const MyQueue = () => {
   const [myQueue, setMyQueue] = useState({});
   const [queueActivity, setQueueActivity] = useState(null);
   const [showQuiz, setShowQuiz] = useState(true);
+  const [activeTab, setActiveTab] = useState("wordchain");
   const showConfetti = myQueue.position === 1;
 
   // Track window dimensions for the Confetti component.
@@ -63,9 +64,9 @@ export const MyQueue = () => {
   const leaveQueueReason = useRef(""); // Use useRef for mutable value
 
   const { darkMode } = useTheme(); // Use the theme hook
-const { userName } = useOutletContext();
+  const { userName } = useOutletContext();
   // Audio references
-  
+
   //const firstPositionSoundRef = useRef(null);
   const nextPositionSoundRef = useRef(null);
 
@@ -109,7 +110,7 @@ const { userName } = useOutletContext();
           showToast.success("Queue is active. You're back in line!");
         }
       };
-  
+
       const handleConnectionStateChange = () => {
         setIsConnected(conn.state === "Connected");
       };
@@ -231,7 +232,7 @@ const { userName } = useOutletContext();
     // Update refs for the next render
     prevPositionRef.current = myQueue.position;
     prevTimeRef.current = myQueue.timeTillYourTurn;
-  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg,showQuiz]);
+  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg, showQuiz]);
 
   // Function to fetch current queue position
   const getCurrentPosition = () => {
@@ -566,7 +567,9 @@ const { userName } = useOutletContext();
                   <div className="text-4xl font-extrabold mb-1 flex items-center flex-1">
                     {myQueue.timeTillYourTurnAI > 2 &&
                       `${myQueue.timeTillYourTurnAI - 2} - `}
-                    {myQueue.timeTillYourTurnAI < 0 ? 0 : myQueue.timeTillYourTurnAI}
+                    {myQueue.timeTillYourTurnAI < 0
+                      ? 0
+                      : myQueue.timeTillYourTurnAI}
                     <span
                       className={`text-xl ml-1 mt-2 ${
                         darkMode ? "text-gray-300" : "text-gray-600"
@@ -641,21 +644,61 @@ const { userName } = useOutletContext();
                   </span>
                 </div>
               </div>
-              {myQueue.position === 1 ? (
-                showQuiz ? (
-                  <WordChain prevHighScore={myQueue.highestScore} userName={userName} />
-                ) : (
-                  <DidYouKnowSlider />
-                )
+              {myQueue.position !== 1 ? (
+                <div className="mt-5">
+                  {/* Tab Navigation */}
+                  <div className="flex border-b border-gray-200 dark:border-gray-600 mb-4">
+                    <button
+                      onClick={() => setActiveTab("wordchain")}
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200 ${
+                        activeTab === "wordchain"
+                          ? darkMode
+                            ? "border-blue-400 text-blue-400"
+                            : "border-blue-500 text-blue-600"
+                          : darkMode
+                          ? "border-transparent text-gray-400 hover:text-gray-200"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      Word Chain Game
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("trivia")}
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200 ${
+                        activeTab === "trivia"
+                          ? darkMode
+                            ? "border-blue-400 text-blue-400"
+                            : "border-blue-500 text-blue-600"
+                          : darkMode
+                          ? "border-transparent text-gray-400 hover:text-gray-200"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      Did You Know?
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="tab-content">
+                    {activeTab === "wordchain" ? (
+                      <WordChain
+                        prevHighScore={myQueue.highestScore}
+                        userName={userName}
+                      />
+                    ) : (
+                      <DidYouKnowSlider />
+                    )}
+                  </div>
+                </div>
               ) : (
                 <div
                   className={`p-4 rounded-lg text-sm border mt-5 transition-colors duration-300
-                    ${
-                      darkMode
-                        ? "bg-gray-700 border-gray-600 text-gray-200"
-                        : "bg-gray-100 border-gray-200 text-gray-700"
-                    }
-                  `}
+                      ${
+                        darkMode
+                          ? "bg-gray-700 border-gray-600 text-gray-200"
+                          : "bg-gray-100 border-gray-200 text-gray-700"
+                      }
+                    `}
                 >
                   <div className="flex flex-col gap-3">
                     <div className="flex items-start gap-3">

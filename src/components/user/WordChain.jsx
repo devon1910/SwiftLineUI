@@ -24,7 +24,7 @@ const WordChain = ({prevHighScore, userName}) => {
   const [currentWord, setCurrentWord] = useState("");
   const [userInput, setUserInput] = useState("");
   const [score, setScore] = useState(0);
-  const [previousScore, setPreviousScore] = useState(0);
+  const [previousGameScore, setPreviousScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [highScore, setHighScore] = useState(prevHighScore);
   const [streak, setStreak] = useState(0);
@@ -193,17 +193,6 @@ const WordChain = ({prevHighScore, userName}) => {
   const resetGame = () => {
     setGameState("menu");
     setShowLeaderboard(false);
-    // Submit level and update high score if needed
-    console.log("score: ", score, " highScore: ", highScore);
-  //   if (score > highScore && !userName.startsWith("Anonymous")) {
-  //     setHighScore(score);
-  //     const updateReq = { score, level };
-  //     UpdateUserScore(updateReq).then(() => {
-  //      setFeedback("🏆 New High Score!");
-  //   });
-
-  //   if (gameTimerRef.current) clearInterval(gameTimerRef.current);
-  // };
 }
 
   const isValidChain = (word1, word2) => {
@@ -218,7 +207,6 @@ const WordChain = ({prevHighScore, userName}) => {
       const response = await fetch(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`
       );
-      console.log("Response status:", response);
       return response.status == 200;
     } catch (error) {
       console.error("Error checking word validity:", error);
@@ -237,7 +225,6 @@ const WordChain = ({prevHighScore, userName}) => {
     else{
       setShowLeaderboard(false);
     }
-    // Replace with actual API call
     
   };
 
@@ -351,7 +338,7 @@ const WordChain = ({prevHighScore, userName}) => {
 
   // Show score comparison animation
   const showScoreComparison = () => {
-    const improvement = score - previousScore;
+    const improvement = score - previousGameScore;
     setScoreImprovement(improvement);
     setShowScoreAnimation(true);
     
@@ -565,7 +552,7 @@ const WordChain = ({prevHighScore, userName}) => {
                 </p>
 
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                  <h3 className="font-semibold mb-2">How to Play:</h3>
+                  <h3 className="font-semibold mb-2 text-black">How to Play:</h3>
                   <div className="text-xs text-green-700 space-y-1">
                     <div>• Type words that start with the last letter</div>
                     <div>• Longer words = more points</div>
@@ -579,7 +566,7 @@ const WordChain = ({prevHighScore, userName}) => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
                   <div className="flex items-center justify-center gap-2 text-green-700">
                     <Trophy className="w-5 h-5" />
-                    <span className="font-semibold">High Score: {highScore}</span>
+                    <span className="font-semibold">Your Current High Score: {highScore}</span>
                   </div>
                 </div>
               )}
@@ -847,7 +834,7 @@ const WordChain = ({prevHighScore, userName}) => {
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Previous Best:</span>
-                        <span className="font-semibold">{previousScore}</span>
+                        <span className="font-semibold">{previousGameScore > prevHighScore ? previousGameScore : prevHighScore}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>This Game:</span>
