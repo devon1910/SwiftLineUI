@@ -13,7 +13,7 @@ import { FiArrowUp, FiPause, FiRefreshCw, FiUserCheck } from "react-icons/fi";
 import { FiLogOut, FiX } from "react-icons/fi"; // Added FiX for close button
 import { showToast } from "../../services/utils/ToastHelper.jsx";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { Bot, Clock, FastForward, Info, MapPin } from "lucide-react";
+import { Bot, Clock, FastForward, Info, MapPin, User } from "lucide-react";
 import { useFeedback } from "../../services/utils/useFeedback.js";
 import GlobalSpinner from "../common/GlobalSpinner.jsx";
 import firstPositionSound from "../../sounds/tv-talk-show-intro.mp3"; // Renamed for clarity
@@ -405,7 +405,20 @@ export const MyQueue = () => {
         >
           {/* Header */}
           <div className="bg-sage-500 px-6 py-4 flex justify-between items-center text-white">
-            <h3 className="text-xl font-semibold">{myQueue.eventTitle}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-semibold">{myQueue.eventTitle}</h3>
+              {myQueue.allowAutomaticSkips ? (
+                <div className="flex items-center gap-1 text-sm bg-white/20 rounded-full px-2 py-1">
+                  <Bot className="w-4 h-4" />
+                  <span className="hidden sm:inline">Automatic</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-sm bg-white/20 rounded-full px-2 py-1">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">Manual</span>
+                </div>
+              )}
+            </div>
             <button
               onClick={() => setShowLeaveModal(true)}
               className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors text-white"
