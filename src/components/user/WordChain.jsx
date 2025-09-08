@@ -17,9 +17,12 @@ import {
   TrendingDown,
   Minus,
 } from "lucide-react";
-import { GetWordLengthLeaderboard, UpdateUserScore } from "../../services/api/swiftlineService";
+import {
+  GetWordLengthLeaderboard,
+  UpdateUserScore,
+} from "../../services/api/swiftlineService";
 
-const WordChain = ({prevHighScore, userName}) => {
+const WordChain = ({ prevHighScore, userName }) => {
   const [gameState, setGameState] = useState("menu");
   const [currentWord, setCurrentWord] = useState("");
   const [userInput, setUserInput] = useState("");
@@ -42,12 +45,12 @@ const WordChain = ({prevHighScore, userName}) => {
   const [showScoreAnimation, setShowScoreAnimation] = useState(false);
   const [scoreImprovement, setScoreImprovement] = useState(null);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  
+
   // Mock leaderboard data - replace with your API call
   const [leaderboard, setLeaderboard] = useState([]);
 
   const gameTimerRef = useRef(null);
-  const inputRef = useRef(null); 
+  const inputRef = useRef(null);
 
   // Word lists by difficulty
   const easyWords = [
@@ -193,7 +196,7 @@ const WordChain = ({prevHighScore, userName}) => {
   const resetGame = () => {
     setGameState("menu");
     setShowLeaderboard(false);
-}
+  };
 
   const isValidChain = (word1, word2) => {
     const lastLetter = word1.toLowerCase().slice(-1);
@@ -215,17 +218,14 @@ const WordChain = ({prevHighScore, userName}) => {
   }
 
   const GetLeaderboard = () => {
-    
-    if(!showLeaderboard){
+    if (!showLeaderboard) {
       GetWordLengthLeaderboard().then((response) => {
-      setLeaderboard(response.data.data);
-      setShowLeaderboard(true);
-    });
-    }
-    else{
+        setLeaderboard(response.data.data);
+        setShowLeaderboard(true);
+      });
+    } else {
       setShowLeaderboard(false);
     }
-    
   };
 
   const getHint = () => {
@@ -341,7 +341,7 @@ const WordChain = ({prevHighScore, userName}) => {
     const improvement = score - previousGameScore;
     setScoreImprovement(improvement);
     setShowScoreAnimation(true);
-    
+
     setTimeout(() => {
       setShowScoreAnimation(false);
     }, 8000);
@@ -358,10 +358,9 @@ const WordChain = ({prevHighScore, userName}) => {
           if (score > highScore && !userName.startsWith("Anonymous")) {
             setHighScore(score);
 
-            const updateReq = {score, level}
+            const updateReq = { score, level };
             UpdateUserScore(updateReq).then(() => {
               setFeedback("🏆 New High Score!");
-
             });
           }
           // Trigger score comparison animation
@@ -392,7 +391,7 @@ const WordChain = ({prevHighScore, userName}) => {
 
   const getScoreComparisonContent = () => {
     if (scoreImprovement === null) return null;
-    
+
     if (scoreImprovement > 0) {
       return {
         icon: <TrendingUp className="w-8 h-8 text-green-500" />,
@@ -400,7 +399,7 @@ const WordChain = ({prevHighScore, userName}) => {
         subtext: `+${scoreImprovement} points improvement`,
         bgColor: "bg-green-50",
         textColor: "text-black",
-        borderColor: "border-green-200"
+        borderColor: "border-green-200",
       };
     } else if (scoreImprovement < 0) {
       return {
@@ -409,7 +408,7 @@ const WordChain = ({prevHighScore, userName}) => {
         subtext: `${scoreImprovement} points from your best`,
         bgColor: "bg-orange-50",
         textColor: "text-black",
-        borderColor: "border-orange-200"
+        borderColor: "border-orange-200",
       };
     } else {
       return {
@@ -418,7 +417,7 @@ const WordChain = ({prevHighScore, userName}) => {
         subtext: "Consistent performance",
         bgColor: "bg-blue-50",
         textColor: "text-black",
-        borderColor: "border-blue-200"
+        borderColor: "border-blue-200",
       };
     }
   };
@@ -426,25 +425,26 @@ const WordChain = ({prevHighScore, userName}) => {
   return (
     <div className="max-w-md mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Brain className="w-6 h-6" />
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
+            <Brain className="w-5 h-5 sm:w-6 sm:h-6" />
             Word Chain
           </h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-2">
             <button
               onClick={() => GetLeaderboard()}
-              className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-sm transition-colors"
+              className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs sm:text-sm transition-colors whitespace-nowrap"
             >
-              <Users className="w-4 h-4" />
+              <Users className="w-3 h-3 sm:w-4 sm:h-4" />
               {showLeaderboard ? "Game" : "Leaderboard"}
             </button>
-            <div className="text-sm opacity-90">theswiftLine Games</div>
+            <div className="text-xs sm:text-sm opacity-90 whitespace-nowrap">
+              theswiftLine Games
+            </div>
           </div>
         </div>
       </div>
-
       {/* Leaderboard */}
       {showLeaderboard && (
         <div className="p-4 bg-gradient-to-b from-yellow-50 to-white">
@@ -452,7 +452,7 @@ const WordChain = ({prevHighScore, userName}) => {
             <Trophy className="w-6 h-6 text-yellow-500" />
             <h2 className="text-xl font-bold text-black">Top Players</h2>
           </div>
-          
+
           <div className="space-y-2">
             {leaderboard.map((player, index) => (
               <div
@@ -477,11 +477,15 @@ const WordChain = ({prevHighScore, userName}) => {
                     <div className="font-semibold text-gray-800 truncate">
                       {player.username}
                     </div>
-                    <div className="text-xs text-gray-500">Level {player.level}</div>
+                    <div className="text-xs text-gray-500">
+                      Level {player.level}
+                    </div>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <div className="font-bold text-green-600">{player.highestScore.toLocaleString()}</div>
+                  <div className="font-bold text-green-600">
+                    {player.highestScore.toLocaleString()}
+                  </div>
                   <div className="text-xs text-gray-500">points</div>
                 </div>
               </div>
@@ -547,12 +551,14 @@ const WordChain = ({prevHighScore, userName}) => {
                   Word Chain
                 </h2>
                 <p className="text-sm leading-relaxed mb-4">
-                  Create word chains! Each word must start with the last letter of
-                  the previous word. Quick thinking gets bonus points!
+                  Create word chains! Each word must start with the last letter
+                  of the previous word. Quick thinking gets bonus points!
                 </p>
 
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                  <h3 className="font-semibold mb-2 text-black">How to Play:</h3>
+                  <h3 className="font-semibold mb-2 text-black">
+                    How to Play:
+                  </h3>
                   <div className="text-xs text-green-700 space-y-1">
                     <div>• Type words that start with the last letter</div>
                     <div>• Longer words = more points</div>
@@ -566,7 +572,9 @@ const WordChain = ({prevHighScore, userName}) => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
                   <div className="flex items-center justify-center gap-2 text-green-700">
                     <Trophy className="w-5 h-5" />
-                    <span className="font-semibold">Your Current High Score: {highScore}</span>
+                    <span className="font-semibold">
+                      Your Current High Score: {highScore}
+                    </span>
                   </div>
                 </div>
               )}
@@ -587,7 +595,9 @@ const WordChain = ({prevHighScore, userName}) => {
               <div className="p-4 bg-gradient-to-b from-green-50 to-white min-h-80">
                 {/* Current Word */}
                 <div className="text-center mb-6">
-                  <div className="text-sm text-gray-600 mb-2">Current Word:</div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    Current Word:
+                  </div>
                   <div className="text-3xl font-bold text-gray-800 bg-white rounded-lg p-4 shadow-sm border-2 border-green-200 break-words">
                     {currentWord.toUpperCase()}
                   </div>
@@ -684,7 +694,9 @@ const WordChain = ({prevHighScore, userName}) => {
                         <span className="text-sm sm:text-base">💡</span>
                         <span>
                           Hint{" "}
-                          <div className="text-xs inline">({powerUps.hints})</div>
+                          <div className="text-xs inline">
+                            ({powerUps.hints})
+                          </div>
                         </span>
                       </div>
                     </button>
@@ -796,11 +808,17 @@ const WordChain = ({prevHighScore, userName}) => {
 
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
-                    <div className="font-semibold text-gray-700">Level Reached</div>
-                    <div className="text-green-600 font-bold">Level {level}</div>
+                    <div className="font-semibold text-gray-700">
+                      Level Reached
+                    </div>
+                    <div className="text-green-600 font-bold">
+                      Level {level}
+                    </div>
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-700">Best Streak</div>
+                    <div className="font-semibold text-gray-700">
+                      Best Streak
+                    </div>
                     <div className="text-green-600 font-bold">{streak}</div>
                   </div>
                 </div>
@@ -814,27 +832,53 @@ const WordChain = ({prevHighScore, userName}) => {
 
               {/* Score Comparison Animation */}
               {showScoreAnimation && scoreImprovement !== null && (
-                <div className={`absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center z-10 transition-all duration-500 ${
-                  showScoreAnimation ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <div className={`text-center p-6 rounded-xl border-2 ${getScoreComparisonContent()?.bgColor} ${getScoreComparisonContent()?.borderColor} transform transition-all duration-700 ${
-                    showScoreAnimation ? 'scale-100 rotate-0' : 'scale-75 rotate-12'
-                  }`}>
-                    <div className={`mb-4 transform transition-all duration-1000 ${
-                      showScoreAnimation ? 'scale-100 rotate-0' : 'scale-0 rotate-180'
-                    }`}>
+                <div
+                  className={`absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center z-10 transition-all duration-500 ${
+                    showScoreAnimation ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  <div
+                    className={`text-center p-6 rounded-xl border-2 ${
+                      getScoreComparisonContent()?.bgColor
+                    } ${
+                      getScoreComparisonContent()?.borderColor
+                    } transform transition-all duration-700 ${
+                      showScoreAnimation
+                        ? "scale-100 rotate-0"
+                        : "scale-75 rotate-12"
+                    }`}
+                  >
+                    <div
+                      className={`mb-4 transform transition-all duration-1000 ${
+                        showScoreAnimation
+                          ? "scale-100 rotate-0"
+                          : "scale-0 rotate-180"
+                      }`}
+                    >
                       {getScoreComparisonContent()?.icon}
                     </div>
-                    <h3 className={`text-xl font-bold mb-2 ${getScoreComparisonContent()?.textColor}`}>
+                    <h3
+                      className={`text-xl font-bold mb-2 ${
+                        getScoreComparisonContent()?.textColor
+                      }`}
+                    >
                       {getScoreComparisonContent()?.text}
                     </h3>
-                    <p className={`text-sm ${getScoreComparisonContent()?.textColor} opacity-80`}>
+                    <p
+                      className={`text-sm ${
+                        getScoreComparisonContent()?.textColor
+                      } opacity-80`}
+                    >
                       {getScoreComparisonContent()?.subtext}
                     </p>
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Previous Best:</span>
-                        <span className="font-semibold">{previousGameScore > prevHighScore ? previousGameScore : prevHighScore}</span>
+                        <span className="font-semibold">
+                          {previousGameScore > prevHighScore
+                            ? previousGameScore
+                            : prevHighScore}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>This Game:</span>

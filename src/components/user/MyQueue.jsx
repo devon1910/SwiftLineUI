@@ -27,7 +27,6 @@ export const MyQueue = () => {
   const navigate = useNavigate();
   const [myQueue, setMyQueue] = useState({});
   const [queueActivity, setQueueActivity] = useState(null);
-  const [showQuiz, setShowQuiz] = useState(true);
   const [activeTab, setActiveTab] = useState("wordchain");
   const showConfetti = myQueue.position === 1;
 
@@ -185,8 +184,6 @@ export const MyQueue = () => {
       nextPositionSoundRef.current?.play().catch((error) => {
         console.error("Next Position Audio playback failed:", error);
       });
-      //switch btw game and did you know
-      setShowQuiz(!showQuiz);
       setShowPositionArrow(true);
       setTimeout(() => setShowPositionArrow(false), 3000);
     }
@@ -232,7 +229,7 @@ export const MyQueue = () => {
     // Update refs for the next render
     prevPositionRef.current = myQueue.position;
     prevTimeRef.current = myQueue.timeTillYourTurn;
-  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg, showQuiz]);
+  }, [myQueue.position, myQueue.timeTillYourTurn, showLeaveQueueMsg]);
 
   // Function to fetch current queue position
   const getCurrentPosition = () => {
@@ -404,24 +401,26 @@ export const MyQueue = () => {
         `}
         >
           {/* Header */}
-          <div className="bg-sage-500 px-6 py-4 flex justify-between items-center text-white">
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold">{myQueue.eventTitle}</h3>
+          <div className="bg-sage-500 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 text-white">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-lg sm:text-xs font-semibold break-words">
+                {myQueue.eventTitle}
+              </h3>
               {myQueue.allowAutomaticSkips ? (
-                <div className="flex items-center gap-1 text-sm bg-white/20 rounded-full px-2 py-1">
-                  <Bot className="w-4 h-4" />
-                  <span className="hidden sm:inline">Automatic</span>
+                <div className="flex items-center gap-1 text-xs sm:text-sm bg-white/20 rounded-full px-2 py-1 flex-shrink-0">
+                  <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>Automatic</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 text-sm bg-white/20 rounded-full px-2 py-1">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">Manual</span>
+                <div className="flex items-center gap-1 text-xs sm:text-sm bg-white/20 rounded-full px-2 py-1 flex-shrink-0">
+                  <User className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>Manual</span>
                 </div>
               )}
             </div>
             <button
               onClick={() => setShowLeaveModal(true)}
-              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors text-white"
+              className="flex items-center justify-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-md transition-colors text-white self-end sm:self-auto w-auto"
             >
               <FiLogOut className="w-4 h-4" />
               <span className="text-sm font-medium">Leave</span>
