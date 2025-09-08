@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loginUser } from "../../services/api/swiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { showToast } from "../../services/utils/ToastHelper";
@@ -19,7 +19,21 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
   const { darkMode } = useTheme(); // Use the theme hook
+  const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
 
+  useEffect(() => {
+    const checkTurnstileReady = () => {
+      console.log("Checking if Turnstile is ready...", window);
+      if (window.turnstile) {
+        setIsTurnstileLoaded(true);
+      } else {
+        // Keep checking until Turnstile is available
+        setTimeout(checkTurnstileReady, 50);
+      }
+    };
+
+    checkTurnstileReady();
+  }, []);
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -41,7 +55,7 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   };
 
   const handleGoogleSignIn = () => {
-     if (!turnstileToken) {
+    if (!turnstileToken) {
       showToast.error("Please complete the security check");
       return;
     }
@@ -50,13 +64,19 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   };
 
   return (
-    <div className="space-y-6"> {/* Increased space-y for better visual separation */}
+    <div className="space-y-6">
+      {" "}
+      {/* Increased space-y for better visual separation */}
       <div>
         <button
           type="button"
           onClick={handleGoogleSignIn}
           className={`w-full flex items-center justify-center px-4 py-2.5 border rounded-lg shadow-sm text-base font-medium transition-colors duration-200
-            ${darkMode ? "border-gray-600 bg-gray-700 text-gray-100 hover:bg-gray-600" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"}
+            ${
+              darkMode
+                ? "border-gray-600 bg-gray-700 text-gray-100 hover:bg-gray-600"
+                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+            }
           `}
         >
           <svg
@@ -72,19 +92,27 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           Sign in with Google
         </button>
       </div>
-
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className={`w-full border-t ${darkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+          <div
+            className={`w-full border-t ${
+              darkMode ? "border-gray-600" : "border-gray-300"
+            }`}
+          ></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className={`px-2 ${darkMode ? "bg-gray-800 text-gray-400" : "bg-white text-gray-500"}`}>
+          <span
+            className={`px-2 ${
+              darkMode ? "bg-gray-800 text-gray-400" : "bg-white text-gray-500"
+            }`}
+          >
             Or continue with email and password
           </span>
         </div>
       </div>
-
-      <form className="space-y-4" onSubmit={handleLogin}> {/* Increased space-y */}
+      <form className="space-y-4" onSubmit={handleLogin}>
+        {" "}
+        {/* Increased space-y */}
         <FormInput
           id="email"
           label="Email address"
@@ -94,7 +122,6 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           autoComplete="username"
           darkMode={darkMode} // Pass darkMode prop
         />
-
         <FormInput
           id="password"
           label="Password"
@@ -107,27 +134,39 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           onTogglePassword={() => setShowPassword(!showPassword)}
           darkMode={darkMode} // Pass darkMode prop
         />
-
         <div className="text-right">
           <button
             type="button"
             onClick={onResetPassword}
             className={`text-sm font-medium transition-colors duration-200
-              ${darkMode ? "text-sage-400 hover:text-sage-300" : "text-sage-600 hover:text-sage-700"}
+              ${
+                darkMode
+                  ? "text-sage-400 hover:text-sage-300"
+                  : "text-sage-600 hover:text-sage-700"
+              }
             `}
           >
             Forgot password?
           </button>
         </div>
-
         <div className="flex justify-center">
-          <TurnstileWidget setTurnstileToken={setTurnstileToken}   />
+          {!isTurnstileLoaded ? (
+            <div className="flex items-center gap-2 text-gray-600">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+              <span className="text-sm">Loading security check widget...</span>
+            </div>
+          ) : (
+            <TurnstileWidget setTurnstileToken={setTurnstileToken} />
+          )}
         </div>
-
         <button
           type="submit"
           className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-md text-base font-medium text-white transition-all duration-200
-            ${darkMode ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800" : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white"}
+            ${
+              darkMode
+                ? "bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 focus:ring-offset-gray-800"
+                : "bg-sage-500 hover:bg-sage-600 focus:ring-sage-500 focus:ring-offset-white"
+            }
             focus:outline-none focus:ring-2 focus:ring-offset-2
           `}
         >
