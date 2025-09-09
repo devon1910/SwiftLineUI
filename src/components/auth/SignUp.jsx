@@ -17,7 +17,7 @@ const SignUp = ({ setShowAuthModal }) => {
   const [
     hasAgreedToTermsOfServiceAndPrivacyPolicy,
     setHasAgreedToTermsOfServiceAndPrivacyPolicy,
-  ] = useState(false);
+  ] = useState(true);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false); // This seems to control the success message view
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
@@ -264,6 +264,7 @@ const SignUp = ({ setShowAuthModal }) => {
                 <input
                   id="checkbox"
                   type="checkbox"
+                  checked={hasAgreedToTermsOfServiceAndPrivacyPolicy}
                   onClick={() =>
                     setHasAgreedToTermsOfServiceAndPrivacyPolicy(
                       !hasAgreedToTermsOfServiceAndPrivacyPolicy
@@ -283,7 +284,7 @@ const SignUp = ({ setShowAuthModal }) => {
                       darkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    By checking this box, you agree to our{" "}
+                  You agree to our{" "}
                     {/* Use a simple <span> with an onClick handler to open the URL in a new window */}
                     <span
                       onClick={() => window.open("/tos.pdf", "_blank")}
