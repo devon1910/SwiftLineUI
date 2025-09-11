@@ -56,7 +56,6 @@ const EventCard = ({
     new Date(`1970-01-01T${event.eventEndTime}`),
     "h:mm a"
   );
-
   // Status indicator logic
   const getStatusIndicator = () => {
     if (!event.isActive) {
@@ -94,155 +93,160 @@ const EventCard = ({
         `}
       ></div>
 
-      <div className="p-5">
-        {/* Header area with event title and action buttons */}
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1 pr-2">
-            <h3 className={`text-lg font-semibold word-wrap ${darkMode ? "text-gray-100" : "text-gray-900"}`}>
-              {event.title}
-            </h3>
+      <div className="flex flex-wrap justify-space-between p-3 bg-black-900">
+
+        {/*left side */}
+        <div className=" w-1/2">
+            {/* Header area with event title and action buttons */}
+          <div className="justify-between items-start mb-3">
+            <div className="flex-1 pr-2">
+              <h4 className={`font-semibold word-wrap ${darkMode ? "text-gray-100" : "text-gray-900"}`}>
+                {event.title}
+              </h4>
+            </div>
+
+            <div className="flex gap-1.5">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowQRCode(true);
+                }}
+                className={`
+                  text-gray-500 hover:text-sage-500
+                  ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
+                  p-2 rounded-lg transition-colors
+                `}
+                title="Generate QR Code"
+                aria-label="Generate QR Code"
+              >
+                <QrCode className="w-4 h-4" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShare(event.title);
+                }}
+                className={`
+                  text-gray-500 hover:text-sage-500
+                  ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
+                  p-2 rounded-lg transition-colors
+                `}
+                title="Share Event"
+                aria-label="Share Event"
+              >
+                <FiShare2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          <div className="flex gap-1.5">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowQRCode(true);
-              }}
-              className={`
-                text-gray-500 hover:text-sage-500
-                ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
-                p-2 rounded-lg transition-colors
-              `}
-              title="Generate QR Code"
-              aria-label="Generate QR Code"
+          {/* Status badges row */}
+          <div className="gap-2 mb-3 min-h-6">
+            {status && (
+              <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor} ${status.animate} shadow-sm`}
+              >
+                {status.icon}
+                {status.label}
+              </span>
+            )}
+            {isUserInQueue && lastEventJoined && (
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-blue-800 text-blue-300" : "bg-blue-100 text-blue-700"} shadow-sm`}>
+                <FiCheckCircle className="w-3 h-3 mr-1" />
+                IN QUEUE
+              </span>
+            )}
+            {event.allowAnonymousJoining ? (
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
+                ANONYMOUS
+              </span>
+            ) : (
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
+                USERS
+              </span>
+            )}
+            {event.enableGeographicRestriction && (
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ?  "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
+                <FiLock className="w-3 h-3 mr-1" />
+                GEO-RESTRICTED
+              </span>            
+            )}
+          </div>
+
+          {/* Description with proper truncation */}
+          <p className={`text-sm mb-4 word-wrap min-h-12 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+            {event.description || "No description available."}
+          </p>
+        </div>
+        
+        {/* right side */}
+        <div className="w-1/2">
+            {/* Time info */}
+          <div className="flex mb-4 rounded-lg divide-x divide-gray-200 shadow-sm">
+            <div className="flex-1 p-3">
+              <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"} mb-1`}>Starts ⏱️</p>
+              <div className="items-center">
+                <span className={`text-sm font-medium ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{startTime}</span>
+              </div>
+            </div>
+
+            <div className="flex-1 p-3">
+              <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"} mb-1`}>Ends ⏱️</p>
+              <div className="flex items-center">
+                <span className={`text-sm font-medium ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{endTime}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats grid */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div
+              className={`rounded-lg p-2.5 items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
             >
-              <QrCode className="w-4 h-4" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onShare(event.title);
-              }}
-              className={`
-                text-gray-500 hover:text-sage-500
-                ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
-                p-2 rounded-lg transition-colors
-              `}
-              title="Share Event"
-              aria-label="Share Event"
+              <div className="items-center justify-center mb-1">
+                <FiClock className="w-3.5 h-3.5 text-gray-500" />
+              </div>
+              <p className="text-xs text-center">Avg Wait</p>
+              <p className="text-sm font-semibold text-center">
+                {event.averageTime} mins
+              </p>
+            </div>
+
+            <div
+              className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
             >
-              <FiShare2 className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+              <div className="flex items-center justify-center mb-1">
+                <FiUsers className="w-3.5 h-3.5 text-gray-500" />
+              </div>
+              <p className="text-xs text-center">In Queue</p>
+              <p className="text-sm font-semibold text-center ">
+                {event.usersInQueue}
+              </p>
+            </div>
 
-        {/* Status badges row */}
-        <div className="flex flex-wrap gap-2 mb-3 min-h-6">
-          {status && (
-            <span
-              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor} ${status.animate} shadow-sm`}
+            <div
+              className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
             >
-              {status.icon}
-              {status.label}
-            </span>
-          )}
-          {isUserInQueue && lastEventJoined && (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-blue-800 text-blue-300" : "bg-blue-100 text-blue-700"} shadow-sm`}>
-              <FiCheckCircle className="w-3 h-3 mr-1" />
-              IN QUEUE
-            </span>
-          )}
-          {event.allowAnonymousJoining ? (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
-              ANONYMOUS
-            </span>
-          ) : (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ? "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
-              USERS
-            </span>
-          )}
-          {event.enableGeographicRestriction && (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${darkMode ?  "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-500"} shadow-sm`}>
-              <FiLock className="w-3 h-3 mr-1" />
-              GEO-RESTRICTED
-            </span>            
-          )}
-        </div>
-
-        {/* Description with proper truncation */}
-        <p className={`text-sm mb-4 word-wrap min-h-12 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-          {event.description || "No description available."}
-        </p>
-
-        {/* Time info */}
-        <div className="flex mb-4 rounded-lg divide-x divide-gray-200 shadow-sm">
-          <div className="flex-1 p-3">
-            <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"} mb-1`}>Starts</p>
-            <div className="flex items-center">
-              <FiClock className="w-3.5 h-3.5 mr-1.5 text-gray-500" />
-              <span className={`text-sm font-medium ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{startTime}</span>
+              <div className="flex items-center justify-center mb-1">
+                <FiUserCheck className="w-3.5 h-3.5 text-gray-500" />
+              </div>
+              <p className="text-xs text-center">Staff Serving</p>
+              <p className="text-sm font-semibold text-center">
+                {event.staffCount}
+              </p>
             </div>
           </div>
 
-          <div className="flex-1 p-3">
-            <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"} mb-1`}>Ends</p>
-            <div className="flex items-center">
-              <FiClock className="w-3.5 h-3.5 mr-1.5 text-gray-500" />
-              <span className={`text-sm font-medium ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{endTime}</span>
+          {/* Organizer info */}
+          <div className={`flex items-center gap-2.5 mb-4 p-3 rounded-lg ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-600 shadow-inner"}`}>
+            <div className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center flex-shrink-0 text-sage-700">
+              <FiUser className="w-4 h-4" />
             </div>
-          </div>
-        </div>
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <div
-            className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-          >
-            <div className="flex items-center justify-center mb-1">
-              <FiClock className="w-3.5 h-3.5 text-gray-500" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs">Organized By</p>
+              <p className="text-sm font-medium truncate">
+                {event.organizer || "Unknown"}
+              </p>
             </div>
-            <p className="text-xs text-center">Avg Wait</p>
-            <p className="text-sm font-semibold text-center">
-              {event.averageTime} mins
-            </p>
-          </div>
-
-          <div
-            className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-          >
-            <div className="flex items-center justify-center mb-1">
-              <FiUsers className="w-3.5 h-3.5 text-gray-500" />
-            </div>
-            <p className="text-xs text-center">In Queue</p>
-            <p className="text-sm font-semibold text-center ">
-              {event.usersInQueue}
-            </p>
-          </div>
-
-          <div
-            className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-          >
-            <div className="flex items-center justify-center mb-1">
-              <FiUserCheck className="w-3.5 h-3.5 text-gray-500" />
-            </div>
-            <p className="text-xs text-center">Staff Serving</p>
-            <p className="text-sm font-semibold text-center">
-              {event.staffCount}
-            </p>
-          </div>
-        </div>
-
-        {/* Organizer info */}
-        <div className={`flex items-center gap-2.5 mb-4 p-3 rounded-lg ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-600 shadow-inner"}`}>
-          <div className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center flex-shrink-0 text-sage-700">
-            <FiUser className="w-4 h-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs">Organized By</p>
-            <p className="text-sm font-medium truncate">
-              {event.organizer || "Unknown"}
-            </p>
           </div>
         </div>
 
@@ -291,6 +295,7 @@ const EventCard = ({
             </>
           )}
         </button>
+       
       </div>
 
       {/* QR Code Modal */}
