@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { ArrowRight, LockKeyholeOpen, Pause, QrCode } from "lucide-react";
+import { ArrowRight, Clock, LockKeyholeOpen, Pause, QrCode, User } from "lucide-react";
 import {
   FiShare2,
   FiX,
@@ -12,7 +12,6 @@ import {
   FiClock,
   FiCheckCircle,
   FiUserPlus,
-  FiMapPin,
   FiLock,
 } from "react-icons/fi";
 import { useTheme } from "../../services/utils/useTheme";
@@ -80,12 +79,19 @@ const EventCard = ({
 
   const status = getStatusIndicator();
 
+ 
+
+// Truncate text utility
+const truncateText = (text, maxLength = 100) => {
+  if (!text || text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
   return (
-    <div className={`
-      group relative overflow-hidden rounded-xl border
+    <div className={
+      `group relative overflow-hidden rounded-xl border
       ${darkMode ? "border-gray-800 bg-gray-900 shadow-md hover:shadow-lg" : "border-gray-200 bg-white shadow-sm hover:shadow-md"}
-      transition-all duration-300 hover:border-sage-300
-    `}>
+      transition-all duration-300 hover:border-sage-300`
+    }>
       {/* Status bar - changes based on event status */}
       <div
         className={`h-1.5 w-full transition-colors duration-300
@@ -95,8 +101,8 @@ const EventCard = ({
 
       <div className="flex flex-wrap justify-space-between p-3 bg-black-900">
 
-        {/*left side */}
-        <div className=" w-1/2">
+  {/* left side */}
+        <div className="w-1/2">
             {/* Header area with event title and action buttons */}
           <div className="justify-between items-start mb-3">
             <div className="flex-1 pr-2">
@@ -114,8 +120,8 @@ const EventCard = ({
                 className={`
                   text-gray-500 hover:text-sage-500
                   ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
-                  p-2 rounded-lg transition-colors
-                `}
+                  p-2 rounded-lg transition-colors`
+                }
                 title="Generate QR Code"
                 aria-label="Generate QR Code"
               >
@@ -126,11 +132,11 @@ const EventCard = ({
                   e.stopPropagation();
                   onShare(event.title);
                 }}
-                className={`
-                  text-gray-500 hover:text-sage-500
+                className={
+                  `text-gray-500 hover:text-sage-500
                   ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"}
-                  p-2 rounded-lg transition-colors
-                `}
+                  p-2 rounded-lg transition-colors`
+                }
                 title="Share Event"
                 aria-label="Share Event"
               >
@@ -177,8 +183,8 @@ const EventCard = ({
             {event.description || "No description available."}
           </p>
         </div>
-        
-        {/* right side */}
+
+  {/* right side */}
         <div className="w-1/2">
             {/* Time info */}
           <div className="flex mb-4 rounded-lg divide-x divide-gray-200 shadow-sm">
@@ -198,42 +204,10 @@ const EventCard = ({
           </div>
 
           {/* Stats grid */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <div
-              className={`rounded-lg p-2.5 items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-            >
-              <div className="items-center justify-center mb-1">
-                <FiClock className="w-3.5 h-3.5 text-gray-500" />
-              </div>
-              <p className="text-xs text-center">Avg Wait</p>
-              <p className="text-sm font-semibold text-center">
-                {event.averageTime} mins
-              </p>
-            </div>
-
-            <div
-              className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-            >
-              <div className="flex items-center justify-center mb-1">
-                <FiUsers className="w-3.5 h-3.5 text-gray-500" />
-              </div>
-              <p className="text-xs text-center">In Queue</p>
-              <p className="text-sm font-semibold text-center ">
-                {event.usersInQueue}
-              </p>
-            </div>
-
-            <div
-              className={`rounded-lg p-2.5 flex flex-col items-center ${darkMode ? "bg-gray-800 text-gray-300 shadow-inner" : "bg-gray-100 text-gray-500 shadow-inner"}`}
-            >
-              <div className="flex items-center justify-center mb-1">
-                <FiUserCheck className="w-3.5 h-3.5 text-gray-500" />
-              </div>
-              <p className="text-xs text-center">Staff Serving</p>
-              <p className="text-sm font-semibold text-center">
-                {event.staffCount}
-              </p>
-            </div>
+          <div className="ml-2">
+            <p className="text-xs"><Clock className="w-3.5 h-3.5 inline text-gray-500 mr-1"/>Avg Wait Time: <span className="font-medium">{event.averageTime} {event.averageTime > 1 ? "mins" : "min"}</span></p>
+            <p className="text-xs"><User className="w-3.5 h-3.5 inline  text-gray-500 mr-1"/>In Queue: <span className="font-medium">{event.usersInQueue}</span></p>
+            <p className="text-xs"><FiUserCheck className="w-3.5 h-3.5 inline text-gray-500 mr-1"/>Staff Serving: <span className="font-medium">{event.staffCount}</span></p>
           </div>
 
           {/* Organizer info */}
@@ -242,7 +216,7 @@ const EventCard = ({
               <FiUser className="w-4 h-4" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs">Organized By</p>
+              <p className="text-xs"><i>Organized by</i></p>
               <p className="text-sm font-medium truncate">
                 {event.organizer || "Unknown"}
               </p>
@@ -295,7 +269,7 @@ const EventCard = ({
             </>
           )}
         </button>
-       
+
       </div>
 
       {/* QR Code Modal */}
@@ -363,6 +337,7 @@ const EventCard = ({
         </div>
       )}
     </div>
+
   );
 };
 

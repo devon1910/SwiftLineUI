@@ -31,7 +31,7 @@ export const SearchEvents = () => {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [isReconnecting, setIsReconnecting] = useState(false); // New state for reconnecting
   const [isCreatingAccount, setIsCreatingAccount] = useState(false); // New state for creating account
-  const eventsPerPage = 3;
+  const eventsPerPage = 6;
 
   const [searchParams, updateSearchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
