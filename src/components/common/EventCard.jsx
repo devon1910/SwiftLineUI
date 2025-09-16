@@ -168,7 +168,7 @@ const EventCard = ({
         )}
         {event.allowAnonymousJoining ? (
             <span
-              className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium shadow-sm ${
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ${
                 darkMode
                   ? "bg-gray-800 text-gray-400"
                   : "bg-gray-100 text-gray-500"
@@ -179,7 +179,7 @@ const EventCard = ({
             </span>
           ) : (
             <span
-              className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium shadow-sm ${
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ${
                 darkMode
                   ? "bg-gray-800 text-gray-400"
                   : "bg-gray-100 text-gray-500"

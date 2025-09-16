@@ -12,7 +12,6 @@ import MyQueue from "./components/user/MyQueue";
 import ViewQueue from "./components/user/ViewQueue";
 import Dashboard from "./components/user/Dashboard";
 import EventForm from "./components/user/EventForm";
-import ViewEvent from "./components/user/ViewEvent";
 import CustomToast from "./components/common/CustomToast";
 import { ThemeProvider } from "./services/context/ThemeProvider";
 import FeedbackForm from "./components/user/FeedbackForm";
