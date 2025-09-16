@@ -298,8 +298,7 @@ export const SearchEvents = () => {
                 isUserInQueue={isUserInQueue}
                 lastEventJoined={lastEventJoined == event.id}
                 onShare={handleShare}
-                onJoin={joinQueue}
-                
+                onJoin={joinQueue}             
               />
             ))}
           </div>

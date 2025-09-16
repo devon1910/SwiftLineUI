@@ -9,6 +9,7 @@ import {
   Pause,
   ArrowRightCircle,
   Users,
+  LockKeyhole,
 } from "lucide-react";
 import {
   FiShare2,
@@ -21,7 +22,7 @@ import {
 import { useTheme } from "../../services/utils/useTheme";
 import QRCode from "../user/QRCodeModal";
 import QRCodeModal from "../user/QRCodeModal";
-import EventDetails from "../user/EventCardDetails";
+import EventDetails from "../user/EventDetails";
 
 const EventCard = ({
   event,
@@ -79,14 +80,6 @@ const EventCard = ({
 
   const status = getStatusIndicator();
 
-  const startTime = format(
-    new Date(`1970-01-01T${event.eventStartTime}`),
-    "h:mm a"
-  );
-  const endTime = format(
-    new Date(`1970-01-01T${event.eventEndTime}`),
-    "h:mm a"
-  );
 
   return (
     <div
@@ -173,6 +166,29 @@ const EventCard = ({
             GEO-RESTRICTED
           </span>
         )}
+        {event.allowAnonymousJoining ? (
+            <span
+              className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium shadow-sm ${
+                darkMode
+                  ? "bg-gray-800 text-gray-400"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              <LockKeyhole className="h-3 w-3 mr-1" />
+              ANONYMOUS
+            </span>
+          ) : (
+            <span
+              className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium shadow-sm ${
+                darkMode
+                  ? "bg-gray-800 text-gray-400"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              <User className="h-3 w- mr-1" />
+              USERS ONLY
+            </span>
+          )}
       </div>
 
       {/* Key Stats */}
@@ -305,13 +321,14 @@ const EventCard = ({
               darkMode={darkMode}/>
       )}
       {showDetails &&
-       (<EventDetails 
-       onJoin={onJoin}
-       isUserInQueue={isUserInQueue}
-       event={event} 
-       setShowDetails={setShowDetails} 
-       isLoading={isLoading}
-       />
+          (<EventDetails 
+          onJoin={onJoin}
+          isUserInQueue={isUserInQueue}
+          event={event} 
+          setShowDetails={setShowDetails} 
+          isLoading={isLoading}
+          onShare ={onShare}
+          />
 
        )}
       {}
