@@ -20,6 +20,7 @@ import { FeedbackProvider } from "./services/context/FeedbackProvider";
 import FAQPage from "./components/user/FAQ";
 import AboutUsPage from "./components/user/AboutUsPage";
 import HowItWorks from "./components/user/HowItWorks";
+import EventDetails from "./components/user/EventCardDetails";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                   <Route path="newEvent" element={<EventForm />} />
                   <Route path="myQueue" element={<MyQueue />} />
                   <Route path="queueManagement" element={<ViewQueue />} />
+                  <Route path="eventDetails/:eventId" element={<EventDetails />} />
                   <Route
                   path="*"
                   element={
