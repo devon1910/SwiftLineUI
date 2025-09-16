@@ -37,7 +37,7 @@ const faqData = [
             <strong>Open theswiftline:</strong> Navigate to www.theswiftline.com in your browser (e.g., Chrome, Safari, Edge).
           </li>
           <li>
-            <strong>Look for "Install" or "Add to Home Screen":</strong>
+            <strong>Click on the Share Icon and then look for "Install" or "Add to Home Screen":</strong>
             <ul className="list-disc list-inside ml-4">
               <li>
                 <strong>Chrome (Android/Desktop):</strong> You might see an "Install app" icon in the address bar or a prompt. On mobile, open the browser menu (three dots) and select "Add to Home Screen" or "Install app."
