@@ -30,56 +30,40 @@ const EventForm = () => {
 
   const editingEvent = location.state?.editingEvent;
 
-  const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
-  const [description, setDescription] = useState(
-    editingEvent ? editingEvent.description : ""
-  );
-  const [averageTime, setAverageTime] = useState(
-    editingEvent ? editingEvent.averageTime : ""
-  );
-  const [eventStartTime, setStartTime] = useState(
-    editingEvent ? editingEvent.eventStartTime.slice(0, -3) : ""
-  );
-  const [eventEndTime, setEndTime] = useState(
-    editingEvent ? editingEvent.eventEndTime.slice(0, -3) : ""
-  );
+  const [formData, setFormData] = useState({
+    title: editingEvent ? editingEvent.title : "",
+    description: editingEvent ? editingEvent.description : "",
+    averageTime: editingEvent ? editingEvent.averageTime : "",
+    eventStartTime: editingEvent ? editingEvent.eventStartTime.slice(0, -3) : "",
+    eventEndTime: editingEvent ? editingEvent.eventEndTime.slice(0, -3) : "",
+    staffCount: editingEvent ? editingEvent.staffCount : 1,
+    capacity: editingEvent ? editingEvent.capacity : 10,
+    allowAnonymous: editingEvent ? editingEvent.allowAnonymousJoining : false,
+    allowAutomaticSkips: editingEvent ? editingEvent.allowAutomaticSkips : true,
+    enableGeographicRestriction: editingEvent ? editingEvent.enableGeographicRestriction || false : false,
+    eventLocation: editingEvent ? editingEvent.address || "" : "",
+    eventLatitude: editingEvent ? editingEvent.latitude || null : null,
+    eventLongitude: editingEvent ? editingEvent.longitude || null : null,
+    radiusInMeters: editingEvent ? editingEvent.radiusInMeters || 100 : 100,
+  });
 
-  const [staffCount, setStaffCount] = useState(
-    editingEvent ? editingEvent.staffCount : 1
-  );
-  const [capacity, setCapacity] = useState(
-    editingEvent ? editingEvent.capacity : 10
-  );
-  const [allowAnonymous, setAllowAnonymous] = useState(
-    editingEvent ? editingEvent.allowAnonymousJoining : false
-  );
-
-  const [allowAutomaticSkips, setAllowAutomaticSkips] = useState(
-    editingEvent ? editingEvent.allowAutomaticSkips : true
-  );
-
-  // New geographic restriction states
-  const [enableGeographicRestriction, setEnableGeographicRestriction] =
-    useState(
-      editingEvent ? editingEvent.enableGeographicRestriction || false : false
-    );
-  const [eventLocation, setEventLocation] = useState(
-    editingEvent ? editingEvent.address || "" : ""
-  );
-  const [eventLatitude, setEventLatitude] = useState(
-    editingEvent ? editingEvent.latitude || null : null
-  );
-  const [eventLongitude, setEventLongitude] = useState(
-    editingEvent ? editingEvent.longitude || null : null
-  );
-  const [radiusInMeters, setRadiusInMeters] = useState(
-    editingEvent ? editingEvent.radiusInMeters || 100 : 100
-  );
+  const [showRequired, setShowRequired] = useState({
+    title: !formData.title,
+    description: !formData.description,
+    averageTime: !formData.averageTime,
+    eventStartTime: !formData.eventStartTime,
+    eventEndTime: !formData.eventEndTime,
+    staffCount: !formData.staffCount,
+    capacity: !formData.capacity,
+    eventLocation: !formData.eventLocation && formData.enableGeographicRestriction,
+    radiusInMeters: !formData.radiusInMeters && formData.enableGeographicRestriction,
+  });
 
   const [isMapApiLoaded, setIsMapApiLoaded] = useState(false);
+
   // Load Google Maps API
   useEffect(() => {
-    if (enableGeographicRestriction && !window.google) {
+    if (formData.enableGeographicRestriction && !window.google) {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${
         import.meta.env.VITE_GOOGLE_CLIENT_KEY
@@ -92,7 +76,6 @@ const EventForm = () => {
         if (window.google?.maps?.importLibrary) {
           setIsMapApiLoaded(true);
         } else {
-          // Check again after a short delay
           setTimeout(checkApiReady, 100);
         }
       };
@@ -107,45 +90,32 @@ const EventForm = () => {
         );
       };
     }
-  }, [enableGeographicRestriction]);
+  }, [formData.enableGeographicRestriction]);
 
-  // Initialize Google Places Autocomplete with new API
+  // Initialize Google Places Autocomplete
   useEffect(() => {
     const initMap = async () => {
       if (
-        enableGeographicRestriction &&
+        formData.enableGeographicRestriction &&
         isMapApiLoaded &&
-        locationInputRef.current 
+        locationInputRef.current
       ) {
         try {
-          // Request needed libraries
           await window.google.maps.importLibrary("places");
-
-          // Create the PlaceAutocompleteElement
           const placeAutocomplete =
             new window.google.maps.places.PlaceAutocompleteElement();
           placeAutocomplete.id = "place-autocomplete";
-          // placeAutocomplete.setComponentRestrictions({ country: ['ng'] });
-          // Style the autocomplete element to match your design
-          //   placeAutocomplete.style.width = '100%';
-          //   placeAutocomplete.style.height = '42px';
           placeAutocomplete.style.borderRadius = "0.5rem";
           placeAutocomplete.style.border = darkMode
             ? "1px solid #6b7280"
             : "1px solid #d1d5db";
           placeAutocomplete.style.backgroundColor = "#6B7D6B";
-          //placeAutocomplete.style.color = darkMode ? '#ffffff !important' : '#111827 !important';
-          //   placeAutocomplete.style.paddingLeft = '2.5rem';
-          //   placeAutocomplete.style.fontSize = '14px';
-          //   placeAutocomplete.placeholder = 'Search for event location...';
 
-          // Clear the container and add the new element
           if (locationInputRef.current) {
             locationInputRef.current.innerHTML = "";
             locationInputRef.current.appendChild(placeAutocomplete);
           }
 
-          // Add the place select listener
           placeAutocomplete.addEventListener(
             "gmp-select",
             async ({ placePrediction }) => {
@@ -160,11 +130,16 @@ const EventForm = () => {
                 const lng = placeData.location?.lng;
 
                 if (lat && lng) {
-                  setEventLocation(
-                    placeData.formattedAddress || placeData.displayName
-                  );
-                  setEventLatitude(lat);
-                  setEventLongitude(lng);
+                  setFormData((prev) => ({
+                    ...prev,
+                    eventLocation: placeData.formattedAddress || placeData.displayName,
+                    eventLatitude: lat,
+                    eventLongitude: lng,
+                  }));
+                  setShowRequired((prev) => ({
+                    ...prev,
+                    eventLocation: false,
+                  }));
                 }
               } catch (error) {
                 console.error("Error fetching place details:", error);
@@ -190,7 +165,19 @@ const EventForm = () => {
         locationInputRef.current.innerHTML = "";
       }
     };
-  }, [enableGeographicRestriction, darkMode, isMapApiLoaded]);
+  }, [formData.enableGeographicRestriction, darkMode, isMapApiLoaded]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setShowRequired((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? !checked : !value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -199,20 +186,20 @@ const EventForm = () => {
     if (validateEventStartEnd() && validateGeographicSettings()) {
       const newEvent = {
         eventId,
-        title,
-        description,
-        eventStartTime,
-        eventEndTime,
-        averageTime,
-        staffCount,
-        capacity,
-        allowAnonymousJoining: allowAnonymous,
-        allowAutomaticSkips,
-        enableGeographicRestriction,
-        address: enableGeographicRestriction ? eventLocation : null,
-        Latitude: enableGeographicRestriction ? eventLatitude : null,
-        Longitude: enableGeographicRestriction ? eventLongitude : null,
-        radiusInMeters: enableGeographicRestriction ? radiusInMeters : 0,
+        title: formData.title,
+        description: formData.description,
+        eventStartTime: formData.eventStartTime,
+        eventEndTime: formData.eventEndTime,
+        averageTime: formData.averageTime,
+        staffCount: formData.staffCount,
+        capacity: formData.capacity,
+        allowAnonymousJoining: formData.allowAnonymous,
+        allowAutomaticSkips: formData.allowAutomaticSkips,
+        enableGeographicRestriction: formData.enableGeographicRestriction,
+        address: formData.enableGeographicRestriction ? formData.eventLocation : null,
+        Latitude: formData.enableGeographicRestriction ? formData.eventLatitude : null,
+        Longitude: formData.enableGeographicRestriction ? formData.eventLongitude : null,
+        radiusInMeters: formData.enableGeographicRestriction ? formData.radiusInMeters : 0,
       };
 
       if (editingEvent) {
@@ -224,19 +211,17 @@ const EventForm = () => {
           .catch((error) => {
             console.error("Error updating event:", error);
             toast.error(
-              "An error occured while updating your event. Please try again later."
+              "An error occurred while updating your event. Please try again later."
             );
           });
       } else {
-
-        if(enableGeographicRestriction){
-          if (!eventLocation || !eventLatitude || !eventLongitude) {
+        if (formData.enableGeographicRestriction) {
+          if (!formData.eventLocation || !formData.eventLatitude || !formData.eventLongitude) {
             showToast.error(
               "Please select a valid location for geographic restrictions."
             );
             return;
           }
-
         }
         createEvent(newEvent)
           .then(() => {
@@ -246,7 +231,7 @@ const EventForm = () => {
           .catch((error) => {
             console.error("Error creating event:", error);
             toast.error(
-              "An error occured while creating your event. Please try again later."
+              "An error occurred while creating your event. Please try again later."
             );
           });
       }
@@ -254,14 +239,14 @@ const EventForm = () => {
   };
 
   const validateGeographicSettings = () => {
-    if (enableGeographicRestriction) {
-      if (!eventLocation || !eventLatitude || !eventLongitude) {
+    if (formData.enableGeographicRestriction) {
+      if (!formData.eventLocation || !formData.eventLatitude || !formData.eventLongitude) {
         toast.error(
           "Please select a valid location for geographic restrictions."
         );
         return false;
       }
-      if (radiusInMeters < 10 || radiusInMeters > 10000) {
+      if (formData.radiusInMeters < 10 || formData.radiusInMeters > 10000) {
         toast.error("Radius must be between 10 and 10,000 meters.");
         return false;
       }
@@ -285,19 +270,13 @@ const EventForm = () => {
   const timeOptions = generateTimeOptions();
 
   const validateEventStartEnd = () => {
-    if (!eventStartTime || !eventEndTime) {
+    if (!formData.eventStartTime || !formData.eventEndTime) {
       toast.error("Please select both start and end times.");
       return false;
     }
     return true;
   };
 
-  const formatRadiusText = (radius) => {
-    if (radius >= 1000) {
-      return `${(radius / 1000).toFixed(1)} km`;
-    }
-    return `${radius} m`;
-  };
 
   return (
     <form
@@ -344,22 +323,23 @@ const EventForm = () => {
       {/* Title Input */}
       <div className="mb-6">
         <label
-          htmlFor="eventTitle"
+          htmlFor="title"
           className={`block text-sm font-medium mb-2 ${
             darkMode ? "text-gray-200" : "text-gray-700"
           }`}
         >
-          Title <span className="text-red-500">*</span>
+          Title {showRequired.title && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
           <input
-            id="eventTitle"
+            id="title"
+            name="title"
             type="text"
             placeholder="e.g., Tech Conference 2024"
-            value={title}
+            value={formData.title}
             disabled={!!editingEvent}
             maxLength={50}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleChange}
             required
             className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
               ${
@@ -370,27 +350,31 @@ const EventForm = () => {
               ${editingEvent ? "opacity-70 cursor-not-allowed" : ""}
             `}
           />
+          <p className="mt-1 text-xs text-gray-500 text-right">
+            {formData.title.length}/50
+          </p>
         </div>
       </div>
 
       {/* Description Input */}
       <div className="mb-6">
         <label
-          htmlFor="eventDescription"
+          htmlFor="description"
           className={`block text-sm font-medium mb-2 ${
             darkMode ? "text-gray-200" : "text-gray-700"
           }`}
         >
-          Description <span className="text-red-500">*</span>
+          Description {showRequired.description && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
           <textarea
-            id="eventDescription"
+            id="description"
+            name="description"
             rows={4}
-            maxLength={300}
+            maxLength={500}
             placeholder="Describe your event details, purpose, or what attendees can expect..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={formData.description}
+            onChange={handleChange}
             required
             className={`w-full pl-4 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200 resize-y
               ${
@@ -400,6 +384,9 @@ const EventForm = () => {
               }
             `}
           />
+          <p className="mt-1 text-xs text-gray-500 text-right">
+            {formData.description.length}/500
+          </p>
         </div>
       </div>
 
@@ -413,18 +400,19 @@ const EventForm = () => {
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Avg. Wait Time (mins) <span className="text-red-500">*</span>
+            Avg. Wait Time (mins) {showRequired.averageTime && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <LoaderCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="averageTime"
+              name="averageTime"
               type="number"
               placeholder="5"
               min="0"
               max="60"
-              value={averageTime}
-              onChange={(e) => setAverageTime(e.target.value)}
+              value={formData.averageTime}
+              onChange={handleChange}
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
                 ${
@@ -445,18 +433,19 @@ const EventForm = () => {
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Serving Staff No. <span className="text-red-500">*</span>
+            Serving Staff No. {showRequired.staffCount && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="staffCount"
+              name="staffCount"
               type="number"
               placeholder="2"
               min="1"
               max="20"
-              value={staffCount}
-              onChange={(e) => setStaffCount(e.target.value)}
+              value={formData.staffCount}
+              onChange={handleChange}
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
                 ${
@@ -472,23 +461,24 @@ const EventForm = () => {
         {/* Capacity */}
         <div className="relative">
           <label
-            htmlFor="capacityCount"
+            htmlFor="capacity"
             className={`block text-sm font-medium mb-2 ${
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Queue Capacity (Min) <span className="text-red-500">*</span>
+            Queue Capacity (Min) {showRequired.capacity && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <FiUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
-              id="capacityCount"
+              id="capacity"
+              name="capacity"
               type="number"
               placeholder=""
               min="10"
               max="1000"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
+              value={formData.capacity}
+              onChange={handleChange}
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
                 ${
@@ -508,19 +498,20 @@ const EventForm = () => {
         {/* Start Time */}
         <div className="relative">
           <label
-            htmlFor="startTime"
+            htmlFor="eventStartTime"
             className={`block text-sm font-medium mb-2 ${
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Start Time <span className="text-red-500">*</span>
+            Start Time {showRequired.eventStartTime && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <select
-              id="startTime"
-              value={eventStartTime}
-              onChange={(e) => setStartTime(e.target.value)}
+              id="eventStartTime"
+              name="eventStartTime"
+              value={formData.eventStartTime}
+              onChange={handleChange}
               className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
                 ${
                   darkMode
@@ -535,7 +526,7 @@ const EventForm = () => {
                   key={option.value}
                   value={option.value}
                   className={`${
-                    option.value === eventStartTime
+                    option.value === formData.eventStartTime
                       ? "bg-sage-600 text-white"
                       : darkMode
                       ? "bg-gray-700 text-gray-200"
@@ -567,19 +558,20 @@ const EventForm = () => {
         {/* End Time */}
         <div className="relative">
           <label
-            htmlFor="endTime"
+            htmlFor="eventEndTime"
             className={`block text-sm font-medium mb-2 ${
               darkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            End Time <span className="text-red-500">*</span>
+            End Time {showRequired.eventEndTime && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <select
-              id="endTime"
-              value={eventEndTime}
-              onChange={(e) => setEndTime(e.target.value)}
+              id="eventEndTime"
+              name="eventEndTime"
+              value={formData.eventEndTime}
+              onChange={handleChange}
               className={`w-full appearance-none pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition duration-200
                 ${
                   darkMode
@@ -594,7 +586,7 @@ const EventForm = () => {
                   key={option.value}
                   value={option.value}
                   className={`${
-                    option.value === eventEndTime
+                    option.value === formData.eventEndTime
                       ? "bg-sage-600 text-white"
                       : darkMode
                       ? "bg-gray-700 text-gray-200"
@@ -635,7 +627,10 @@ const EventForm = () => {
           <button
             type="button"
             onClick={() =>
-              setEnableGeographicRestriction(!enableGeographicRestriction)
+              setFormData((prev) => ({
+                ...prev,
+                enableGeographicRestriction: !prev.enableGeographicRestriction,
+              }))
             }
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
@@ -645,20 +640,20 @@ const EventForm = () => {
                   : "focus:ring-offset-gray-100"
               }
               ${
-                enableGeographicRestriction
+                formData.enableGeographicRestriction
                   ? "bg-sage-700"
                   : darkMode
                   ? "bg-gray-900"
                   : "bg-gray-400"
               }
             `}
-            aria-checked={enableGeographicRestriction}
+            aria-checked={formData.enableGeographicRestriction}
             role="switch"
           >
             <span
               className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
                 ${
-                  enableGeographicRestriction
+                  formData.enableGeographicRestriction
                     ? "translate-x-6 bg-white"
                     : "translate-x-0 bg-white"
                 }
@@ -666,7 +661,7 @@ const EventForm = () => {
             >
               <FiMapPin
                 className={`w-4 h-4 ${
-                  enableGeographicRestriction
+                  formData.enableGeographicRestriction
                     ? "text-sage-500"
                     : "text-gray-500"
                 }`}
@@ -679,7 +674,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-100" : "text-gray-800"
               }`}
             >
-              {enableGeographicRestriction
+              {formData.enableGeographicRestriction
                 ? "Location-Based Queue"
                 : "Open Location Queue"}
             </span>
@@ -688,7 +683,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              {enableGeographicRestriction
+              {formData.enableGeographicRestriction
                 ? "Users must be nearby to join"
                 : "No location restrictions"}
             </span>
@@ -710,7 +705,7 @@ const EventForm = () => {
             ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
           `}
           >
-            {enableGeographicRestriction
+            {formData.enableGeographicRestriction
               ? "Users can only join the queue if they're within the specified distance from your event location"
               : "Anyone can join the queue regardless of their location"}
             <div
@@ -723,7 +718,7 @@ const EventForm = () => {
       </div>
 
       {/* Geographic Restriction Settings */}
-      {enableGeographicRestriction && (
+      {formData.enableGeographicRestriction && (
         <div
           className={`mb-6 p-4 rounded-lg border transition-all duration-300 space-y-4
           ${
@@ -750,7 +745,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-200" : "text-gray-700"
               }`}
             >
-              Event Location <span className="text-red-500">*</span>
+              Event Location {showRequired.eventLocation && <span className="text-red-500">*</span>}
             </label>
             <div className="relative">
               <div
@@ -763,13 +758,12 @@ const EventForm = () => {
                   }
                 `}
               >
-                {/* Placeholder div when Google Maps isn't loaded yet */}
-                {(!isMapApiLoaded) && (
+                {!isMapApiLoaded && (
                   <input
                     type="text"
                     placeholder="Loading location search..."
                     disabled
-                    value={eventLocation}
+                    value={formData.eventLocation}
                     className={`w-full pl-10 pr-3 py-2 border-0 rounded-lg bg-transparent focus:outline-none
                       ${darkMode ? "text-gray-400" : "text-gray-500"}
                     `}
@@ -777,14 +771,14 @@ const EventForm = () => {
                 )}
               </div>
             </div>
-            {eventLocation && (
+            {formData.eventLocation && (
               <div
                 className={`text-sm flex items-center gap-2 ${
                   darkMode ? "text-sage-400" : "text-sage-600"
                 }`}
               >
                 <FiCheck className="w-4 h-4" />
-                <span>Selected: {eventLocation}</span>
+                <span>Selected: {formData.eventLocation}</span>
               </div>
             )}
           </div>
@@ -797,7 +791,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-200" : "text-gray-700"
               }`}
             >
-              Maximum Distance <span className="text-red-500">*</span>
+              Maximum Distance {showRequired.radiusInMeters && <span className="text-red-500">*</span>}
             </label>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
@@ -805,17 +799,19 @@ const EventForm = () => {
                   <button
                     key={val}
                     type="button"
-                    onClick={() => setRadiusInMeters(val)}
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, radiusInMeters: val }))
+                    }
                     className={`px-4 py-2 rounded-full text-sm font-medium transition
-          ${
-            radiusInMeters === val
-              ? darkMode
-                ? "bg-sage-600 text-white"
-                : "bg-sage-200 text-sage-900"
-              : darkMode
-              ? "bg-gray-800 text-gray-300 hover:bg-gray-400"
-              : "bg-gray-300 text-gray-600 hover:bg-gray-200"
-          }`}
+                      ${
+                        formData.radiusInMeters === val
+                          ? darkMode
+                            ? "bg-sage-600 text-white"
+                            : "bg-sage-200 text-sage-900"
+                          : darkMode
+                          ? "bg-gray-800 text-gray-300 hover:bg-gray-400"
+                          : "bg-gray-300 text-gray-600 hover:bg-gray-200"
+                      }`}
                   >
                     {val >= 1000 ? `${val / 1000} km` : `${val} m`}
                   </button>
@@ -835,7 +831,12 @@ const EventForm = () => {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            onClick={() => setAllowAnonymous(!allowAnonymous)}
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                allowAnonymous: !prev.allowAnonymous,
+              }))
+            }
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
               ${
@@ -844,26 +845,26 @@ const EventForm = () => {
                   : "focus:ring-offset-gray-100"
               }
               ${
-                allowAnonymous
+                formData.allowAnonymous
                   ? "bg-sage-700"
                   : darkMode
                   ? "bg-gray-900"
                   : "bg-gray-400"
               }
             `}
-            aria-checked={allowAnonymous}
+            aria-checked={formData.allowAnonymous}
             role="switch"
           >
             <span
               className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
                 ${
-                  allowAnonymous
+                  formData.allowAnonymous
                     ? "translate-x-6 bg-white"
                     : "translate-x-0 bg-white"
                 }
               `}
             >
-              {allowAnonymous ? (
+              {formData.allowAnonymous ? (
                 <LockKeyholeOpen className="w-4 h-4 text-sage-500" />
               ) : (
                 <FiLock className="w-4 h-4 text-gray-500" />
@@ -876,14 +877,14 @@ const EventForm = () => {
                 darkMode ? "text-gray-100" : "text-gray-800"
               }`}
             >
-              {allowAnonymous ? "Allow Anonymous Joining" : "Require Account"}
+              {formData.allowAnonymous ? "Allow Anonymous Joining" : "Require Account"}
             </span>
             <span
               className={`text-xs ${
                 darkMode ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              {allowAnonymous
+              {formData.allowAnonymous
                 ? "Guests can join without an account"
                 : "Requires account to join"}
             </span>
@@ -905,7 +906,7 @@ const EventForm = () => {
             ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
           `}
           >
-            {allowAnonymous
+            {formData.allowAnonymous
               ? "Anyone can join queue without an account"
               : "Requires account creation to join queue"}
             <div
@@ -926,7 +927,12 @@ const EventForm = () => {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            onClick={() => setAllowAutomaticSkips(!allowAutomaticSkips)}
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                allowAutomaticSkips: !prev.allowAutomaticSkips,
+              }))
+            }
             className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-300 flex-shrink-0
               focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2
               ${
@@ -935,26 +941,26 @@ const EventForm = () => {
                   : "focus:ring-offset-gray-100"
               }
               ${
-                allowAutomaticSkips
+                formData.allowAutomaticSkips
                   ? "bg-sage-700"
                   : darkMode
                   ? "bg-gray-900"
                   : "bg-gray-400"
               }
             `}
-            aria-checked={allowAutomaticSkips}
+            aria-checked={formData.allowAutomaticSkips}
             role="switch"
           >
             <span
               className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full shadow-md transition-transform duration-300 flex items-center justify-center
                 ${
-                  allowAutomaticSkips
+                  formData.allowAutomaticSkips
                     ? "translate-x-6 bg-white"
                     : "translate-x-0 bg-white"
                 }
               `}
             >
-              {allowAutomaticSkips ? (
+              {formData.allowAutomaticSkips ? (
                 <FiPlay className="w-4 h-4 text-sage-500" />
               ) : (
                 <FiPause className="w-4 h-4 text-gray-500" />
@@ -967,7 +973,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-100" : "text-gray-800"
               }`}
             >
-              {allowAutomaticSkips
+              {formData.allowAutomaticSkips
                 ? "Automatic Queue Processing"
                 : "Manual Queue Processing"}
             </span>
@@ -976,7 +982,7 @@ const EventForm = () => {
                 darkMode ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              {allowAutomaticSkips
+              {formData.allowAutomaticSkips
                 ? "System automatically moves to next person"
                 : "Manually mark users as served"}
             </span>
@@ -998,7 +1004,7 @@ const EventForm = () => {
             ${darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-800 text-white"}
           `}
           >
-            {allowAutomaticSkips
+            {formData.allowAutomaticSkips
               ? "Queue automatically advances after a set time period or when service is complete"
               : "Queue administrator must manually mark each person as served before advancing"}
             <div
