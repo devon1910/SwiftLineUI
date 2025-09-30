@@ -33,13 +33,7 @@ export const Footer = () => {
         {/* Copyright - visible on all screen sizes */}
         <div className={`${copyrightBgClass} py-3 mt-6 rounded-md`}> {/* Added mt-6 and rounded-md for separation */}
           <p className="text-xs">
-            © {new Date().getFullYear()} <span className="font-bold">theswiftline</span>. All rights reserved. Created by{" "}
-             <Link 
-              className={`${linkClass} font-medium no-underline`} 
-              style={{ color: 'inherit' }} 
-              to="https://davidson-portfolio-davidsons-projects-2757da45.vercel.app/"
-              target="_blank" 
-              rel="noopener noreferrer">Davidson Ekpokpobe</Link>
+            © {new Date().getFullYear()} <span className="font-bold">theswiftline</span>. All rights reserved. Don't replicate without permission. Created by{" "}Davidson Ekpokpobe
           </p>
         </div>
       </div>
