@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { UserEvents } from "../../services/api/swiftlineService";
+=======
+import { Button, Card, Col, Row } from "react-bootstrap";
+import { UserEvents } from "../../services/swiftlineService";
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 import { FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/api/swiftlineService";
 import { toast } from "react-toastify";
@@ -169,6 +174,7 @@ const MyEvents = () => {
                   <span>View Queue</span>
                 </button>
 
+<<<<<<< HEAD
                 {/* Secondary Actions (as icons or in a dropdown) */}
                 <div className="flex justify-end gap-2 mt-4"> {/* Changed class to className */}
                   <button
@@ -202,6 +208,36 @@ const MyEvents = () => {
                   <div className="flex items-center gap-1 mt-2">
                     <BadgePlus className="w-4 h-4" />
                     Created on: {format(new Date(event.createdAt), "dd/MM/yyyy")}
+=======
+                  {/* Buttons */}
+                  <div className="flex flex-col gap-2 mt-2">
+                    <button
+                      onClick={() =>
+                        navigate(`/events/${event.id}/manage`)
+                      }
+                      className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
+                    >
+                      View Queue
+                    </button>
+
+                    <button
+                      onClick={() => handleShare(event.id, event.title)}
+                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
+                    >
+                      Share Event
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        navigate(`/events/${event.id}/edit`, {
+                          state: { editingEvent: event },
+                        })
+                      }
+                      className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
+                    >
+                      Edit Event
+                    </button>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
                   </div>
                 </div>
               </div>

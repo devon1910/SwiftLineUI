@@ -1,12 +1,35 @@
-# React + Vite
+# SwiftLine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SwiftLine is a virtual queue-management product for attendees and event organizers. This repository is being migrated into a single product workspace while retaining separately deployable web, API, and background-worker processes.
 
-Currently, two official plugins are available:
+## Repository layout
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `src/` — current React/Vite web application
+- `services/swiftline/SwiftLine.API/` — ASP.NET Core HTTP API and SignalR hub
+- `services/swiftline/SwiftLine.Worker/` — long-running queue, email, and cleanup jobs
+- `services/swiftline/Application/` — application services
+- `services/swiftline/Domain/` — domain models and contracts
+- `services/swiftline/Infrastructure/` — EF Core, PostgreSQL, notifications, and background-job implementations
+- `docs/` — architecture and migration decisions
 
-## Expanding the ESLint configuration
+## Local prerequisites
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Node.js and npm
+- .NET 9 SDK
+- PostgreSQL
+
+The web app reads `VITE_API_URL` and `VITE_API_SIGNALR_URL` from an untracked `.env` file. The .NET services read credentials and connection strings from environment variables or .NET user-secrets. Never commit production credentials.
+
+## Commands
+
+```powershell
+npm.cmd install
+npm.cmd run dev
+npm.cmd run lint
+npm.cmd run build
+
+dotnet build services\swiftline\SwiftLine.sln
+dotnet test services\swiftline\SwiftLine.sln
+```
+
+See [docs/architecture.md](docs/architecture.md) for the target topology and migration gates.

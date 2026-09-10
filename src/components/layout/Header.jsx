@@ -1,8 +1,35 @@
-import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Bell, User, Home, List, Clock, LogOut } from 'lucide-react';
+import { createElement, useEffect, useState } from "react";
+import {
+  Bell,
+  CalendarDays,
+  LayoutDashboard,
+  ListChecks,
+  Menu,
+  Moon,
+  Search,
+  Sun,
+  X,
+} from "lucide-react";
+import { NavLink, Link } from "react-router-dom";
+
+const logoUrl =
+  "https://res.cloudinary.com/dddabj5ub/image/upload/v1741908218/swifline_logo_cpsacv.webp";
+
+const headerLinks = [
+  { label: "Dashboard", path: "/", icon: LayoutDashboard, end: true },
+  { label: "Search events", path: "/search", icon: Search },
+  { label: "My events", path: "/myEvents", icon: CalendarDays },
+  { label: "My queue", path: "/myQueue", icon: ListChecks },
+];
+
+const applyTheme = (isDark) => {
+  document.body.classList.toggle("dark-mode", isDark);
+  document.documentElement.classList.toggle("dark", isDark);
+  document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+};
 
 export const Header = () => {
+<<<<<<< HEAD:src/components/layout/Header.jsx
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
     
@@ -36,110 +63,91 @@ export const Header = () => {
             <Link 
               to="/dashboard" 
               className={`text-sm font-medium hover:text-green-700 transition-colors ${isActive('/dashboard') ? 'text-green-700' : 'text-gray-700'}`}
+=======
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
+
+  useEffect(() => {
+    applyTheme(darkMode);
+    localStorage.setItem("darkMode", String(darkMode));
+  }, [darkMode]);
+
+  return (
+    <header className="standalone-header">
+      <div className="standalone-header__inner">
+        <Link to="/" className="shell-brand" aria-label="SwiftLine dashboard">
+          <img className="shell-brand__logo" src={logoUrl} alt="" />
+          <span className="shell-brand__wordmark">SwiftLine</span>
+          <span className="shell-brand__descriptor">queue operations</span>
+        </Link>
+
+        <nav className="standalone-header__nav" aria-label="Header navigation">
+          {headerLinks.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.end}
+              className="standalone-header__link"
+              onClick={() => setIsMenuOpen(false)}
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications):src/components/Header.jsx
             >
-              Home
-            </Link>
-            <Link 
-              to="/queue" 
-              className={`text-sm font-medium hover:text-green-700 transition-colors ${isActive('/queue') ? 'text-green-700' : 'text-gray-700'}`}
-            >
-              My Queue
-            </Link>
-            <Link 
-              to="/history" 
-              className={`text-sm font-medium hover:text-green-700 transition-colors ${isActive('/history') ? 'text-green-700' : 'text-gray-700'}`}
-            >
-              History
-            </Link>
-          </nav>
-          
-          {/* User Actions */}
-          <div className="flex items-center space-x-3">
-            <button className="p-2 rounded-full hover:bg-gray-100 text-gray-600 relative">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full"></span>
-            </button>
-            
-            <Link to="/profile" className="hidden md:flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100">
-              <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white">
-                <User size={16} />
-              </div>
-            </Link>
-            
-            {/* Mobile Menu Button */}
-            <button 
-              onClick={toggleMenu}
-              className="p-2 rounded-md md:hidden text-gray-600 hover:bg-gray-100"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+              {createElement(item.icon, { size: 15, "aria-hidden": true })}
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="standalone-header__actions">
+          <button
+            type="button"
+            className="standalone-header__button"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <Bell size={17} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="standalone-header__button"
+            onClick={() => setDarkMode((isDark) => !isDark)}
+            aria-label={darkMode ? "Use light theme" : "Use dark theme"}
+            title={darkMode ? "Use light theme" : "Use dark theme"}
+          >
+            {darkMode ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+          </button>
+          <button
+            type="button"
+            className="standalone-header__button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-controls="standalone-header-mobile"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          >
+            {isMenuOpen ? <X size={19} aria-hidden="true" /> : <Menu size={19} aria-hidden="true" />}
+          </button>
         </div>
-        
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-white pt-16">
-            <div className="container mx-auto px-4 py-6 space-y-6">
-              <div className="flex items-center space-x-3 p-2">
-                <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white">
-                  <User size={20} />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">John Doe</p>
-                  <p className="text-sm text-gray-500">john.doe@example.com</p>
-                </div>
-              </div>
-              
-              <div className="h-px bg-gray-200"></div>
-              
-              <nav className="space-y-4">
-                <Link 
-                  to="/dashboard" 
-                  className="flex items-center p-2 space-x-3 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={closeMenu}
-                >
-                  <Home size={20} />
-                  <span>Home</span>
-                </Link>
-                <Link 
-                  to="/queue" 
-                  className="flex items-center p-2 space-x-3 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={closeMenu}
-                >
-                  <List size={20} />
-                  <span>My Queue</span>
-                </Link>
-                <Link 
-                  to="/history" 
-                  className="flex items-center p-2 space-x-3 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={closeMenu}
-                >
-                  <Clock size={20} />
-                  <span>History</span>
-                </Link>
-                
-                <div className="h-px bg-gray-200"></div>
-                
-                <Link 
-                  to="/profile" 
-                  className="flex items-center p-2 space-x-3 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={closeMenu}
-                >
-                  <User size={20} />
-                  <span>Profile</span>
-                </Link>
-                <Link 
-                  to="/logout" 
-                  className="flex items-center p-2 space-x-3 text-red-600 hover:bg-red-50 rounded-md"
-                  onClick={closeMenu}
-                >
-                  <LogOut size={20} />
-                  <span>Log Out</span>
-                </Link>
-              </nav>
-            </div>
-          </div>
-        )}
-      </header>
-    );
-}
+      </div>
+
+      {isMenuOpen && (
+        <nav id="standalone-header-mobile" className="standalone-header__mobile" aria-label="Mobile navigation">
+          {headerLinks.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.end}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {createElement(item.icon, { size: 16, "aria-hidden": true })}
+              {item.label}
+            </NavLink>
+          ))}
+          <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+            Account
+          </Link>
+        </nav>
+      )}
+    </header>
+  );
+};
+
+export default Header;

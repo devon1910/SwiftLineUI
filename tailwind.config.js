@@ -1,5 +1,6 @@
-// tailwind.config.js
-module.exports = {
+import forms from '@tailwindcss/forms';
+
+export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -58,7 +59,7 @@ module.exports = {
   },
   plugins: [
     // Add any plugins you need (e.g., forms, typography)
-    require('@tailwindcss/forms'),
+    forms,
   ],
   darkMode: 'class', // Enables class-based dark mode
 }

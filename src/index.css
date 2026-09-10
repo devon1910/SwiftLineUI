@@ -1,8 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+:root {
+  color-scheme: light;
+  --sl-ink: #18332e;
+  --sl-ink-strong: #102722;
+  --sl-text: #243a35;
+  --sl-muted: #64756e;
+  --sl-subtle: #8b9a93;
+  --sl-page: #f5f7f3;
+  --sl-surface: #ffffff;
+  --sl-surface-muted: #edf2ec;
+  --sl-surface-deep: #e1eae2;
+  --sl-border: #d7e1d9;
+  --sl-border-strong: #b9cbbd;
+  --sl-brand: #2f6f5d;
+  --sl-brand-dark: #205344;
+  --sl-brand-soft: #dcebdc;
+  --sl-accent: #d7ed91;
+  --sl-accent-strong: #c2df70;
+  --sl-coral: #c96850;
+  --sl-shadow-sm: 0 1px 2px rgba(24, 51, 46, 0.05), 0 5px 18px rgba(24, 51, 46, 0.04);
+  --sl-shadow-md: 0 12px 34px rgba(24, 51, 46, 0.09);
+  --sl-radius-sm: 0.625rem;
+  --sl-radius-md: 1rem;
+  --sl-radius-lg: 1.5rem;
+  --sl-focus: rgba(47, 111, 93, 0.35);
+  --cursor-x: 0px;
+  --cursor-y: 0px;
+}
 
+<<<<<<< HEAD
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,3 +60,116 @@
     --color-blue-900: #2a4365;
     --color-blue-950: #1e3a8a;
 }
+=======
+body.dark-mode {
+  color-scheme: dark;
+  --sl-ink: #dce9df;
+  --sl-ink-strong: #f4f8f2;
+  --sl-text: #d5e2d8;
+  --sl-muted: #9eb0a5;
+  --sl-subtle: #788e82;
+  --sl-page: #12211e;
+  --sl-surface: #1a2d28;
+  --sl-surface-muted: #223a32;
+  --sl-surface-deep: #294339;
+  --sl-border: #345047;
+  --sl-border-strong: #4d6b5c;
+  --sl-brand: #8fc2a3;
+  --sl-brand-dark: #b4d6bd;
+  --sl-brand-soft: #29483b;
+  --sl-accent: #cce88a;
+  --sl-accent-strong: #ddf3a2;
+  --sl-coral: #ee9279;
+  --sl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 5px 18px rgba(0, 0, 0, 0.12);
+  --sl-shadow-md: 0 16px 38px rgba(0, 0, 0, 0.24);
+  --sl-focus: rgba(143, 194, 163, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  background: var(--sl-page);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--sl-page);
+  color: var(--sl-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img,
+svg {
+  display: block;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--sl-accent);
+  color: var(--sl-ink-strong);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sl-focus);
+  outline-offset: 3px;
+}
+
+body.dark-mode .text-gray-900,
+body.dark-mode .text-gray-800,
+body.dark-mode .text-gray-700 {
+  color: var(--sl-ink-strong);
+}
+
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-500,
+body.dark-mode .text-gray-400 {
+  color: var(--sl-muted);
+}
+
+body.dark-mode .bg-white {
+  background-color: var(--sl-surface);
+}
+
+body.dark-mode .bg-sage-50 {
+  background-color: var(--sl-page);
+}
+
+body.dark-mode .border-gray-200,
+body.dark-mode .border-sage-200 {
+  border-color: var(--sl-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)

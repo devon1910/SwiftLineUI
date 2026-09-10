@@ -1,0 +1,71 @@
+import axios from "axios";
+import {
+  clearAuthStorage,
+  getStoredAccessToken,
+  getStoredRefreshToken,
+  storeAuthTokens,
+} from "./authStorage";
+
+const normalizeBaseUrl = (value) => `${String(value ?? "").replace(/\/+$/, "")}/`;
+const apiBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_URL);
+const API = axios.create({ baseURL: apiBaseUrl });
+let refreshPromise = null;
+
+const isAuthRequest = (url = "") =>
+  /Auth\/(Login|Signup|RefreshToken|VerifyToken|LoginWithGoogle|GetAuthData|VerifyTurnstileToken)/i.test(url);
+
+const redirectToLogin = () => {
+  if (typeof window !== "undefined" && window.location.pathname !== "/auth") {
+    window.location.assign("/auth");
+  }
+};
+
+API.interceptors.request.use((config) => {
+  const token = getStoredAccessToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error?.config;
+    const status = error?.response?.status;
+
+    if (status !== 401 || !originalRequest || originalRequest._retry || isAuthRequest(originalRequest.url)) {
+      return Promise.reject(error);
+    }
+
+    const accessToken = getStoredAccessToken();
+    const refreshToken = getStoredRefreshToken();
+    if (!accessToken || !refreshToken) {
+      clearAuthStorage();
+      redirectToLogin();
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+    try {
+      if (!refreshPromise) {
+        refreshPromise = axios.post(`${apiBaseUrl}Auth/RefreshToken`, { accessToken, refreshToken })
+          .then((response) => {
+            const auth = response?.data?.data;
+            if (!auth?.accessToken || !auth?.refreshToken) throw new Error("Refresh response did not include valid tokens.");
+            storeAuthTokens(auth.accessToken, auth.refreshToken);
+            return auth;
+          })
+          .finally(() => { refreshPromise = null; });
+      }
+      const auth = await refreshPromise;
+      originalRequest.headers = originalRequest.headers ?? {};
+      originalRequest.headers.Authorization = `Bearer ${auth.accessToken}`;
+      return API(originalRequest);
+    } catch (refreshError) {
+      clearAuthStorage();
+      redirectToLogin();
+      return Promise.reject(refreshError);
+    }
+  },
+);
+
+export default API;

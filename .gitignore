@@ -21,6 +21,15 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+!services/swiftline/SwiftLine.sln
 *.sw?
 
 .env
+
+# .NET build and local configuration
+**/bin/
+**/obj/
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/startup_error.txt
+**/Properties/ServiceDependencies/

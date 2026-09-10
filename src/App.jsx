@@ -1,11 +1,21 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+<<<<<<< HEAD
 import AuthForm from "./components/auth/AuthForm";
 import LandingPage from "./components/user/LandingPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/layout/Footer";
 import VerifyToken from "./components/auth/VerifyToken";
 import { LoadingProvider } from "./components/common/LoadingContextProvider";
+=======
+import AuthForm from "./components/AuthForm";
+import { AppShell, MarketingShell } from "./components/user/LandingPage";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import VerifyToken from "./components/VerifyToken";
+import { LoadingProvider } from "./components/LoadingContextProvider";
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 import MyEvents from "./components/user/MyEvents";
 import SearchEvents from "./components/user/SearchEvents";
 import MyQueue from "./components/user/MyQueue";
@@ -25,6 +35,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+<<<<<<< HEAD
         <ThemeProvider>
           <LoadingProvider>
             <FeedbackProvider>
@@ -59,6 +70,30 @@ function App() {
           </LoadingProvider>
         </ThemeProvider>
       </BrowserRouter>
+=======
+        <LoadingProvider>
+          <Routes>         
+            <Route path="/" element={<MarketingShell />}>
+              <Route index element={<Dashboard />} />
+            </Route>
+            <Route element={<AppShell />}>
+              <Route path="search" element={<SearchEvents />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="myEvents" element={<MyEvents />} />
+                <Route path="newEvent" element={<EventForm />} />
+                <Route path="events/:eventId/edit" element={<EventForm />} />
+                <Route path="events/:eventId/manage" element={<ViewQueue />} />
+                <Route path="myQueue" element={<MyQueue />} />
+              </Route>
+              <Route path="events/:eventId" element={<ViewEvent />} />      
+            </Route>
+            <Route path="/auth" element={<AuthForm />} />
+            <Route path="/VerifyToken" element={<VerifyToken />} />
+          </Routes>
+        </LoadingProvider>
+      </BrowserRouter>
+      <CustomToast/>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
     </>
   );
 }

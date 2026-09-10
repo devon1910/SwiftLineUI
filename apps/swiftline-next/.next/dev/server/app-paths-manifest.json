@@ -1,0 +1,5 @@
+{
+  "/api/health/ready/route": "app/api/health/ready/route.js",
+  "/api/v1/Event/GetEvent/route": "app/api/v1/Event/GetEvent/route.js",
+  "/api/v1/Event/SearchEvents/route": "app/api/v1/Event/SearchEvents/route.js"
+}

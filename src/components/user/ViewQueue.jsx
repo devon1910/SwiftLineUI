@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { getQueueHistory } from "../../services/api/swiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -33,10 +34,21 @@ import DropOffChart from "./DropOffChart";
 import BarChart from "./BarChart";
 // import StackedBarChart from "./StackedBarChart"; // Not used
 import PerformanceMatrix from "./PerformanceMatrix"; // Not used
+=======
+import React, { useCallback, useEffect, useState } from "react";
+import { eventQueueInfo, fetchEventById } from "../../services/swiftlineService";
+import { useNavigate, useParams } from "react-router-dom";
+import { format} from "date-fns-tz"
+
+import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { connection, ensureSignalRConnected, useSignalRWithLoading } from "../../services/SignalRConn";
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
+<<<<<<< HEAD
   const [activeTab, setActiveTab] = useState("current"); // "current" or "history"
   const location = useLocation();
   const event = location.state?.event;
@@ -76,6 +88,17 @@ const ViewQueue = () => {
         setTotalPages(response.data.data.pageCountInQueue);
         setQueueHistory(response.data.data.pastLineMembers);
         setHistoryTotalPages(response.data.data.pageCountPastMembers);
+=======
+  const [event, setEvent] = useState(null);
+  const { eventId } = useParams();
+  const navigate = useNavigate();
+  const { invokeWithLoading } = useSignalRWithLoading();
+
+  const getEventQueues = useCallback(() => {
+    eventQueueInfo(eventId)
+      .then((response) => {
+        setQueues(response.data.data.linesMembersInQueue ?? []);
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
         setIsPaused(response.data.data.isEventPaused);
         if (currentPage === 1 && historyPage === 1) {
           setTotalServed(response.data.data.totalServed);
@@ -91,7 +114,14 @@ const ViewQueue = () => {
         console.error("Error fetching queue:", error);
         showToast.error("Failed to load queue members. Please try again.");
       });
-  };
+  }, [eventId]);
+
+  useEffect(() => {
+    fetchEventById(eventId)
+      .then((response) => setEvent(response.data.data))
+      .catch(() => toast.error("Unable to load this event."));
+    getEventQueues();
+  }, [eventId, getEventQueues]);
 
   const ToggleQueueActivity = async () => {
     const userId = localStorage.getItem("userId");
@@ -105,7 +135,7 @@ const ViewQueue = () => {
     if (connection.state !== "Connected") {
       toast.info("Connection lost. Attempting to reconnect...");
       try {
-        await connection.start();
+        await ensureSignalRConnected();
         toast.success("Reconnected successfully.");
       } catch (reconnectError) {
         console.error("Reconnection failed:", reconnectError);
@@ -114,6 +144,7 @@ const ViewQueue = () => {
       }
     }
 
+<<<<<<< HEAD
     invokeWithLoading(
       connection,
       "ToggleQueueActivity",
@@ -121,6 +152,10 @@ const ViewQueue = () => {
       userId,
       event.id
     )
+=======
+    // Invoke SignalR method to join the queue
+    invokeWithLoading(connection,"ToggleQueueActivity", isPaused, userId, Number(eventId))
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
       .then(() => {
         showToast.success("Queue activity updated.");
         // Re-fetch queue data to reflect the new state
@@ -144,6 +179,7 @@ const ViewQueue = () => {
     }
   };
 
+<<<<<<< HEAD
   const onServe = async (lineMemberId) => { // Renamed from onSkip to onServe for clarity
     if (
       window.confirm(
@@ -160,6 +196,31 @@ const ViewQueue = () => {
           toast.error("Unable to reconnect. Please check your network.");
           return;
         }
+=======
+  const onSkip = async (lineMemberId) => {
+      if (window.confirm("Are you sure you want to serve this line member before the end of their estimated wait time?")) {
+        if (connection.state !== "Connected") {
+          toast.info("Connection lost. Attempting to reconnect...");
+          try {
+            await ensureSignalRConnected();
+            toast.success("Reconnected successfully.");
+          } catch (reconnectError) {
+            console.error("Reconnection failed:", reconnectError);
+            toast.error("Unable to reconnect. Please check your network.");
+            return;
+          }
+        }
+        // Invoke SignalR method to join the queue
+        await invokeWithLoading(connection,"ServeQueueMember", Number(eventId), lineMemberId)
+          .then(() => {
+            toast.success("Served Line Member.");
+            getEventQueues();
+          })
+          .catch((err) => {
+            console.error(err);
+            toast.error("Error in exiting queue. Please try again.");
+          });
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
       }
       // Invoke SignalR method to exit the queue
       await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "", -1, "")
@@ -194,6 +255,7 @@ const ViewQueue = () => {
     <div className="max-w-6xl mx-auto p-6">
       <div className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-sage-100'} rounded-xl shadow-lg overflow-hidden transition-colors duration-300`}>
         {/* Header Section */}
+<<<<<<< HEAD
         <div className={`${darkMode ? 'border-gray-700' : 'border-sage-100'} p-6 border-b`}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
             <div>
@@ -205,6 +267,13 @@ const ViewQueue = () => {
               </p>
             </div>
 
+=======
+        <div className="p-6 border-b border-sage-100">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-sage-800 dark:text-gray-100">
+              {event?.title ?? "Queue management"}
+            </h2>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
             <div className="flex gap-2">
               {activeTab === "current" && queue.length > 0 && (
                 <button
@@ -237,6 +306,7 @@ const ViewQueue = () => {
               </button>
             </div>
           </div>
+<<<<<<< HEAD
 
           {/* Stats cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -332,10 +402,16 @@ const ViewQueue = () => {
               </button>
             </div>
           </div>
+=======
+          <p className="text-sage-600 dark:text-sage-400">
+            {event?.description}
+          </p>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
         </div>
 
         {/* Queue Content */}
         <div className="p-6">
+<<<<<<< HEAD
           {activeTab === "current" ? (
             // Current Queue Tab
             queue.length === 0 ? (
@@ -359,6 +435,61 @@ const ViewQueue = () => {
                       <th className={`${darkMode ? 'text-gray-300' : 'text-sage-700'} px-4 py-3 text-left font-semibold text-sm`}>
                         Actions
                       </th>
+=======
+          {queue.length === 0 ? (
+            <div className="text-center py-8 text-sage-500 dark:text-sage-400">
+              No users in the queue
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-sage-50 dark:bg-gray-800">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                      Position
+                    </th>
+                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                      User
+                    </th>
+                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                      Join Time
+                    </th>
+                    <th className="px-4 py-3 text-left text-sage-700 dark:text-gray-300 font-semibold">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sage-100 dark:divide-gray-700">
+                  {queue.map((user, index) => (
+                    <tr
+                      key={user.id}
+                      className="hover:bg-sage-50 dark:hover:bg-gray-800/50 transition-colors"
+                    >
+                      <td className="px-4 py-3 text-sage-600 dark:text-sage-300 font-medium">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-3">
+                        {user.swiftLineUser?.userName ?? "Anonymous attendee"}
+                      </td>
+                      <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
+                        {format(new Date(user.createdAt), "hh:mm:ss a")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          size="sm"
+                          onClick={() => onSkip(user.id)}
+                          disabled={isPaused}
+                          className={`gap-2 ${
+                            isPaused
+                              ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                              : "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/30"
+                          }`}
+                        >
+                          <FiSkipForward className="w-4 h-4" />
+                          Serve
+                        </button>
+                      </td>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
                     </tr>
                   </thead>
                   <tbody className={`${darkMode ? 'divide-gray-700' : 'divide-sage-100'} divide-y`}>

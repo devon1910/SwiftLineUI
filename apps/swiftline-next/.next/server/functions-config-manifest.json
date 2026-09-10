@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/health": {},
+    "/api/health/ready": {},
+    "/api/v1/Event/GetEvent": {},
+    "/api/v1/Event/SearchEvents": {},
+    "/api/v1/events": {},
+    "/api/v1/events/[eventId]": {}
+  }
+}

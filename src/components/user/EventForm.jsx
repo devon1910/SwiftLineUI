@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { createEvent, updateEvent } from "../../services/api/swiftlineService";
@@ -19,17 +20,32 @@ import { LoaderCircle, LockKeyholeOpen } from "lucide-react";
 import { useTheme } from "../../services/utils/useTheme";
 import { ArrowReturnLeft } from "react-bootstrap-icons";
 import { showToast } from "../../services/utils/ToastHelper";
+=======
+import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { createEvent, fetchEventById, updateEvent } from "../../services/swiftlineService";
+import { toast } from "react-toastify";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {  FiClock, FiPlus, FiCheck } from "react-icons/fi";
+import {  LoaderCircle } from "lucide-react";
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
 const EventForm = () => {
   const location = useLocation();
   const navigator = useNavigate();
+<<<<<<< HEAD
   const locationInputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
   const { darkMode } = useTheme();
+=======
+  const { eventId: routeEventId } = useParams();
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
   const editingEvent = location.state?.editingEvent;
+  const isEditing = Boolean(routeEventId || editingEvent);
 
+<<<<<<< HEAD
   const [formData, setFormData] = useState({
     title: editingEvent ? editingEvent.title : "",
     description: editingEvent ? editingEvent.description : "",
@@ -46,6 +62,24 @@ const EventForm = () => {
     eventLongitude: editingEvent ? editingEvent.longitude || null : null,
     radiusInMeters: editingEvent ? editingEvent.radiusInMeters || 100 : 100,
   });
+=======
+  const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
+  const [description, setDescription] = useState(
+    editingEvent ? editingEvent.description : ""
+  );
+  const [averageTime, setAverageTime] = useState(
+    editingEvent ? editingEvent.averageTime : ""
+  );
+  const [capacity, setCapacity] = useState(editingEvent?.capacity ?? 50);
+  const [staffCount, setStaffCount] = useState(editingEvent?.staffCount ?? 1);
+  const [allowAnonymousJoining, setAllowAnonymousJoining] = useState(editingEvent?.allowAnonymousJoining ?? false);
+  const [allowAutomaticSkips, setAllowAutomaticSkips] = useState(editingEvent?.allowAutomaticSkips ?? true);
+  const [enableGeographicRestriction, setEnableGeographicRestriction] = useState(editingEvent?.enableGeographicRestriction ?? false);
+  const [address, setAddress] = useState(editingEvent?.address ?? "");
+  const [latitude, setLatitude] = useState(editingEvent?.latitude ?? null);
+  const [longitude, setLongitude] = useState(editingEvent?.longitude ?? null);
+  const [radiusInMeters, setRadiusInMeters] = useState(editingEvent?.radiusInMeters ?? 0);
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
   const [showRequired, setShowRequired] = useState({
     title: !formData.title,
@@ -179,9 +213,33 @@ const EventForm = () => {
     }));
   };
 
+  useEffect(() => {
+    if (!routeEventId || editingEvent) return;
+    fetchEventById(routeEventId)
+      .then(({ data }) => {
+        const event = data.data;
+        setTitle(event.title);
+        setDescription(event.description);
+        setAverageTime(event.averageTime);
+        setStartTime(event.eventStartTime.slice(0, 5));
+        setEndTime(event.eventEndTime.slice(0, 5));
+        setCapacity(event.capacity);
+        setStaffCount(event.staffCount);
+        setAllowAnonymousJoining(event.allowAnonymousJoining);
+        setAllowAutomaticSkips(event.allowAutomaticSkips);
+        setEnableGeographicRestriction(event.enableGeographicRestriction);
+        setAddress(event.address ?? "");
+        setLatitude(event.latitude ?? null);
+        setLongitude(event.longitude ?? null);
+        setRadiusInMeters(event.radiusInMeters ?? 0);
+      })
+      .catch(() => toast.error("Unable to load the event for editing."));
+  }, [routeEventId, editingEvent]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
+<<<<<<< HEAD
     const eventId = editingEvent ? editingEvent.id : 0;
     if (validateEventStartEnd() && validateGeographicSettings()) {
       const newEvent = {
@@ -200,12 +258,47 @@ const EventForm = () => {
         Latitude: formData.enableGeographicRestriction ? formData.eventLatitude : null,
         Longitude: formData.enableGeographicRestriction ? formData.eventLongitude : null,
         radiusInMeters: formData.enableGeographicRestriction ? formData.radiusInMeters : 0,
+=======
+    const eventId = Number(routeEventId ?? editingEvent?.id ?? 0);
+    if (validateEventStartEnd()) {
+      const newEvent = {
+        eventId,
+        title,
+        description,
+        eventStartTime,
+        eventEndTime,
+        averageTime,
+        capacity: Number(capacity),
+        staffCount: Number(staffCount),
+        allowAnonymousJoining,
+        allowAutomaticSkips,
+        enableGeographicRestriction,
+        address: address || null,
+        latitude,
+        longitude,
+        radiusInMeters: Number(radiusInMeters),
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
       };
 
-      if (editingEvent) {
+      if (isEditing) {
         updateEvent(newEvent)
+<<<<<<< HEAD
           .then(() => {
             toast.success("Event updated successfully!");
+=======
+          .then(() => {})
+          .catch((error) => {
+            console.log(error);
+            toast.error(
+              "There was an error in editing events. Please try again later."
+            );
+          });
+        navigator("/myEvents");
+        //setEvents(updatedEvents);
+      } else {
+        createEvent(newEvent)
+          .then(() => {
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
             navigator("/myEvents");
           })
           .catch((error) => {
@@ -285,6 +378,7 @@ const EventForm = () => {
       `}
       onSubmit={handleSubmit}
     >
+<<<<<<< HEAD
       <div className="flex items-center gap-4 mb-8">
         <button
           type="button"
@@ -319,6 +413,21 @@ const EventForm = () => {
           )}
         </h3>
       </div>
+=======
+      <h3 className="text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
+        {isEditing ? (
+          <>
+            <FiCheck className="w-6 h-6" />
+            Edit Event
+          </>
+        ) : (
+          <>
+            <FiPlus className="w-6 h-6" />
+            Create New Event
+          </>
+        )}
+      </h3>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
       {/* Title Input */}
       <div className="mb-6">
@@ -617,6 +726,7 @@ const EventForm = () => {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* Geographic Restriction Toggle */}
       <div
         className={`mb-6 p-4 rounded-lg border flex items-center justify-between transition-colors duration-300
@@ -1014,6 +1124,25 @@ const EventForm = () => {
             ></div>
           </div>
         </div>
+=======
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label htmlFor="capacity" className="block text-sm font-medium mb-1">Queue capacity</label>
+          <input id="capacity" type="number" min="1" value={capacity} onChange={(event) => setCapacity(event.target.value)} required className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label htmlFor="staffCount" className="block text-sm font-medium mb-1">Staff serving</label>
+          <input id="staffCount" type="number" min="1" max="20" value={staffCount} onChange={(event) => setStaffCount(event.target.value)} required className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <label className="flex items-center gap-3 text-sm">
+          <input type="checkbox" checked={allowAnonymousJoining} onChange={(event) => setAllowAnonymousJoining(event.target.checked)} />
+          Allow attendees to join without an account
+        </label>
+        <label className="flex items-center gap-3 text-sm">
+          <input type="checkbox" checked={allowAutomaticSkips} onChange={(event) => setAllowAutomaticSkips(event.target.checked)} />
+          Automatically advance the queue
+        </label>
+>>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
       </div>
 
       {/* Submit Button */}
@@ -1027,7 +1156,7 @@ const EventForm = () => {
           }
         `}
       >
-        {editingEvent ? (
+        {isEditing ? (
           <>
             <FiCheck className="w-5 h-5" />
             Save Changes

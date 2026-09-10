@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/health/ready/route": "/api/health/ready",
+  "/api/health/route": "/api/health",
+  "/api/v1/Event/GetEvent/route": "/api/v1/Event/GetEvent",
+  "/api/v1/Event/SearchEvents/route": "/api/v1/Event/SearchEvents",
+  "/api/v1/events/[eventId]/route": "/api/v1/events/[eventId]",
+  "/api/v1/events/route": "/api/v1/events",
+  "/page": "/"
+}
