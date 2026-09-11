@@ -11,6 +11,75 @@ namespace ServiceUnitTests;
 public class EventRepoTests
 {
     [Fact]
+    public async Task SearchEvents_ExcludesSoftDeletedRows_AndProjectsThePublicContract()
+    {
+        await using var context = CreateContext();
+        context.SwiftLineUsers.Add(new SwiftLineUser
+        {
+            Id = "search-owner",
+            UserName = "owner@example.test"
+        });
+        context.Events.AddRange(
+            new Event
+            {
+                Id = 501,
+                Title = "Visible event",
+                Description = "Public description",
+                CreatedBy = "search-owner",
+                CreatedAt = new DateTime(2026, 1, 2),
+                AverageTime = 15,
+                EventStartTime = TimeOnly.Parse("09:00"),
+                EventEndTime = TimeOnly.Parse("17:00"),
+                StaffCount = 2,
+                UsersInQueue = 4,
+                IsActive = true,
+                AllowAnonymousJoining = true,
+                EnableGeographicRestriction = false,
+                Address = "Queue Street"
+            },
+            new Event
+            {
+                Id = 502,
+                Title = "Deleted event",
+                Description = "Must not be public",
+                CreatedBy = "search-owner",
+                CreatedAt = new DateTime(2026, 1, 3),
+                AverageTime = 15,
+                EventStartTime = TimeOnly.Parse("09:00"),
+                EventEndTime = TimeOnly.Parse("17:00"),
+                StaffCount = 2,
+                IsDeleted = true
+            });
+        await context.SaveChangesAsync();
+
+        var repository = CreateRepository(context);
+
+        var result = await repository.SearchEvents(1, 10, "event", "search-owner");
+
+        var item = Assert.Single(result.Events);
+        Assert.Equal(501, item.Id);
+        Assert.Equal("Visible event", item.Title);
+        Assert.Equal("owner@example.test", item.Organizer);
+        Assert.True(item.CanManage);
+        Assert.Equal(1, result.TotalPages);
+        Assert.False(result.IsUserInQueue);
+        Assert.DoesNotContain(result.Events, candidate => candidate.Title == "Deleted event");
+    }
+
+    [Fact]
+    public async Task SearchEvents_UsesAnonymousQueueDefaults_WhenViewerIsMissing()
+    {
+        await using var context = CreateContext();
+        var repository = CreateRepository(context);
+
+        var result = await repository.SearchEvents(1, 10, "", null);
+
+        Assert.Empty(result.Events);
+        Assert.False(result.IsUserInQueue);
+        Assert.Equal(0, result.lastEventJoined);
+    }
+
+    [Fact]
     public async Task CreateEvent_ParsesTimeCorrectly_WhenValidTimesProvided()
     {
         await using var context = CreateContext();

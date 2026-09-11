@@ -2,6 +2,7 @@
 using Domain.DTOs.Responses;
 using Domain.Interfaces;
 using Domain.Models;
+using Application.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -38,6 +39,11 @@ namespace Application.Services
 
         public async Task<Result<Event>> GetEvent(long eventId)
         {
+            if (!EventRequestValidation.IsValidEventId(eventId))
+            {
+                return Result<Event>.Failed(EventRequestValidation.InvalidEventIdMessage);
+            }
+
             var @event = await eventRepo.GetEvent(eventId);
             if (@event is null)
             {
@@ -66,8 +72,17 @@ namespace Application.Services
             return Result<bool>.Ok(true);
         }
 
-        public async Task<Result<SearchEventsRes>> SearchEvents(int page, int size, string searchQuery, string userId)
+        public async Task<Result<SearchEventsRes>> SearchEvents(int page, int size, string searchQuery, string? userId)
         {
+            if (!EventRequestValidation.IsValidSearchPagination(page, size))
+            {
+                var message = page is < EventRequestValidation.MinPage or > EventRequestValidation.MaxPage
+                    ? EventRequestValidation.InvalidPageMessage(page)
+                    : EventRequestValidation.InvalidSizeMessage(size);
+
+                return Result<SearchEventsRes>.Failed(message);
+            }
+
             var result = await eventRepo.SearchEvents(page, size, searchQuery, userId);
 
             return Result<SearchEventsRes>.Ok(result);

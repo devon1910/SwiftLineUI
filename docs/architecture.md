@@ -1,72 +1,81 @@
-# SwiftLine target architecture
+# SwiftLine bounded migration architecture
 
-## Decision
+## Current state
 
-SwiftLine is maintained in one repository but deployed as three processes:
+The repository currently has three relevant runtime slices:
 
-1. The React web application serves public, attendee, and organizer experiences.
-2. The ASP.NET Core API owns authentication, queue commands, queries, and SignalR.
-3. The .NET Worker owns queue progression, email delivery, and anonymous-account cleanup.
+1. The React/Vite client in src/.
+2. The ASP.NET Core API in services/swiftline/SwiftLine.API/.
+3. A Next.js and Node foundation in apps/swiftline-next/.
 
-PostgreSQL remains the system of record. The API and worker share the existing Domain, Application, and Infrastructure projects.
+The .NET solution has no SwiftLine.Worker executable. Program.cs registers LineManager and AccountsCleanup as hosted services inside the API and conditionally registers EmailDeliveryJob when `Workers:EmailDeliveryEnabled` is `true`; that setting defaults to `true`. The API also owns Identity, queue commands, organizer operations, SignalR, push notifications, email-row production, and EF Core migrations. The Next and worker code is not a production cutover by itself.
 
-The worker must remain continuously available and must not be implemented as a request-scoped or serverless web function. Until distributed coordination is implemented, exactly one worker replica may run.
+## First-cut topology
 
-## Runtime topology
+The first cut is public event reads plus email delivery only:
 
-```text
-Browser / installable web app
-          |
-          +---- HTTPS ---- ASP.NET Core API ---- PostgreSQL
-          |                    |
-          +-- WebSocket -------+---- SignalR
-                               |
-                         .NET Worker
-                         |    |     |
-                       queue email cleanup
-```
+    Internet
+       |
+    TLS ingress / reverse proxy
+       |-- /api/v1/Event/GetEvent       -> Next.js route -> PostgreSQL
+       |-- /api/v1/Event/SearchEvents   -> Next.js route -> PostgreSQL
+       |-- /api/v1/* (all other routes) -> ASP.NET Core API
+       +-- /queueHub (WebSocket)        -> ASP.NET Core API
 
-The first production deployment may keep the existing Azure App Service for the API. The worker can run as a continuous WebJob or an independently hosted worker with a minimum of one replica. Horizontal API scaling requires Azure SignalR Service or another supported backplane. Horizontal worker scaling additionally requires distributed leases or atomic row claiming.
+    Private network
+       |-- PostgreSQL (shared system of record)
+       |-- ASP.NET Core API, one replica
+       |-- Next.js web process
+       +-- Node email worker, one replica
 
-## Migration gates
+This is a provider-neutral, low-cost shape for one small host or low-cost container host with a private PostgreSQL service. A managed database is preferred where its backup/PITR policy is affordable. A same-host database is a single failure domain and is acceptable only with encrypted off-host backups and a tested restore.
 
-### Gate 1: contract and authorization
+The current Next handlers read PostgreSQL directly. They are not a proxy to the .NET API and must therefore be tested against the same schema and public response fixtures before cutover. The current web foundation exposes a liveness/readiness route at /api/health and /api/health/ready.
 
-- Every frontend endpoint matches the OpenAPI contract.
-- Queue mutations derive identity from authenticated claims.
-- Organizer mutations verify event ownership.
-- Shared event and queue-management URLs survive a page reload.
+## Ownership boundary
 
-### Gate 2: queue integrity
+| Capability | First-cut owner | Notes |
+| --- | --- | --- |
+| GET /api/v1/Event/GetEvent?eventId= | Next.js | Exact legacy path and Result envelope; public DTO-shaped read from shared PostgreSQL |
+| GET /api/v1/Event/SearchEvents?Page=&Size=&Query= | Next.js | Exact legacy path, pagination parameters, and public search shape |
+| Identity, JWT, refresh/revocation, Google login, verification, Turnstile | .NET API | No Next auth cutover |
+| Queue join, exit, serve, pause/resume, queue info, and organizer queue management | .NET API and SignalR | No queue mutation is in the first slice |
+| Organizer event create/edit/delete | .NET API | No organizer write cutover |
+| SignalR /queueHub and push notifications | .NET API | The ingress must forward WebSocket upgrades |
+| LineManager auto-serving/skipping | .NET API | Still a hosted loop inside the API |
+| AccountsCleanup | .NET API | Still a hosted loop inside the API |
+| Email-row creation | .NET API | Node consumes delivery rows only |
+| Email delivery | Node email worker after handoff | Set `Workers__EmailDeliveryEnabled=false` and deploy/restart .NET first; the `Workers:EmailDeliveryEnabled` setting defaults to `true` |
+| Database schema and migration history | .NET/Infrastructure | The Next lease SQL is additive and operator-applied |
 
-- Concurrent joins cannot exceed capacity or create duplicate active memberships.
-- Serve and leave transitions are idempotent and transactional.
-- New timestamps are stored as UTC.
-- Worker retries cannot double-send or double-serve work.
+The lowercase Next route aliases in the current scaffold are not part of the first-cut public contract. Do not route or advertise them as replacements for the exact legacy-cased Event routes.
 
-### Gate 3: attendee vertical slice
+## Single-worker safety
 
-- A user can open a shared event link, authenticate or join anonymously when permitted, enter the queue, reconnect, receive position updates, and leave or be served.
-- Loading, empty, offline, reconnecting, paused, and error states are explicit and accessible.
+The Node email worker claims rows from public.EmailDeliveryRequests using PostgreSQL row leases and an advisory leader lock. The lease migration adds LeaseOwner, LeaseUntil, LastAttemptAt, NextAttemptAt, LastError, and DeadLetteredAt plus a claim index. The lock and leases are defenses, not permission to scale the worker casually.
 
-### Gate 4: organizer vertical slice
+Run exactly one email-worker replica during the first cut. Keep the API at one replica too, because the current hosted loops would otherwise run more than once and the notifier stores user connections in an in-process dictionary. If the worker is later scaled, prove advisory-lock failover, lease expiry, graceful shutdown, and duplicate-send handling with PostgreSQL integration tests first.
 
-- An organizer can create an event with all current backend settings, manage its live queue, and view analytics.
-- Unauthorized users cannot inspect or mutate another organizer's queue.
+SMTP is at-least-once. A process crash after provider acceptance and before the acknowledgement update can send the same message again. A lease prevents concurrent claims but cannot provide exactly-once SMTP.
 
-### Gate 5: production cutover
+## Realtime gap
 
-- Database backup and explicit migration procedure are tested.
-- API, worker, database, and SignalR health are observable.
-- Critical attendee and organizer journeys pass automated browser tests.
-- The previous deployment remains available for rollback during cutover.
+The existing browser client connects to the .NET /queueHub endpoint and supplies its JWT as the SignalR access token. The first Next slice keeps that endpoint on .NET. Next.js route handlers and the Node email worker do not replace SignalR. Do not add API replicas until a supported SignalR backplane or managed SignalR service is selected and tested.
 
-## Contract strategy
+## Environment separation
 
-The ASP.NET Core OpenAPI document is authoritative. The web application should consume a generated TypeScript client rather than manually composing endpoint URLs or reading unvalidated response shapes. Breaking API changes require a versioned contract or a compatibility period.
+The current Next server-side read foundation consumes DATABASE_URL, DB_POOL_MAX, DB_IDLE_TIMEOUT_MS, DB_CONNECTION_TIMEOUT_MS, JWT_ISSUER, JWT_AUDIENCE, JWT_ALGORITHM, JWT_SECRET, and optional SWIFTLINE_EVENT_TIME_ZONE. The worker consumes only database, EMAIL_WORKER_*, SMTP/provider, module override, and health settings; it does not receive the JWT secret.
 
-## Deferred decisions
+The .NET API continues to own ConnectionStrings__Database, JWT__secret, JWT__ValidIssuer, JWT__ValidAudience, Authentication__Google__ClientId, Authentication__Google__ClientSecret, Smtp__FromEmail, Smtp__Host, Smtp__Port, Smtp__Username, Smtp__Password, SwiftLineBaseUrl, Vapid_PublicKey, Vapid_PrivateKey, and `Workers__EmailDeliveryEnabled`. Set the worker switch explicitly to `false` for the Node handoff; if omitted, it defaults to `true`. Do not expose any of these through a client bundle.
 
-- Whether to migrate the web runtime from Vite to Next.js after the stabilized attendee slice.
-- Whether Azure SignalR Service is needed at current connection volume.
-- Whether PostgreSQL row claiming is sufficient for outbound email and push delivery or a dedicated message broker is warranted.
+The existing .NET CORS policy contains hard-coded localhost and current-site origins. The final Next origin must be added and tested before authenticated browser flows; this documentation does not claim that it is already configured.
+
+## Production gates
+
+- Exact public event GET fixtures match the .NET behavior for found, missing, empty, invalid, and error cases.
+- The additive email lease SQL has been applied to a restored staging copy and existing .NET email-row producers still work.
+- .NET is deployed/restarted with `Workers__EmailDeliveryEnabled=false`, and EmailDeliveryJob is verified unregistered/stopped before Node is enabled.
+- One API replica and one email-worker replica are enforced.
+- PostgreSQL backup restore, migration, lease-claim, and concurrency tests pass.
+- WebSocket upgrade works through ingress for /queueHub.
+- The prior Vite artifact, .NET API deployment, ingress rules, and database recovery path remain available for rollback.

@@ -2,8 +2,8 @@
 using Domain.DTOs.Requests;
 using Domain.DTOs.Responses;
 using Domain.Interfaces;
-using Domain.Models;
 using NSubstitute;
+using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,88 @@ namespace ServiceUnitTests
             _eventService = new EventService(_eventsRepoMock);
         }
 
+        private static PublicSearchEventRes SearchEvent(
+            long id = 1,
+            string title = "Event",
+            string description = "",
+            string organizer = "Organizer",
+            bool hasStarted = false,
+            int staffCount = 1,
+            bool isActive = true) => new(
+                id,
+                title,
+                description,
+                15,
+                TimeOnly.Parse("15:00"),
+                TimeOnly.Parse("14:00"),
+                0,
+                organizer,
+                hasStarted,
+                staffCount,
+                isActive,
+                false,
+                false,
+                null,
+                null,
+                false);
+
         #region Search Events
+
+        [Fact]
+        public void SearchEvents_UsesTheSafeCamelCaseContractInsideTheLegacyResultEnvelope()
+        {
+            var payload = new SearchEventsRes(
+                new List<PublicSearchEventRes>
+                {
+                    SearchEvent(id: 42, title: "Contract fixture", organizer: "fixture-owner")
+                },
+                TotalPages: 1,
+                IsUserInQueue: true,
+                lastEventJoined: 42);
+
+            var json = JsonSerializer.Serialize(
+                Result<SearchEventsRes>.Ok(payload),
+                new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+            var data = root.GetProperty("data");
+            var item = data.GetProperty("events")[0];
+
+            Assert.Equal(
+                new[] { "data", "message", "status" },
+                root.EnumerateObject().Select(property => property.Name));
+            Assert.Equal(
+                new[] { "events", "isUserInQueue", "lastEventJoined", "totalPages" },
+                data.EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.Equal(
+                new[]
+                {
+                    "address",
+                    "allowAnonymousJoining",
+                    "averageTime",
+                    "canManage",
+                    "description",
+                    "enableGeographicRestriction",
+                    "eventEndTime",
+                    "eventStartTime",
+                    "hasStarted",
+                    "id",
+                    "isActive",
+                    "organizer",
+                    "radiusInMeters",
+                    "staffCount",
+                    "title",
+                    "usersInQueue"
+                },
+                item.EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.Equal("Contract fixture", item.GetProperty("title").GetString());
+            Assert.Equal("fixture-owner", item.GetProperty("organizer").GetString());
+            Assert.Equal(42, item.GetProperty("id").GetInt64());
+            Assert.Equal(42, data.GetProperty("lastEventJoined").GetInt64());
+            Assert.False(item.TryGetProperty("createdBy", out _));
+            Assert.False(item.TryGetProperty("isDeleted", out _));
+            Assert.False(item.TryGetProperty("swiftLineUser", out _));
+        }
 
         [Fact]
         public async Task SearchEvents_ReturnsExpectedResult_WhenQueryIsEmpty()
@@ -35,16 +116,9 @@ namespace ServiceUnitTests
             var userId = "user123";
 
             var mockResult = new SearchEventsRes(
-                new List<Event>
+                new List<PublicSearchEventRes>
                 {
-                new Event { 
-                    Id = 1, 
-                    Title = "Swift Summit", 
-                    Organizer = "Alice", 
-                    HasStarted = false,
-                    EventEndTime= TimeOnly.Parse("14:00"),
-                    EventStartTime = TimeOnly.Parse("15:00"),
-                    }
+                    SearchEvent(id: 1, title: "Swift Summit", organizer: "Alice")
                 },
                 TotalPages: 1,
                 IsUserInQueue: true,
@@ -75,7 +149,7 @@ namespace ServiceUnitTests
             var userId = "user456";
 
             var mockResult = new SearchEventsRes(
-                new List<Event>(),
+                new List<PublicSearchEventRes>(),
                 TotalPages: 0,
                 IsUserInQueue: false,
                 lastEventJoined: 0
@@ -103,16 +177,10 @@ namespace ServiceUnitTests
             var query = "";
             var userId = "user789";
 
-            var eventList = new List<Event>();
+            var eventList = new List<PublicSearchEventRes>();
             for (int i = 0; i < size; i++)
             {
-                eventList.Add(new Event {
-                    Id = i + 1, 
-                    Title = $"Event {i + 1}", 
-                    Organizer = "Organizer",
-                    EventEndTime = TimeOnly.Parse("12:00"),
-                    EventStartTime = TimeOnly.Parse("15:00")
-                });
+                eventList.Add(SearchEvent(id: i + 1, title: $"Event {i + 1}"));
             }
 
             var mockResult = new SearchEventsRes(
@@ -142,20 +210,15 @@ namespace ServiceUnitTests
             var userId = "userXYZ";
 
             var mockResult = new SearchEventsRes(
-                new List<Event>
+                new List<PublicSearchEventRes>
                 {
-                new Event
-                {
-                    Id = 2,
-                    Title = "SwiftLine Launch",
-                    Description = "Big launch!",
-                    Organizer = "John Doe",
-                    HasStarted = true,
-                    StaffCount = 5,
-                    IsActive = true,
-                    EventEndTime = TimeOnly.Parse("12:00"),
-                    EventStartTime = TimeOnly.Parse("15:00"),
-                }
+                    SearchEvent(
+                        id: 2,
+                        title: "SwiftLine Launch",
+                        description: "Big launch!",
+                        organizer: "John Doe",
+                        hasStarted: true,
+                        staffCount: 5)
                 },
                 TotalPages: 1,
                 IsUserInQueue: true,

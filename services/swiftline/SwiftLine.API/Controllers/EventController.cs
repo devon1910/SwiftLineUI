@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Constants;
+using Application.Validation;
 using Domain.DTOs.Requests;
 using Domain.DTOs.Responses;
 using Domain.Interfaces;
@@ -29,9 +30,14 @@ namespace SwiftLine.API.Controllers
 
       
         [HttpGet, AllowAnonymous]
-        public async Task<ActionResult<Result<PublicEventRes>>> GetEvent(long eventId)
+        public async Task<ActionResult<Result<PublicEventRes>>> GetEvent([FromQuery] string? eventId)
         {
-            var res = await eventService.GetEvent(eventId);
+            if (!EventRequestValidation.TryParseEventId(eventId, out var parsedEventId))
+            {
+                return Result<PublicEventRes>.Failed(EventRequestValidation.InvalidEventIdMessage).ToActionResult();
+            }
+
+            var res = await eventService.GetEvent(parsedEventId);
             if (!res.Status || res.Data is null)
                 return Result<PublicEventRes>.NotFound(res.Message ?? "Event not found").ToActionResult();
 
@@ -80,7 +86,16 @@ namespace SwiftLine.API.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult<Result<SearchEventsRes>>> SearchEvents(int Page, int Size, string Query="")
         {
-           var res = await eventService.SearchEvents(Page,Size,Query, UserId);
+            if (!EventRequestValidation.IsValidSearchPagination(Page, Size))
+            {
+                var message = Page is < EventRequestValidation.MinPage or > EventRequestValidation.MaxPage
+                    ? EventRequestValidation.InvalidPageMessage(Page)
+                    : EventRequestValidation.InvalidSizeMessage(Size);
+
+                return Result<SearchEventsRes>.Failed(message).ToActionResult();
+            }
+
+            var res = await eventService.SearchEvents(Page,Size,Query, UserId);
 
             return res.ToActionResult();
         }

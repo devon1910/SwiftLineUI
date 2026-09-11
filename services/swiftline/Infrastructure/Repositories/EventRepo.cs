@@ -506,10 +506,15 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        public async Task<SearchEventsRes> SearchEvents(int page, int size, string query, string userId)
+        public async Task<SearchEventsRes> SearchEvents(int page, int size, string query, string? userId)
         {
             var baseQuery = dbContext.Events
-       .AsNoTracking();
+                .AsNoTracking()
+                // Keep this predicate beside the public query even though the
+                // DbContext also has a global filter. It makes this endpoint's
+                // visibility rule explicit and protects it if that filter is
+                // ever changed or bypassed for another reason.
+                .Where(x => !x.IsDeleted);
 
             // Only apply filter if query exists
             if (!string.IsNullOrEmpty(query))
@@ -517,39 +522,40 @@ namespace Infrastructure.Repositories
                 baseQuery = baseQuery.Where(x => EF.Functions.Like(x.Title.ToLower(), $"%{query.ToLower()}%"));
             }
 
-            baseQuery = baseQuery.OrderBy(x => x.EventStartTime);
-
             // Execute one query to get total count
             var totalCount = await baseQuery.CountAsync();
             var pageCount = (totalCount + size - 1) / size;
 
             // Execute second query to get paginated data
             var eventsData = await baseQuery
-                .OrderByDescending(x=>x.CreatedAt)
+                .OrderByDescending(x => x.CreatedAt)
+                .ThenByDescending(x => x.Id)
                 .Skip((page - 1) * size)
                 .Take(size)
                 .Include(x => x.SwiftLineUser)
                 .ToListAsync();
 
             // Process the data in memory since the time comparison logic can't be translated to SQL
-            var events = eventsData.Select(x => new Event
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description,
-                AverageTime = x.AverageTime,
-                EventStartTime = x.EventStartTime,
-                EventEndTime = x.EventEndTime,
-                UsersInQueue = x.UsersInQueue,
-                Organizer = x.SwiftLineUser.UserName,
-                HasStarted = IsEventActive(x.EventStartTime, x.EventEndTime),
-                StaffCount = x.StaffCount,
-                IsActive = x.IsActive,
-                AllowAnonymousJoining = x.AllowAnonymousJoining,
-                EnableGeographicRestriction = x.EnableGeographicRestriction,
-                RadiusInMeters = x.RadiusInMeters,
-                Address = x.Address
-            }).ToList();
+            var events = eventsData.Select(x => new PublicSearchEventRes(
+                x.Id,
+                x.Title ?? string.Empty,
+                x.Description ?? string.Empty,
+                x.AverageTime,
+                x.EventStartTime,
+                x.EventEndTime,
+                x.UsersInQueue,
+                string.IsNullOrEmpty(x.SwiftLineUser?.UserName)
+                    ? "SwiftLine organizer"
+                    : x.SwiftLineUser.UserName,
+                IsEventActive(x.EventStartTime, x.EventEndTime),
+                x.StaffCount,
+                x.IsActive,
+                x.AllowAnonymousJoining,
+                x.EnableGeographicRestriction,
+                x.RadiusInMeters,
+                x.Address,
+                !string.IsNullOrEmpty(userId) && x.CreatedBy == userId))
+                .ToList();
 
             // Execute user query in parallel
             var user = await getUser(userId);
@@ -562,8 +568,10 @@ namespace Infrastructure.Repositories
             );
         }
 
-        private async Task<SwiftLineUser> getUser(string userId)
+        private async Task<SwiftLineUser?> getUser(string? userId)
         {
+            if (string.IsNullOrEmpty(userId)) return null;
+
             return await dbContext.SwiftLineUsers.FindAsync(userId);
         }
 

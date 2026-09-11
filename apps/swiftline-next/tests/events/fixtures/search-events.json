@@ -1,0 +1,29 @@
+{
+  "data": {
+    "events": [
+      {
+        "id": 9007199254740991,
+        "title": "Cross-runtime fixture",
+        "description": "One captured event",
+        "averageTime": 15,
+        "eventStartTime": "09:00:00",
+        "eventEndTime": "17:00:00",
+        "usersInQueue": 4,
+        "organizer": "fixture-owner@example.test",
+        "hasStarted": true,
+        "staffCount": 2,
+        "isActive": true,
+        "allowAnonymousJoining": true,
+        "enableGeographicRestriction": false,
+        "radiusInMeters": 250,
+        "address": "Queue Street",
+        "canManage": true
+      }
+    ],
+    "totalPages": 1,
+    "isUserInQueue": true,
+    "lastEventJoined": 9007199254740990
+  },
+  "message": "Operation completed successfully",
+  "status": true
+}

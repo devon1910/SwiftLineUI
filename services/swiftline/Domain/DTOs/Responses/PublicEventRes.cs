@@ -1,6 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Domain.DTOs.Responses;
 
 public record PublicEventRes(
+    [property: JsonConverter(typeof(PublicEventJsonLongConverter))]
     long Id,
     string Title,
     string Description,

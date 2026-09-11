@@ -1,0 +1,36 @@
+# Dependencies and generated build output
+node_modules/
+.next/
+dist/
+out/
+coverage/
+*.tsbuildinfo
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Logs, reports, and local runtime state
+*.log
+logs/
+tmp/
+.cache/
+
+# Version-control metadata and editor/OS noise
+.git/
+.gitignore
+.gitattributes
+.github/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+

@@ -83,7 +83,10 @@ try
     });
     builder.Services.AddHostedService<LineManager>();
     builder.Services.AddHostedService<AccountsCleanup>();
-    builder.Services.AddHostedService<EmailDeliveryJob>();
+    if (builder.Configuration.GetValue("Workers:EmailDeliveryEnabled", true))
+    {
+        builder.Services.AddHostedService<EmailDeliveryJob>();
+    }
     //builder.Services.AddSingleton(mlContext);
     //builder.Services.AddSingleton(trainedModel);
 

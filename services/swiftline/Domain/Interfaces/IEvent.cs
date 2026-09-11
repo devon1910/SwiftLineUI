@@ -38,7 +38,7 @@ namespace Domain.Interfaces
 
         public Task<bool> ToggleQueueActivity(bool status, string userId, long eventId);
 
-        public Task<SearchEventsRes> SearchEvents(int page, int size, string query, string userId);
+        public Task<SearchEventsRes> SearchEvents(int page, int size, string query, string? userId);
 
     }
     public interface IEventService
@@ -55,7 +55,7 @@ namespace Domain.Interfaces
         public Task<Result<EventQueueRes>> GetEventQueue(int currentMembersPage, int pastMembersPage, int size, long eventId);
         public Task<Result<GetUserEventsRes>> GetUserEvents(string userId);
         public Result<bool> DeleteEvent(long Id);
-        public Task<Result<SearchEventsRes>> SearchEvents(int page, int size, string query, string userId);
+        public Task<Result<SearchEventsRes>> SearchEvents(int page, int size, string query, string? userId);
 
         public Task AddEvent(Event evt);
         public Task<int> SaveChangesAsync();
