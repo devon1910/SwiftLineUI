@@ -1,6 +1,6 @@
 import { HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { getStoredAccessToken } from "./authStorage";
-import { useLoading } from "./useLoader";
+import { useLoading } from "./utils/useLoader";
 
 const signalRBaseUrl = `${String(import.meta.env.VITE_API_SIGNALR_URL ?? "").replace(/\/+$/, "")}/`;
 

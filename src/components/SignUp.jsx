@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { CheckCircle, Eye, EyeSlashFill } from "react-bootstrap-icons";
 import { SignUpUser } from "../services/swiftlineService";
 import { toast } from "react-toastify";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "./common/GlobalSpinner";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const handleGoogleSignIn = async () => {

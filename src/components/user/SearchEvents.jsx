@@ -1,46 +1,10 @@
-<<<<<<< HEAD
-import React, { useContext, useEffect, useState } from "react";
-import {
-  connection,
-  ensureConnection,
-  useSignalRWithLoading,
-} from "../../services/api/SignalRConn.js";
-import {
-  useNavigate,
-  useOutletContext,
-  useSearchParams,
-} from "react-router-dom";
-import EventCard from "../common/EventCard.jsx";
-import { useDebounce } from "@uidotdev/usehooks";
-import PaginationControls from "../common/PaginationControl.jsx";
-import GlobalSpinner from "../common/GlobalSpinner.jsx";
-import { showToast } from "../../services/utils/ToastHelper.jsx";
-import { saveAuthTokensFromSignalR } from "../../services/utils/authUtils.js";
-import { eventsList } from "../../services/api/swiftlineService.js";
-
-export const SearchEvents = () => {
-  let userId = localStorage.getItem("userId") || null;
-  const { userName, setShowAuthModal } = useOutletContext();
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isUserInQueue, setIsUserInQueue] = useState(false);
-  const [lastEventJoined, setLastEventJoined] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState(null);
-  const [isReconnecting, setIsReconnecting] = useState(false); // New state for reconnecting
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false); // New state for creating account
-  const eventsPerPage = 6;
-=======
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FiRefreshCw, FiSearch, FiX } from "react-icons/fi";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import EventCard from "../EventCard.jsx";
-import PaginationControls from "../PaginationControl.jsx";
+import PaginationControls from "../common/PaginationControl.jsx";
 import {
   connection,
   ensureSignalRConnected,
@@ -93,7 +57,6 @@ export const SearchEvents = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
   const [searchParams, updateSearchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -113,19 +76,6 @@ export const SearchEvents = () => {
     setIsLoading(true);
     setError("");
 
-<<<<<<< HEAD
-  const fetchEvents = async (page = 1, search = "") => {
-    try {
-      eventsList(page, eventsPerPage, search).then((response) => {
-        setEvents(response.data.data.events);
-        setTotalPages(response.data.data.totalPages);
-        setIsUserInQueue(response.data.data.isUserInQueue);
-        setLastEventJoined(response.data.data.lastEventJoined);
-        setSelectedEventId(searchParams.get("eventId"));
-      });
-    } catch (error) {
-      console.log(error);
-=======
     try {
       const response = await eventsList(page, EVENTS_PER_PAGE, search);
       if (requestId !== latestRequestRef.current) return;
@@ -143,21 +93,12 @@ export const SearchEvents = () => {
       setTotalPages(1);
       setIsUserInQueue(false);
       console.error("Failed to load events", requestError);
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
     } finally {
       if (requestId === latestRequestRef.current) setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-<<<<<<< HEAD
-    const urlSearchTerm = searchParams.get("search");
-    if (urlSearchTerm) {
-      setSearchTerm(urlSearchTerm);
-      fetchEvents(1, urlSearchTerm);
-    } else {
-      fetchEvents(currentPage, debouncedSearchTerm);
-=======
     const sharedSearchTerm = searchParams.get("search");
     if (
       searchParams.get("eventId") &&
@@ -165,31 +106,12 @@ export const SearchEvents = () => {
       sharedSearchTerm !== searchTerm
     ) {
       setSearchTerm(sharedSearchTerm);
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
     }
   }, [searchParams, searchTerm]);
 
   useEffect(() => {
     fetchEvents(requestPage, requestSearch);
   }, [fetchEvents, requestPage, requestSearch]);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const eventId = queryParams.get("eventId");
-
-    if (eventId) {
-      // Automatically join the queue if the user came from a QR code
-      const event = events.find((e) => e.id.toString() === eventId);
-      if (event) {
-        joinQueue(event);
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        ); // Clear the URL parameter after joining
-      }
-    }
-  }, [events]);
 
   const handlePageChange = (newPage) => {
     if (!isLoading && newPage >= 1 && newPage <= totalPages) {
@@ -212,24 +134,6 @@ export const SearchEvents = () => {
   };
 
   const joinQueue = async (event) => {
-<<<<<<< HEAD
-    // if (!userId || !token) {
-    //   if(event.allowAnonymousJoining){
-    //     //create User
-    //     setIsCreatingAccount(true); // Show loading indicator
-    //     await CreateAnonymousUser().then((response) => {
-    //       saveAuthTokens(response);
-    //       setIsCreatingAccount(false); // Hide loading indicator
-    //     }).catch(() => {
-    //       setIsCreatingAccount(false); // Hide loading indicator
-    //     });
-    //   }else{
-    //     showToast.error("Please login or sign up to join a queue");
-    //     localStorage.setItem("from", location.href);
-    //     setShowAuthModal("login");
-    //     return;
-    //   }
-=======
     if (joinInFlightRef.current) return;
 
     if (!userId && !event.allowAnonymousJoining) {
@@ -241,159 +145,16 @@ export const SearchEvents = () => {
       });
       return;
     }
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
 
-    // }
+    if (isUserInQueue) {
+      toast.warning("You're already in a queue");
+      return;
+    }
 
     joinInFlightRef.current = true;
     setJoiningEventId(event.id);
 
     try {
-<<<<<<< HEAD
-      setIsLoading(true);
-      if (isUserInQueue) {
-        showToast.error("You're already in a queue.");
-        return;
-      }
-      if (!userId && !event.allowAnonymousJoining) {
-        showToast.error(
-          "The Event Organizer has disabled anonymous joining. Please login or sign up to join this queue"
-        );
-        setShowAuthModal("login");
-        return;
-      }
-      if (event.enableGeographicRestriction) {
-        if (navigator.geolocation) {
-          try {
-            const position = await new Promise((resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-
-            if (position) {
-              const { latitude, longitude } = position.coords;
-              const distance = calculateDistance(
-                event.latitude,
-                event.longitude,
-                latitude,
-                longitude
-              );
-
-              console.log(event);
-              if (distance > event.radiusInMeters) {
-                showToast.error(
-                  `You are ${Math.round(
-                    distance,
-                    2
-                  )} meters away from the event Location. Please move closer to at least ${
-                    event.radiusInMeters
-                  } meters to join the queue.`
-                );
-                return;
-              }
-            }
-          } catch (error) {
-            if (error.code === error.PERMISSION_DENIED) {
-              showToast.error(
-                "Please enable location services to join as this event is geographically restricted."
-              );
-            } else {
-              showToast.error(
-                "An error occurred while getting your location. Please try again."
-              );
-            }
-            return;
-          }
-        } else {
-          showToast.error("Your browser does not support geolocation.");
-          return;
-        }
-      }
-
-      function calculateDistance(lat1, lon1, lat2, lon2) {
-        const toRad = (value) => (value * Math.PI) / 180;
-        const R = 6371; // Radius of the Earth in kilometers
-        const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(toRad(lat1)) *
-            Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c; // Distance in kilometers
-      }
-
-      const joinQueueLogic = async () => {
-        try {
-          setIsReconnecting(true); // Show loading indicator
-          await ensureConnection();
-          const res = await invokeWithLoading(
-            connection,
-            "JoinQueueGroup",
-            event.id,
-            JSON.parse(userId)
-          );
-
-          saveAuthTokensFromSignalR(res);
-          await connection.stop(); // Stop if already connected
-          await connection.start();
-
-          if (!res.status) {
-            showToast.error(res.message);
-            return;
-          }
-          showToast.success("Joined queue successfully");
-          localStorage.setItem("showFeedbackForm", true);
-          navigate("/myQueue");
-        } catch (error) {
-          showToast.error(
-            "Failed to join queue. please try again later. if the problem persists, please contact support."
-          );
-          console.log("Error joining queue:", error);
-        } finally {
-          setIsReconnecting(false); // Hide loading indicator
-        }
-      };
-
-      if (!event.isActive) {
-        const confirmValue = confirm(
-          "This event has been paused by the Organizer. The estimated wait time in queue would start counting once the event is resumed. Do you want to continue?"
-        );
-        if (confirmValue) {
-          joinQueueLogic();
-        }
-      } else {
-        joinQueueLogic();
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleShare = (eventTitle) => {
-    const searchUrl = `${
-      window.location.origin
-    }/search?search=${encodeURIComponent(eventTitle)}`;
-
-    navigator.clipboard
-      .writeText(searchUrl)
-      .then(() => showToast.success("Event link copied!"))
-      .catch(() => {
-        // Fallback for browsers without clipboard API
-        const textArea = document.createElement("textarea");
-        textArea.value = searchUrl;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-          document.execCommand("copy");
-          showToast.success("Link copied!");
-        } catch (err) {
-          console.log(err);
-        }
-=======
       const response = await invokeWithLoading(
         connection,
         "JoinQueueGroup",
@@ -443,7 +204,6 @@ export const SearchEvents = () => {
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand("copy");
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
         document.body.removeChild(textArea);
       }
       toast.success("Event link copied!");
@@ -453,57 +213,6 @@ export const SearchEvents = () => {
     }
   };
 
-<<<<<<< HEAD
-  return (
-    <div
-      className={`p-4 md:p-6 lg:p-8 max-w-7xl mx-auto ${
-        isReconnecting ? "opacity-50 pointer-events-none" : ""
-      }`}
-    >
-      {isReconnecting && <GlobalSpinner />}{" "}
-      {/* Show spinner during reconnection */}
-      {isCreatingAccount && <GlobalSpinner />}{" "}
-      {/* Show spinner during account creation */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold ">Featured Events</h2>
-        <div className="w-full md:max-w-xs">
-          <input
-            type="text"
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500"
-          />
-        </div>
-      </div>
-      {isLoading ? (
-        <GlobalSpinner />
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                isUserInQueue={isUserInQueue}
-                lastEventJoined={lastEventJoined == event.id}
-                onShare={handleShare}
-                onJoin={joinQueue}             
-              />
-            ))}
-          </div>
-
-          <PaginationControls
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
-      {events.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-gray-500">
-          No events found matching your search
-=======
   const retry = () => fetchEvents(requestPage, requestSearch);
 
   return (
@@ -573,7 +282,6 @@ export const SearchEvents = () => {
               Updating
             </span>
           )}
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications)
         </div>
 
         {isLoading ? (

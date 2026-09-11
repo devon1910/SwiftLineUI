@@ -29,41 +29,6 @@ const applyTheme = (isDark) => {
 };
 
 export const Header = () => {
-<<<<<<< HEAD:src/components/layout/Header.jsx
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const location = useLocation();
-    
-    const toggleMenu = () => {
-      setIsMenuOpen(!isMenuOpen);
-    };
-    
-    const closeMenu = () => {
-      setIsMenuOpen(false);
-    };
-    
-    const isActive = (path) => {
-      return location.pathname === path;
-    };
-  
-    return (
-      <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/dashboard" className="flex items-center">
-            <img 
-              src="/logo.png" 
-              alt="theswiftline" 
-              className="h-8 md:h-10"
-            />
-            <span className="ml-2 text-lg font-semibold hidden md:block text-gray-900">theswiftline</span>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link 
-              to="/dashboard" 
-              className={`text-sm font-medium hover:text-green-700 transition-colors ${isActive('/dashboard') ? 'text-green-700' : 'text-gray-700'}`}
-=======
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
 
@@ -89,7 +54,6 @@ export const Header = () => {
               end={item.end}
               className="standalone-header__link"
               onClick={() => setIsMenuOpen(false)}
->>>>>>> 5590c04 (feat: Implement SignalR Notifier for queue management and user notifications):src/components/Header.jsx
             >
               {createElement(item.icon, { size: 15, "aria-hidden": true })}
               {item.label}
@@ -151,3 +115,4 @@ export const Header = () => {
 };
 
 export default Header;
+
