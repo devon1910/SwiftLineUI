@@ -22,7 +22,9 @@ const TurnstileWidget = ({ setTurnstileToken }) => {
             showToast.error(BotCheck_Error_Message);
             turnstile.reset();
           }else{
-            setTurnstileToken(true);
+            // Keep the one-time token so the login/signup endpoint can verify it
+            // as part of the same security-sensitive request.
+            setTurnstileToken(turnstileToken);
           }   
         });
       }}

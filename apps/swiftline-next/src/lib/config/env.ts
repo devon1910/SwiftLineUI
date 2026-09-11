@@ -15,6 +15,9 @@ export const envSchema = databaseEnvSchema.extend({
   JWT_AUDIENCE: nonEmptyString,
   JWT_ALGORITHM: z.enum(["HS256", "HS384", "HS512"]).default("HS256"),
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters long"),
+  AUTH_ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().min(300).max(86_400).default(900),
+  AUTH_REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(7),
+  TURNSTILE_SECRET_KEY: nonEmptyString.optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
