@@ -33,3 +33,5 @@ dist-ssr
 **/appsettings.Local.json
 **/startup_error.txt
 **/Properties/ServiceDependencies/
+.vercel
+.env*

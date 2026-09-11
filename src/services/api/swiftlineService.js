@@ -1,6 +1,9 @@
 import API from "./APIService";
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const publicEventApiUrl = `${String(
+  import.meta.env.VITE_NEXT_API_URL || apiUrl || "",
+).replace(/\/+$/, "")}/`;
 
 // Auth
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
@@ -17,7 +20,7 @@ export const eventsList = (page, eventsPerPage, search = "")=> {
   params.append('Page', page);
   params.append('Size', eventsPerPage);
   params.append('Query', search);
-  return API.get(`${apiUrl}Event/SearchEvents?${params.toString()}`);
+  return API.get(`${publicEventApiUrl}Event/SearchEvents?${params.toString()}`);
 }
     
 export const createEvent = (event) => API.post(`${apiUrl}Event/CreateEvent`, event);
@@ -35,7 +38,8 @@ export const getQueueHistory = (currentPage, historyPage, size, eventId) => {
 export const UserEvents = () => API.get(`${apiUrl}Event/GetUserEvents`);
 export const updateEvent = (event) => API.put(`${apiUrl}Event/EditEvent`, event);
 export const deleteEvent = (id) => API.delete(`${apiUrl}Event/DeleteEvent/${id}`);
-export const fetchEventById = (eventId) => API.get(`${apiUrl}Event/GetEvent/${eventId}`);
+export const fetchEventById = (eventId) =>
+  API.get(`${publicEventApiUrl}Event/GetEvent`, { params: { eventId } });
 
 // Lines
 export const GetUserLineInfo = () => API.get(`${apiUrl}Line/GetUserLineInfo`);

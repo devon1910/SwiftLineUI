@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/next/(.*)",
+      "destination": "https://swiftline-olive.vercel.app/api/$1"
+    },
+    {
       "source": "/sw.js",
       "destination": "/sw.js"
     },
