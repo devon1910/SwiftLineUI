@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run && node --test tests/worker/email-worker.test.mjs tests/worker/smtp-mailer.test.mjs tests/worker/sql-contract.test.mjs",
+    "test": "vitest run && node --test tests/auth/auth-session-sql.test.mjs tests/worker/email-worker.test.mjs tests/worker/smtp-mailer.test.mjs tests/worker/sql-contract.test.mjs",
     "test:foundation": "vitest run tests/foundation",
     "test:integration": "node --test tests/integration/postgres.integration.test.mjs",
     "test:watch": "vitest tests"
