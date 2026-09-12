@@ -18,6 +18,10 @@ export const envSchema = databaseEnvSchema.extend({
   AUTH_ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().min(300).max(86_400).default(900),
   AUTH_REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(7),
   TURNSTILE_SECRET_KEY: nonEmptyString.optional(),
+  SWIFTLINE_APP_URL: z.string().url().default("http://localhost:5173"),
+  GOOGLE_CLIENT_ID: nonEmptyString.optional(),
+  GOOGLE_CLIENT_SECRET: nonEmptyString.optional(),
+  CRON_SECRET: nonEmptyString.optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

@@ -1,7 +1,8 @@
 import { getOptionalAuth } from "@/lib/auth";
 import { getEnv } from "@/lib/config";
 import { resultFailure, resultOk, resultResponse } from "@/lib/http";
-import { failedAuthResponse, loginSchema, refreshSchema } from "./contracts";
+import { failedAuthResponse, loginSchema, refreshSchema, signupSchema, verificationSchema } from "./contracts";
+import { signup, verifyEmail } from "./registration";
 import { createAuthRepository } from "./repository";
 import { loginWithPassword, refreshSession, type AuthSessionRepository } from "./service";
 import { verifyTurnstile } from "./turnstile";
@@ -41,4 +42,24 @@ export async function handleLogout(request: Request, dependencies: Dependencies 
   if (!identity) return resultResponse(resultFailure("Unauthorized.", 401, false));
   await (dependencies.repository ?? createAuthRepository()).revokeAllForUser(identity.subject, "logout");
   return resultResponse(resultOk(true, "Logout successful."));
+}
+
+export async function handleSignup(request: Request, dependencies: Dependencies = {}) {
+  const parsed = signupSchema.safeParse(await json(request));
+  if (!parsed.success) return resultResponse(resultFailure("Invalid signup request.", 400, failedAuthResponse("Invalid signup request.")));
+  const env = getEnv(); if (!env.TURNSTILE_SECRET_KEY) return resultResponse(resultFailure("Authentication is not configured.", 503, failedAuthResponse("Authentication is not configured.")));
+  const host = (request.headers.get("x-forwarded-host") ?? new URL(request.url).hostname).split(":")[0];
+  const botOk = await (dependencies.verifyBot ?? verifyTurnstile)({ secret: env.TURNSTILE_SECRET_KEY, token: parsed.data.turnstileToken, remoteIp: metadata(request).ipAddress, expectedHostname: host });
+  if (!botOk) return resultResponse(resultFailure("Security verification failed.", 400, failedAuthResponse("Security verification failed.")));
+  const created = await signup({ email: parsed.data.email, password: parsed.data.password, fullName: parsed.data.fullName, agreed: true });
+  const message = "If this address can be registered, a verification email has been queued.";
+  return resultResponse(resultOk({ status: Boolean(created), message }, message));
+}
+
+export async function handleVerifyEmail(request: Request) {
+  const parsed = verificationSchema.safeParse(await json(request));
+  if (!parsed.success) return resultResponse(resultFailure("Invalid or expired verification link.", 400, failedAuthResponse("Invalid or expired verification link.")));
+  const auth = await verifyEmail(parsed.data.token, request);
+  if (!auth) return resultResponse(resultFailure("Invalid or expired verification link.", 400, failedAuthResponse("Invalid or expired verification link.")));
+  return resultResponse(resultOk(auth, "Email verified."));
 }

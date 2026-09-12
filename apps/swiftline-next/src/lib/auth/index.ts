@@ -4,4 +4,4 @@ export {
   verifyAccessToken,
 } from "./jwt";
 export type { AuthIdentity, JwtConfig } from "./jwt";
-export { verifyAspNetIdentityPassword } from "./password-hasher";
+export { hashAspNetIdentityPassword, verifyAspNetIdentityPassword } from "./password-hasher";
