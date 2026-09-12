@@ -194,7 +194,7 @@ const ViewQueue = () => {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
