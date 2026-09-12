@@ -1,99 +1,61 @@
-# SwiftLine
+# theSwiftLine
 
-theSwiftLine is a virtual queue-management product for attendees and event organizers.
+theSwiftLine is a virtual queue platform for attendees and event organisers. Create an event, share it, let people join the line, and manage the queue from one responsive web app.
 
-The repository is in a bounded migration. The existing React/Vite client and ASP.NET Core API remain the production baseline. The Next.js service now contains a public-event-read foundation and an email-worker foundation, but neither has been cut over in production.
+## Highlights
 
-## Repository state
+- Search active events, view event details, capacity, location, and opening hours.
+- Create, edit, delete, pause, and manage organiser-owned events.
+- Join, monitor, and leave queues with position and wait-time polling.
+- Support anonymous joining with an individual revocable session — never a shared anonymous password.
+- Serve attendees and manage active/past members from the organiser dashboard.
+- Password signup with Turnstile, one-time email verification, secure ASP.NET Identity-compatible hashes, and rotating refresh sessions.
+- Password login/logout, PWA support, and light/dark UI.
+- SMTP email outbox with PostgreSQL leases/retries and a free GitHub Actions delivery trigger.
 
-- src/ is the current React/Vite web client.
-- services/swiftline/SwiftLine.API/ is the only executable project in the .NET solution. It exposes the REST API and the /queueHub SignalR hub.
-- services/swiftline/Infrastructure/BackgroundServices/ contains the current LineManager, EmailDeliveryJob, and AccountsCleanup loops. LineManager and AccountsCleanup run inside the API process; EmailDeliveryJob is conditionally registered there through `Workers:EmailDeliveryEnabled`, which defaults to `true`. There is no SwiftLine.Worker project in the solution.
-- services/swiftline/Infrastructure/ owns the EF Core PostgreSQL context and migrations.
-- apps/swiftline-next/ contains the Next.js App Router foundation, direct PostgreSQL public-event reads, the additive email lease SQL, and Node email-worker code.
-- apps/swiftline-next/Dockerfile is the Next web image template. apps/swiftline-next/Dockerfile.worker builds the separate worker image.
-- The worker includes a built-in SMTP mailer by default and supports an optional provider module through `SWIFTLINE_EMAIL_MAILER_MODULE`.
-- vercel.json is the current Vite SPA rewrite. It is not evidence that the Next.js service is deployed.
+## Production architecture
 
-## Bounded first slice
+The React/Vite UI runs on Vercel at `https://www.theswiftline.com`. Its `/api/next/*` requests are rewritten to the Next.js API at `https://swiftline-olive.vercel.app`, which connects directly to Neon PostgreSQL.
 
-Only these anonymous legacy public event GET contracts are eligible for the first web cutover:
+    Browser -> Vite UI (Vercel) -> Next.js API (Vercel) -> Neon PostgreSQL
+                                                  -> SMTP provider
+    GitHub Actions (10 min) -> protected email batch -> Neon outbox
 
-    GET /api/v1/Event/GetEvent?eventId={id}
-    GET /api/v1/Event/SearchEvents?Page={page}&Size={size}&Query={query}
+`services/swiftline/` is the legacy .NET implementation retained as a database/behaviour reference; it is not required by the active Vercel + Neon path.
 
-The current Next handlers read the shared PostgreSQL schema directly and return the legacy Result envelope with public DTO-shaped data. Their route and schema compatibility must be proven against .NET fixtures before ingress changes.
+## Repository map
 
-The only worker responsibility in this slice is delivery of rows from EmailDeliveryRequests. Identity, JWT and refresh/revocation, all queue mutations, organizer writes and queue management, SignalR, push notifications, LineManager auto-serving, AccountsCleanup, event/email-row production, and PostgreSQL ownership remain on .NET. Before enabling Node, explicitly set `Workers__EmailDeliveryEnabled=false` on the .NET API and deploy/restart it; the corresponding `Workers:EmailDeliveryEnabled` setting defaults to `true` when omitted.
+- `src/` — React/Vite application.
+- `apps/swiftline-next/` — Next API, auth, queue/event commands, migrations, and outbox processor.
+- `.github/workflows/email-outbox.yml` — scheduled email delivery.
+- `services/swiftline/` — legacy .NET reference.
 
-See docs/architecture.md for ownership and docs/nextjs-migration.md for the cutover runbook.
+## Local development
 
-## Prerequisites
+Set server values in `apps/swiftline-next/.env.local` from `.env.example`, then:
 
-- Node.js and npm.
-- .NET 9 SDK.
-- Docker Desktop with Compose, or PostgreSQL plus the PostgreSQL client tools.
-- pg_dump, pg_restore, and psql for backup and migration gates.
-
-Never commit production credentials. Next server and worker database, JWT, and SMTP values are server-only. Do not put them in NEXT_PUBLIC_* variables.
-
-## Run the current API and Vite client
-
-Start a local PostgreSQL container. This creates an empty database; run the current .NET API in Development first so its existing development migration hook can create the schema.
-
-    docker compose -f apps\swiftline-next\compose.example.yml up -d postgres
-
-The checked-in root .env.example still uses port 5000. The current .NET launch profile listens on http://localhost:5267, so use:
-
-    VITE_API_URL=http://localhost:5267/api/v1/
-    VITE_API_SIGNALR_URL=http://localhost:5267/
-
-Then:
-
-    npm.cmd install
-    npm.cmd run dev
-
-For a local API using the Compose database, provide the required settings before starting .NET. The Google and SMTP values below are placeholders and do not provide working external login or email delivery.
-
-    $env:ASPNETCORE_ENVIRONMENT = "Development"
-    $env:ConnectionStrings__Database = "Host=localhost;Port=5432;Database=swiftline;Username=swiftline;Password=local-development-only"
-    $env:JWT__secret = "local-only-secret-at-least-32-characters"
-    $env:JWT__ValidIssuer = "swiftline-api"
-    $env:JWT__ValidAudience = "swiftline-web"
-    $env:Authentication__Google__ClientId = "local-placeholder"
-    $env:Authentication__Google__ClientSecret = "local-placeholder"
-    $env:Smtp__FromEmail = "noreply@example.test"
-    $env:Smtp__Host = "localhost"
-    $env:Smtp__Port = "1025"
-    $env:Smtp__Username = "local"
-    $env:Smtp__Password = "local"
-    $env:SwiftLineBaseUrl = "http://localhost:5173/"
-
-    dotnet run --project services\swiftline\SwiftLine.API --launch-profile http
-
-## Run the Next foundation locally
-
-The Next service needs the same populated PostgreSQL schema. From apps/swiftline-next:
-
+    cd apps/swiftline-next
     npm.cmd ci
-    npm.cmd run lint
     npm.cmd run typecheck
-    npm.cmd run test
-    npm.cmd run build
+    npm.cmd test
     npm.cmd run dev
 
-Copy apps/swiftline-next/.env.example to a local environment file and replace the database and JWT placeholders. The Next public-read routes require DATABASE_URL and the JWT contract even when a request is anonymous because optional-token verification loads the shared configuration.
+In a second terminal, run the Vite UI from the repository root with `VITE_NEXT_API_URL=http://localhost:3000/api/v1/`.
 
-The email worker is a separate process, not a Next request handler. Its image is built from Dockerfile.worker and starts through worker-entrypoint.mjs. It uses the built-in SMTP adapter by default; `SWIFTLINE_EMAIL_MAILER_MODULE` is only needed when replacing it with a compatible module exporting `createMailer()` or `default.send()`.
+## Production configuration
 
-## Verification
+Vercel project `swiftline` requires `DATABASE_URL`, JWT values, `TURNSTILE_SECRET_KEY`, `SWIFTLINE_APP_URL`, Google OAuth credentials, SMTP values, and `CRON_SECRET`. Add the same `CRON_SECRET` as a GitHub Actions secret. Never expose secrets with a `VITE_*` or `NEXT_PUBLIC_*` name.
 
-    npm.cmd run lint
+## Checks
+
+    cd apps/swiftline-next
+    npm.cmd run typecheck
+    npm.cmd test
     npm.cmd run build
 
-    dotnet build services\swiftline\SwiftLine.sln --no-restore
-    dotnet test services\swiftline\SwiftLine.sln --no-build
+    cd ../..
+    npm.cmd run build
 
-    git diff --check
+## Optional remaining legacy work
 
-The deployment, backup, lease handoff, SignalR gap, and rollback gates are documented in docs/nextjs-migration.md.
+Google OAuth browser handoff, feedback, push notifications, WordChain, automatic queue advancement, and account cleanup remain unfinished migration work.

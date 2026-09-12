@@ -1,98 +1,36 @@
-# SwiftLine Next.js and email-worker slice
+# SwiftLine Next API
 
-## Status
+The production API for theSwiftLine: Next.js route handlers on Vercel, backed by Neon PostgreSQL.
 
-This directory contains the bounded first-slice implementation foundation. It is not a production cutover:
+## Features
 
-- Next.js exposes the exact legacy public event GET paths and reads the shared PostgreSQL schema directly.
-- The email worker claims rows from EmailDeliveryRequests using PostgreSQL leases and an advisory leader lock.
-- The email worker ships with an SMTP adapter; a provider-specific module may be injected when stronger delivery semantics are available.
-- Next contains password login, rotating refresh sessions, logout, organizer event CRUD, authenticated/anonymous queue commands, and polling queue reads compatible with existing ASP.NET Identity users. The Vite client no longer uses SignalR for active queue actions.
-- The .NET EmailDeliveryJob is conditionally registered through `Workers:EmailDeliveryEnabled` and defaults to enabled (`true`). Before the Node worker starts, deploy/restart .NET with `Workers__EmailDeliveryEnabled=false` and verify that email polling has stopped.
+- Public event discovery and details.
+- Password login, logout, refresh rotation, signup, and one-time email verification.
+- Google OAuth server-side start/callback foundation with CSRF state validation; browser code exchange remains to be wired.
+- Organiser event CRUD and protected queue controls.
+- Authenticated and anonymous queue joins, leave, pause/resume, serve, and polling status.
+- Protected outbox processing at `POST /api/internal/email/process`.
 
-## Files and processes
+## Email delivery
 
-- Dockerfile builds the Next.js web process and uses the `/api/health` liveness and `/api/health/ready` readiness checks.
-- Dockerfile.worker is the existing separate worker image template. It runs worker-entrypoint.mjs and checks the worker health file.
-- compose.example.yml starts local PostgreSQL and provides opt-in web and email-worker profiles.
-- migrations/20260910_email_delivery_leases.sql is additive and must be applied after a backup/restore gate.
-- migrations/20260911_auth_sessions.sql is additive and must be applied before enabling the Next auth routes.
+Email rows live in `EmailDeliveryRequests`. The processor uses PostgreSQL `SKIP LOCKED`, leases, retry/dead-letter state, and an advisory lock. GitHub Actions calls one bounded batch every ten minutes using `CRON_SECRET`.
 
-The worker image uses the built-in SMTP adapter by default. `SWIFTLINE_EMAIL_MAILER_MODULE` may point to a module exporting `createMailer()` or `default.send()` to replace it.
+SMTP stays in Vercel. Delivery is at-least-once, so provider acceptance immediately before a timeout/crash can produce a duplicate.
 
-## Exact public routes
+## Migrations
 
-    GET /api/v1/Event/GetEvent?eventId={long}
-    GET /api/v1/Event/SearchEvents?Page={int}&Size={int}&Query={string}
+    node --env-file=../../.env scripts/apply-migrations.mjs
 
-These are the only routes in the first cut. Preserve their casing, query parameters, HTTP status behavior, JSON field names, and data/message/status envelope. The lowercase route aliases in the scaffold are not part of the release surface.
+Applied production migrations:
 
-## Local PostgreSQL
+- `20260910_email_delivery_leases.sql`
+- `20260911_auth_sessions.sql`
+- `20260912_auth_verification_and_oauth.sql`
 
-From the repository root:
+## Checks
 
-    docker compose -f apps/swiftline-next/compose.example.yml up -d postgres
-    docker compose -f apps/swiftline-next/compose.example.yml ps
-
-The defaults are development-only:
-
-    host: localhost
-    port: 5432
-    database: swiftline
-    user: swiftline
-    password: local-development-only
-
-The Compose database starts empty. Run the current ASP.NET Core API in Development against it so the existing EF migration hook creates the SwiftLine schema. Do not use that startup migration behavior as a production deployment procedure.
-
-## Run the Next web foundation
-
-From this directory:
-
-    Copy-Item .env.example .env.local
-    npm.cmd ci
-    npm.cmd run lint
     npm.cmd run typecheck
-    npm.cmd run test
+    npm.cmd test
     npm.cmd run build
-    npm.cmd run dev
 
-The Next server requires DATABASE_URL, DB pool settings, and the current JWT issuer/audience/algorithm/secret contract. The JWT secret is server-only and must be at least 32 characters. SWIFTLINE_EVENT_TIME_ZONE defaults to Africa/Lagos for event-hour calculations.
-
-To build/run the web container after the local package and source checks pass:
-
-    docker build -t swiftline-next:local .
-    docker compose -f compose.example.yml --profile web up --build
-
-The web service is stateless apart from PostgreSQL. It owns the queue commands and exposes polling reads; it does not host a WebSocket hub.
-
-## Run the email worker
-
-Apply the lease migration only after taking and restoring a PostgreSQL backup:
-
-    psql "$DATABASE_URL" --set=ON_ERROR_STOP=1 --file=migrations/20260910_email_delivery_leases.sql
-
-Before starting Node, set `Workers__EmailDeliveryEnabled=false` on the .NET API, deploy/restart it, and verify that EmailDeliveryJob is not registered/polling. The corresponding `Workers:EmailDeliveryEnabled` setting defaults to `true`, so do not rely on omission. This leaves queue progression and account cleanup enabled.
-
-Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_FROM_EMAIL`, and optional SMTP credentials, then:
-
-    docker compose -f compose.example.yml --profile email-worker up --build
-
-The core worker configuration accepts `EMAIL_WORKER_*` values for batch size, polling, leases, heartbeats, retries, advisory-lock key, and health freshness. The built-in adapter consumes `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and `SMTP_FROM_EMAIL`, plus the optional positive-millisecond `SMTP_CONNECTION_TIMEOUT_MS` and `SMTP_SEND_TIMEOUT_MS` settings. They default to 15 seconds for TCP/SMTP greeting and 60 seconds for the complete send. A send timeout closes the active Nodemailer transport and is recorded through the existing retry/dead-letter path; it does not change queue semantics. SMTP can still accept a message immediately before a process failure or timeout, so delivery remains at-least-once and duplicates remain possible. Compose defaults are local placeholders, not production credentials.
-
-Run one email-worker replica in the first cut. The advisory lock and row lease protect against stale/concurrent claims, but SMTP remains at-least-once: a crash after provider acceptance and before acknowledgement can produce a duplicate.
-
-## Deployment topology
-
-    TLS ingress
-       |-- exact public Event GET routes -> Next web
-       |-- all other /api/v1 routes   -> .NET API
-       +-- /queueHub WebSocket         -> .NET API
-
-    Private PostgreSQL
-       |-- .NET API, one replica while hosted loops remain there
-       |-- Next web
-       +-- Node email worker, one replica
-
-The Compose example omits the .NET API because this scope does not add a .NET Dockerfile. Keep PostgreSQL private, forward WebSocket upgrades for /queueHub, and retain the existing Vite/.NET deployment for rollback.
-
-See ../../docs/nextjs-migration.md for backup, migration, cutover, worker handoff, SignalR, and rollback gates.
+Copy `.env.example` to `.env.local`; configure PostgreSQL, JWT, Turnstile, application URL, SMTP, Google OAuth, and cron values. Keep secrets server-only.
