@@ -45,6 +45,16 @@
 .organizer-queue__table th { color: var(--sl-muted); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
 .organizer-queue__table tbody tr:first-child { background: color-mix(in srgb, var(--sl-brand-soft) 65%, transparent); }
 
+.events-portfolio { background: var(--sl-page); color: var(--sl-ink); }
+.events-portfolio__eyebrow, .events-portfolio__event-label { margin: 0 0 .45rem; color: var(--sl-brand); font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.events-portfolio__create { display: inline-flex; align-items: center; gap: .5rem; background: var(--sl-ink); }
+.events-portfolio__create:hover { background: var(--sl-brand-dark); }
+.events-portfolio__card { overflow: hidden; border-color: var(--sl-border); background: var(--sl-surface); box-shadow: none; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.events-portfolio__card:hover { border-color: var(--sl-border-strong); box-shadow: var(--sl-shadow-md); }
+.events-portfolio__card::before { display: block; height: .28rem; background: var(--sl-brand); content: ""; opacity: .85; }
+.events-portfolio__card button:not([aria-label]) { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; }
+.events-portfolio__empty { border: 1px dashed var(--sl-border-strong); border-radius: var(--sl-radius-lg); background: var(--sl-surface); }
+
 .app-shell {
   min-height: 100vh;
   background: var(--sl-page);

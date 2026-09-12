@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
 import { UserEvents } from "../../services/swiftlineService";
-import { FiTrash2 } from "react-icons/fi";
+import { FiArrowUpRight, FiEdit3, FiShare2, FiTrash2 } from "react-icons/fi";
 import { deleteEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -59,24 +58,26 @@ const MyEvents = () => {
       });
   }
   return (
-    <div className="min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
+    <main className="events-portfolio min-h-screen bg-sage-50 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-            My Events
-          </h2>
+          <div>
+            <p className="events-portfolio__eyebrow">Organizer workspace</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">My Events</h2>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Create a line, share it, and keep the day moving.</p>
+          </div>
           <button
             onClick={() => handleNavigation()}
-            className="bg-sage-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+            className="events-portfolio__create bg-sage-500 text-white px-5 py-3 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
           >
-            Create New Event
+            Create event <FiArrowUpRight aria-hidden="true" />
           </button>
         </div>
 
         {/* Events Grid */}
         {userEvents.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="events-portfolio__empty text-center py-12">
             <p className="text-gray-500 dark:text-gray-400 mb-4">
               No events created yet. Start by creating your first event!
             </p>
@@ -84,10 +85,7 @@ const MyEvents = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
-              <div
-                key={event.id}
-                className="relative  rounded-xl shadow-md border border-sage-200 dark:border-gray-700"
-              >
+              <article key={event.id} className="events-portfolio__card relative rounded-xl shadow-md border border-sage-200 dark:border-gray-700">
                 {/* Delete Button */}
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
@@ -98,6 +96,7 @@ const MyEvents = () => {
                 </button>
 
                 <div className="p-6 flex flex-col gap-4">
+                  <p className="events-portfolio__event-label">Event #{event.id}</p>
                   {/* Title */}
                   <h3 className="text-xl  font-semibold text-gray-900 dark:text-gray-100 pr-6">
                     {event.title}
@@ -116,14 +115,14 @@ const MyEvents = () => {
                       }
                       className="w-full py-2 px-4 border border-sage-500 text-sage-500 rounded-lg font-medium hover:bg-sage-50 dark:hover:bg-sage-900/20 transition-colors"
                     >
-                      View Queue
+                      Manage queue <FiArrowUpRight aria-hidden="true" />
                     </button>
 
                     <button
                       onClick={() => handleShare(event.id, event.title)}
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
-                      Share Event
+                      <FiShare2 aria-hidden="true" /> Share event
                     </button>
 
                     <button
@@ -134,16 +133,16 @@ const MyEvents = () => {
                       }
                       className="w-full py-2 px-4 border border-sage-300 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:border-sage-500 hover:text-sage-500 dark:hover:bg-sage-900/10 transition-colors"
                     >
-                      Edit Event
+                      <FiEdit3 aria-hidden="true" /> Edit event
                     </button>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 export default MyEvents;
