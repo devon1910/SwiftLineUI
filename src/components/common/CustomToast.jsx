@@ -4,8 +4,6 @@ import { Flip } from 'react-toastify';
 
 
 const CustomToast = () => {
-  const savedTheme = localStorage.getItem("darkMode");
-  
   return (
     <ToastContainer
       position="bottom-center"
@@ -18,7 +16,7 @@ const CustomToast = () => {
       draggable
       pauseOnHover
       transition={Slide} // Using Flip instead of Bounce for a more modern feel
-      theme={savedTheme === "true" ? 'dark' : 'light'}
+      theme="dark"
       toastClassName="rounded-md shadow-lg"
       // Custom CSS for the toast container
       className="toast-container"

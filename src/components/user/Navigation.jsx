@@ -6,9 +6,7 @@ import {
   LayoutDashboard,
   ListChecks,
   Menu,
-  Moon,
   Search,
-  Sun,
   X,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -30,7 +28,7 @@ const hasStoredAuth = () => {
   return Boolean(value && value !== "undefined" && value !== "null");
 };
 
-const Navigation = ({ darkMode, toggleDarkMode }) => {
+const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
@@ -93,16 +91,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
         </div>
 
         <div className="shell-nav__tools">
-          <button
-            type="button"
-            className="shell-nav__icon-button"
-            onClick={toggleDarkMode}
-            aria-label={darkMode ? "Use light theme" : "Use dark theme"}
-            title={darkMode ? "Use light theme" : "Use dark theme"}
-          >
-            {darkMode ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
-          </button>
-
           <div className="shell-nav__profile-wrap">
             <button
               type="button"

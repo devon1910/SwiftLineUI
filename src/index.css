@@ -30,6 +30,7 @@
   --cursor-y: 0px;
 }
 
+:root,
 body.dark-mode {
   color-scheme: dark;
   --sl-ink: #F2F1EC;

@@ -10,13 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { LogOut } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 import AuthForm from "../auth/AuthForm";
-import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../../services/utils/useTheme";
 
 const Navigation = ({ setShowAuthModal, showAuthModal }) => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { darkMode } = useTheme();
   const isAuthenticated = localStorage.getItem("user");
   const userName = localStorage.getItem("userName");
 
@@ -164,29 +163,6 @@ const Navigation = ({ setShowAuthModal, showAuthModal }) => {
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className={`p-2 rounded-full transition-colors duration-200
-                  ${
-                    darkMode
-                      ? "bg-gray-800 text-gray-200 hover:bg-gray-700 shadow-sm shadow-gray-800/20"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-sm shadow-gray-100/20"
-                  }
-                  focus:outline-none focus:ring-2 focus:ring-offset-2
-                  ${darkMode ? "focus:ring-gray-700 focus:ring-offset-gray-900" : "focus:ring-gray-200 focus:ring-offset-white"}
-                `}
-                aria-label={
-                  darkMode ? "Switch to light mode" : "Switch to dark mode"
-                }
-              >
-                {darkMode ? (
-                  <FiSun className="w-5 h-5" />
-                ) : (
-                  <FiMoon className="w-5 h-5" />
-                )}
-              </button>
-
               {/* Profile/Auth Button - Now shows text on small screens */}
               <div className="relative">
                 <button

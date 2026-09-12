@@ -1,13 +1,11 @@
-import { createElement, useEffect, useState } from "react";
+import { createElement, useState } from "react";
 import {
   Bell,
   CalendarDays,
   LayoutDashboard,
   ListChecks,
   Menu,
-  Moon,
   Search,
-  Sun,
   X,
 } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
@@ -22,20 +20,8 @@ const headerLinks = [
   { label: "My queue", path: "/myQueue", icon: ListChecks },
 ];
 
-const applyTheme = (isDark) => {
-  document.body.classList.toggle("dark-mode", isDark);
-  document.documentElement.classList.toggle("dark", isDark);
-  document.documentElement.style.colorScheme = isDark ? "dark" : "light";
-};
-
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
-
-  useEffect(() => {
-    applyTheme(darkMode);
-    localStorage.setItem("darkMode", String(darkMode));
-  }, [darkMode]);
 
   return (
     <header className="standalone-header">
@@ -73,15 +59,6 @@ export const Header = () => {
           <button
             type="button"
             className="standalone-header__button"
-            onClick={() => setDarkMode((isDark) => !isDark)}
-            aria-label={darkMode ? "Use light theme" : "Use dark theme"}
-            title={darkMode ? "Use light theme" : "Use dark theme"}
-          >
-            {darkMode ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
-          </button>
-          <button
-            type="button"
-            className="standalone-header__button"
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-expanded={isMenuOpen}
             aria-controls="standalone-header-mobile"
@@ -115,4 +92,3 @@ export const Header = () => {
 };
 
 export default Header;
-

@@ -37,7 +37,6 @@ const routeContext = (pathname) => {
 };
 
 function LandingPage({ mode }) {
-  const [darkMode, setDarkMode] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -65,28 +64,12 @@ function LandingPage({ mode }) {
       navigate("/", { replace: true });
     }
 
-    const savedTheme = localStorage.getItem("darkMode") === "true";
-    document.body.classList.toggle("dark-mode", savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme);
-    document.documentElement.style.colorScheme = savedTheme ? "dark" : "light";
-    setDarkMode(savedTheme);
     setLoaded(true);
   }, [navigate]);
 
-  const toggleDarkMode = () => {
-    setDarkMode((currentMode) => {
-      const nextMode = !currentMode;
-      document.body.classList.toggle("dark-mode", nextMode);
-      document.documentElement.classList.toggle("dark", nextMode);
-      document.documentElement.style.colorScheme = nextMode ? "dark" : "light";
-      localStorage.setItem("darkMode", String(nextMode));
-      return nextMode;
-    });
-  };
-
   return (
     <div className="app-shell">
-      <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Navigation />
 
       <main className={`app-main${isHome ? " app-main--home" : ""}`}>
         <div className="app-main__inner">
