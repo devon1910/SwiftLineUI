@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import EventCard from "../EventCard.jsx";
 import PaginationControls from "../common/PaginationControl.jsx";
 import { eventsList, joinEventQueue } from "../../services/swiftlineService";
+import { saveAuthTokens } from "../../services/utils/authUtils";
 
 const EVENTS_PER_PAGE = 6;
 
@@ -148,7 +149,10 @@ export const SearchEvents = () => {
     setJoiningEventId(event.id);
 
     try {
-      await joinEventQueue(event.id);
+      const response = await joinEventQueue(event.id);
+      // Anonymous queues mint a scoped guest session on the server. Persist it
+      // exactly like a normal login so polling and leave requests stay secure.
+      if (response?.data?.data?.accessToken) saveAuthTokens(response);
 
       setIsUserInQueue(true);
       toast.success("Joined queue successfully");
