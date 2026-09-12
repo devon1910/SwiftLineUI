@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { eventQueueInfo, fetchEventById } from "../../services/swiftlineService";
+import { fetchEventById, getOrganizerQueue, serveOrganizerQueueMember, setOrganizerQueueActivity } from "../../services/swiftlineService";
 import { useNavigate, useParams } from "react-router-dom";
 import { format} from "date-fns-tz"
 
 import { FiPause, FiPlay, FiRefreshCw, FiSkipForward } from "react-icons/fi";
 import { toast } from "react-toastify";
-import { connection, ensureSignalRConnected, useSignalRWithLoading } from "../../services/SignalRConn";
 
 const ViewQueue = () => {
   const [queue, setQueues] = useState([]);
@@ -13,13 +12,11 @@ const ViewQueue = () => {
   const [event, setEvent] = useState(null);
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { invokeWithLoading } = useSignalRWithLoading();
 
   const getEventQueues = useCallback(() => {
-    eventQueueInfo(eventId)
+    getOrganizerQueue(eventId)
       .then((response) => {
-        setQueues(response.data.data.linesMembersInQueue ?? []);
-        setIsPaused(response.data.data.isEventPaused);
+        setQueues(response.data.data ?? []);
       })
       .catch((error) => {
         console.error("Error fetching queue:", error);
@@ -33,31 +30,18 @@ const ViewQueue = () => {
     getEventQueues();
   }, [eventId, getEventQueues]);
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") getEventQueues();
+    }, 15_000);
+    return () => window.clearInterval(timer);
+  }, [getEventQueues]);
+
   const ToggleQueueActivity = async () => {
-    //check if user is logged In
-    const userId=localStorage.getItem('userId')
-
-    if (!userId) {
-      toast.error("Please login or signup to join a queue.");
-      navigate("/auth");
-      return;
-    }
-    if (connection.state !== "Connected") {
-      toast.info("Connection lost. Attempting to reconnect...");
-      try {
-        await ensureSignalRConnected();
-        toast.success("Reconnected successfully.");
-      } catch (reconnectError) {
-        console.error("Reconnection failed:", reconnectError);
-        toast.error("Unable to reconnect. Please check your network.");
-        return;
-      }
-    }
-
-    // Invoke SignalR method to join the queue
-    invokeWithLoading(connection,"ToggleQueueActivity", isPaused, userId, Number(eventId))
+    setOrganizerQueueActivity(eventId, isPaused)
       .then(() => {
         toast.success("Queue Activity updated.");
+        getEventQueues();
       })
       .catch((err) => {
         console.error(err);
@@ -84,19 +68,7 @@ const ViewQueue = () => {
 
   const onSkip = async (lineMemberId) => {
       if (window.confirm("Are you sure you want to serve this line member before the end of their estimated wait time?")) {
-        if (connection.state !== "Connected") {
-          toast.info("Connection lost. Attempting to reconnect...");
-          try {
-            await ensureSignalRConnected();
-            toast.success("Reconnected successfully.");
-          } catch (reconnectError) {
-            console.error("Reconnection failed:", reconnectError);
-            toast.error("Unable to reconnect. Please check your network.");
-            return;
-          }
-        }
-        // Invoke SignalR method to join the queue
-        await invokeWithLoading(connection,"ServeQueueMember", Number(eventId), lineMemberId)
+        await serveOrganizerQueueMember(eventId, lineMemberId)
           .then(() => {
             toast.success("Served Line Member.");
             getEventQueues();
@@ -191,7 +163,7 @@ const ViewQueue = () => {
                         {index + 1}
                       </td>
                       <td className="px-4 py-3">
-                        {user.swiftLineUser?.userName ?? "Anonymous attendee"}
+                        {user.username ?? "Anonymous attendee"}
                       </td>
                       <td className="px-4 py-3 text-sage-600 dark:text-sage-400">
                         {format(new Date(user.createdAt), "hh:mm:ss a")}

@@ -31,3 +31,6 @@ export const GetUserLineInfo = () => API.get("Line/GetUserLineInfo");
 export const joinEventQueue = (eventId) => API.post(`${queueApiUrl}events/${eventId}/join`);
 export const getMyQueue = () => API.get(`${queueApiUrl}me/queue`);
 export const leaveMyQueue = () => API.post(`${queueApiUrl}me/queue/leave`);
+export const getOrganizerQueue = (eventId) => API.get(`${queueApiUrl}organizer/events/${eventId}/queue`);
+export const setOrganizerQueueActivity = (eventId, isActive) => API.patch(`${queueApiUrl}organizer/events/${eventId}/queue`, { isActive });
+export const serveOrganizerQueueMember = (eventId, lineId) => API.post(`${queueApiUrl}organizer/events/${eventId}/queue/${lineId}/serve`);
