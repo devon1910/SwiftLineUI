@@ -20,7 +20,7 @@ async function createSession(client: { query: Function }, userId: string, reques
   return refreshToken;
 }
 
-async function authResponse(client: { query: Function }, user: { id: string; email: string; username: string }, request: Request, message: string) {
+export async function createSessionAuthResponse(client: { query: Function }, user: { id: string; email: string; username: string }, request: Request, message: string) {
   const env = getEnv(); const refreshToken = await createSession(client, user.id, request);
   const accessToken = await issueAccessToken({ id: user.id, username: user.username, roles: await roles(client, user.id) }, env, env.AUTH_ACCESS_TOKEN_TTL_SECONDS);
   return { status: true, message, accessToken, refreshToken, userId: user.id, email: user.email, username: user.username, purpose: "Login", isNewUser: false };
@@ -55,7 +55,7 @@ export async function verifyEmail(token: string, request: Request) {
     const row = tokenRow.rows[0]; if (!row) { await client.query("ROLLBACK"); return null; }
     await client.query(`UPDATE public."EmailVerificationTokens" SET "ConsumedAt"=now() WHERE "TokenHash"=$1`, [digest(token)]);
     await client.query(`UPDATE public."AspNetUsers" SET "EmailConfirmed"=TRUE WHERE "Id"=$1`, [row.UserId]);
-    const auth = await authResponse(client, { id: row.UserId, email: row.Email, username: row.UserName }, request, "Email verified.");
+    const auth = await createSessionAuthResponse(client, { id: row.UserId, email: row.Email, username: row.UserName }, request, "Email verified.");
     await client.query("COMMIT"); return auth;
   } catch (error) { await client.query("ROLLBACK").catch(() => {}); throw error; } finally { client.release(); }
 }
