@@ -141,10 +141,11 @@ const EventForm = () => {
 
   return (
     <form
-      className="mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
+      className="event-form mt-5 max-w-3xl mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
       onSubmit={handleSubmit}
     >
-      <h3 className="text-xl sm:text-2xl font-semibold mb-6 pb-2 border-b-2 border-emerald-700/60 flex items-center gap-2">
+      <p className="event-form__eyebrow">Organizer workspace</p>
+      <h3 className="text-xl sm:text-2xl font-semibold mb-2 flex items-center gap-2">
         {isEditing ? (
           <>
             <FiCheck className="w-6 h-6" />
@@ -157,9 +158,10 @@ const EventForm = () => {
           </>
         )}
       </h3>
+      <p className="event-form__lede mb-6">Set the rhythm before people arrive. You can fine-tune the details later.</p>
 
       {/* Title Input */}
-      <div className="mb-6 relative">
+      <div className="event-form__section mb-6 relative">
         <label htmlFor="eventTitle" className="block text-sm font-medium mb-1">
           Event Title
         </label>
@@ -177,7 +179,7 @@ const EventForm = () => {
       </div>
 
       {/* Description Input */}
-      <div className="mb-6 relative">
+      <div className="event-form__section mb-6 relative">
         <label
           htmlFor="eventDescription"
           className="block text-sm font-medium mb-1"
@@ -198,7 +200,7 @@ const EventForm = () => {
       </div>
 
       {/* Input Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="event-form__section grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Average Wait Time */}
         <div className="relative">
           <label
@@ -280,7 +282,7 @@ const EventForm = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <div className="event-form__section grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div>
           <label htmlFor="capacity" className="block text-sm font-medium mb-1">Queue capacity</label>
           <input id="capacity" type="number" min="1" value={capacity} onChange={(event) => setCapacity(event.target.value)} required className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -302,7 +304,7 @@ const EventForm = () => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
+        className="event-form__submit w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
       >
         {isEditing ? (
           <>
