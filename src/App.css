@@ -18,6 +18,14 @@
 .auth-page--dark .auth-page__panel { background: #171a1e; }
 @media (max-width: 760px) { .auth-page { display: block; } .auth-page__intro { min-height: 26rem; padding: 1.5rem; } .auth-page__copy { margin: auto 0 1.5rem; } .auth-page h1 { font-size: clamp(3rem, 14vw, 4.5rem); } .auth-page__panel { padding: 1rem; margin-top: -1.25rem; position: relative; } .auth-card { width: 100%; } }
 
+.event-card { border-color: var(--sl-border); box-shadow: none; }
+.event-card::before { position: absolute; inset: 0 auto auto 0; width: 100%; height: .28rem; background: var(--sl-brand); content: ""; opacity: 0; transition: opacity 160ms ease; }
+.event-card:hover { border-color: var(--sl-border-strong); box-shadow: var(--sl-shadow-md); }
+.event-card:hover::before { opacity: 1; }
+.event-card__body { padding-top: 1.65rem; }
+.event-card__title { letter-spacing: -.035em; }
+.event-card__metrics { border-color: var(--sl-border); background: var(--sl-page); }
+
 .app-shell {
   min-height: 100vh;
   background: var(--sl-page);

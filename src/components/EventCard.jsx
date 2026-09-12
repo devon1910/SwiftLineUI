@@ -61,14 +61,14 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
 
   return (
     <article
-      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800 ${
+      className={`event-card group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800 ${
         event.isShared
           ? "border-sage-400 dark:border-sage-600"
           : "border-sage-200 dark:border-gray-700"
       }`}
       aria-labelledby={`event-${event.id}-title`}
     >
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
+      <div className="event-card__body flex flex-1 flex-col p-5 sm:p-6">
         <header className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -91,7 +91,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
             </div>
             <h3
               id={`event-${event.id}-title`}
-              className="break-words text-xl font-semibold leading-tight text-gray-900 dark:text-gray-100"
+              className="event-card__title break-words text-xl font-semibold leading-tight text-gray-900 dark:text-gray-100"
             >
               {event.title || "Untitled event"}
             </h3>
@@ -112,7 +112,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
           {event.description || "No description provided for this event."}
         </p>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
+        <div className="event-card__metrics mt-5 grid grid-cols-2 gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
           <StatItem
             label="Average Wait"
             value={
