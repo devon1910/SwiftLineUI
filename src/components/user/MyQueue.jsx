@@ -171,9 +171,9 @@ const MyQueue = () => {
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
+    <main className="queue-page min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
-        <header className="mb-8">
+        <header className="queue-page__header mb-8">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-sage-600 dark:text-sage-300">
             Your place in line
           </p>
@@ -223,7 +223,7 @@ const MyQueue = () => {
           </section>
         ) : (
           <section
-            className="relative overflow-hidden rounded-2xl border border-sage-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            className="queue-active relative overflow-hidden rounded-2xl border border-sage-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
             aria-labelledby="active-queue-title"
           >
             {showConfetti && (
@@ -270,7 +270,7 @@ const MyQueue = () => {
 
             <div className="p-5 sm:p-7">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
+                <div className="queue-stat rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
                   <div className="flex items-center gap-2 text-sm font-semibold text-sage-700 dark:text-sage-200">
                     <FiUsers className="h-4 w-4" aria-hidden="true" />
                     Your position
@@ -288,7 +288,7 @@ const MyQueue = () => {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
+                <div className="queue-stat rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
                   <div className="flex items-center gap-2 text-sm font-semibold text-sage-700 dark:text-sage-200">
                     <FiClock className="h-4 w-4" aria-hidden="true" />
                     Estimated wait
