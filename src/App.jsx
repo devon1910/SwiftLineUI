@@ -25,7 +25,7 @@ import EventDetails from "./components/user/EventDetails";
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       <BrowserRouter>
         <LoadingProvider>
           <Routes>         
@@ -49,7 +49,7 @@ function App() {
         </LoadingProvider>
       </BrowserRouter>
       <CustomToast/>
-    </>
+    </ThemeProvider>
   );
 }
 
