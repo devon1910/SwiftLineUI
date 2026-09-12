@@ -5,6 +5,7 @@ const publicEventApiUrl = `${String(
   import.meta.env.VITE_NEXT_API_URL || apiUrl || "",
 ).replace(/\/+$/, "")}/`;
 const nextAuthApiUrl = publicEventApiUrl;
+const organizerEventsUrl = `${publicEventApiUrl}organizer/events`;
 
 // Auth
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
@@ -24,7 +25,7 @@ export const eventsList = (page, eventsPerPage, search = "")=> {
   return API.get(`${publicEventApiUrl}Event/SearchEvents?${params.toString()}`);
 }
     
-export const createEvent = (event) => API.post(`${apiUrl}Event/CreateEvent`, event);
+export const createEvent = (event) => API.post(organizerEventsUrl, event);
 export const getQueueHistory = (currentPage, historyPage, size, eventId) => {
 
   const params = new URLSearchParams();
@@ -36,9 +37,9 @@ export const getQueueHistory = (currentPage, historyPage, size, eventId) => {
   return API.get(`${apiUrl}Event/GetEventQueue?${params.toString()}`);
 }
     
-export const UserEvents = () => API.get(`${apiUrl}Event/GetUserEvents`);
-export const updateEvent = (event) => API.put(`${apiUrl}Event/EditEvent`, event);
-export const deleteEvent = (id) => API.delete(`${apiUrl}Event/DeleteEvent/${id}`);
+export const UserEvents = () => API.get(organizerEventsUrl);
+export const updateEvent = (event) => API.put(`${organizerEventsUrl}/${event.eventId}`, event);
+export const deleteEvent = (id) => API.delete(`${organizerEventsUrl}/${id}`);
 export const fetchEventById = (eventId) =>
   API.get(`${publicEventApiUrl}Event/GetEvent`, { params: { eventId } });
 
