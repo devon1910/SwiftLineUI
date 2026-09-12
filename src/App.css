@@ -66,6 +66,14 @@
 .event-form__submit { background: var(--sl-ink); }
 .event-form__submit:hover { background: var(--sl-brand-dark); }
 
+.event-detail-page { background: var(--sl-page); }
+.event-detail-surface { border-color: var(--sl-border-strong); box-shadow: var(--sl-shadow-md); }
+.event-detail-surface > header { position: relative; background: var(--sl-page); }
+.event-detail-surface > header::before { position: absolute; top: 0; left: 0; width: .32rem; height: 100%; background: var(--sl-brand); content: ""; }
+.event-detail-metric { border-color: var(--sl-border); background: var(--sl-page); }
+.event-detail-snapshot { position: relative; border-color: var(--sl-border-strong); background: var(--sl-brand-soft); }
+.event-detail-snapshot::before { display: block; margin-bottom: 1rem; color: var(--sl-brand); font-size: .68rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; content: "Live queue"; }
+
 .app-shell {
   min-height: 100vh;
   background: var(--sl-page);

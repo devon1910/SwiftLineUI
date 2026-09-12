@@ -175,7 +175,7 @@ const ViewEvent = () => {
     : `${event.usersInQueue ?? 0}`;
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-6 dark:bg-gray-900 sm:px-6 sm:py-8 lg:px-8">
+    <main className="event-detail-page min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-6 dark:bg-gray-900 sm:px-6 sm:py-8 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <button
           type="button"
@@ -186,7 +186,7 @@ const ViewEvent = () => {
           Back to events
         </button>
 
-        <article className="overflow-hidden rounded-2xl border border-sage-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <article className="event-detail-surface overflow-hidden rounded-2xl border border-sage-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <header className="border-b border-sage-100 px-5 py-6 sm:px-8 sm:py-8 dark:border-gray-700">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
@@ -241,7 +241,7 @@ const ViewEvent = () => {
                   Schedule
                 </h2>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
+                  <div className="event-detail-metric rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
                     <DetailItem
                       icon={<FiCalendar className="h-4 w-4" aria-hidden="true" />}
                       label="Starts"
@@ -249,7 +249,7 @@ const ViewEvent = () => {
                       {formatEventTime(event.eventStartTime)}
                     </DetailItem>
                   </div>
-                  <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
+                  <div className="event-detail-metric rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
                     <DetailItem
                       icon={<FiClock className="h-4 w-4" aria-hidden="true" />}
                       label="Ends"
@@ -265,7 +265,7 @@ const ViewEvent = () => {
                   <h2 id="event-location-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Location
                   </h2>
-                  <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
+                  <div className="event-detail-metric mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/60">
                     <DetailItem
                       icon={<FiMapPin className="h-4 w-4" aria-hidden="true" />}
                       label="Address"
@@ -277,7 +277,7 @@ const ViewEvent = () => {
               )}
             </div>
 
-            <aside className="h-fit rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
+            <aside className="event-detail-snapshot h-fit rounded-2xl border border-sage-200 bg-sage-50 p-5 dark:border-sage-900/50 dark:bg-sage-900/20">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Queue snapshot
               </h2>
