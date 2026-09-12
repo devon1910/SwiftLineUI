@@ -7,7 +7,7 @@ This directory contains the bounded first-slice implementation foundation. It is
 - Next.js exposes the exact legacy public event GET paths and reads the shared PostgreSQL schema directly.
 - The email worker claims rows from EmailDeliveryRequests using PostgreSQL leases and an advisory leader lock.
 - The email worker ships with an SMTP adapter; a provider-specific module may be injected when stronger delivery semantics are available.
-- Next now contains password login, rotating refresh sessions, and logout routes compatible with existing ASP.NET Identity users. Queue mutations, organizer writes, signup/verification, Google auth, SignalR replacement, push notifications, LineManager, and AccountsCleanup remain migration work.
+- Next contains password login, rotating refresh sessions, logout, organizer event CRUD, authenticated/anonymous queue commands, and polling queue reads compatible with existing ASP.NET Identity users. The Vite client no longer uses SignalR for active queue actions.
 - The .NET EmailDeliveryJob is conditionally registered through `Workers:EmailDeliveryEnabled` and defaults to enabled (`true`). Before the Node worker starts, deploy/restart .NET with `Workers__EmailDeliveryEnabled=false` and verify that email polling has stopped.
 
 ## Files and processes
@@ -63,7 +63,7 @@ To build/run the web container after the local package and source checks pass:
     docker build -t swiftline-next:local .
     docker compose -f compose.example.yml --profile web up --build
 
-The web image is stateless apart from its database reads. It does not own queue commands or SignalR.
+The web service is stateless apart from PostgreSQL. It owns the queue commands and exposes polling reads; it does not host a WebSocket hub.
 
 ## Run the email worker
 
