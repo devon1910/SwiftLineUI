@@ -80,14 +80,17 @@ const ViewQueue = () => {
       }
     };
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="rounded-xl shadow-lg border border-sage-100  overflow-hidden">
+    <main className="organizer-queue max-w-6xl mx-auto p-4 sm:p-6">
+      <div className="organizer-queue__surface rounded-xl shadow-lg border border-sage-100 overflow-hidden">
         {/* Header Section */}
-        <div className="p-6 border-b border-sage-100">
+        <div className="organizer-queue__header p-6 border-b border-sage-100">
           <div className="flex items-center justify-between mb-4">
+            <div>
+            <p className="organizer-queue__eyebrow">Queue operations</p>
             <h2 className="text-2xl font-bold text-sage-800 dark:text-gray-100">
               {event?.title ?? "Queue management"}
             </h2>
+            </div>
             <div className="flex gap-2">
             {queue.length > 0 && (
               <>
@@ -129,13 +132,13 @@ const ViewQueue = () => {
         </div>
 
         {/* Queue Content */}
-        <div className="p-6">
+        <div className="organizer-queue__body p-6">
           {queue.length === 0 ? (
             <div className="text-center py-8 text-sage-500 dark:text-sage-400">
               No users in the queue
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="organizer-queue__table overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-sage-50 dark:bg-gray-800">
                   <tr>

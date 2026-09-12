@@ -34,6 +34,17 @@
 .queue-stat::after { position: absolute; right: -1.5rem; bottom: -2rem; width: 6rem; height: 6rem; border: 1px solid var(--sl-border); border-radius: 999px; content: ""; opacity: .7; }
 .queue-stat > * { position: relative; z-index: 1; }
 
+.organizer-queue { color: var(--sl-ink); }
+.organizer-queue__surface { border-color: var(--sl-border-strong); background: var(--sl-surface); box-shadow: var(--sl-shadow-md); }
+.organizer-queue__header { position: relative; background: var(--sl-page); }
+.organizer-queue__header::before { position: absolute; top: 0; left: 0; width: .32rem; height: 100%; background: var(--sl-brand); content: ""; }
+.organizer-queue__eyebrow { margin: 0 0 .45rem; color: var(--sl-brand); font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.organizer-queue__body { background: var(--sl-surface); }
+.organizer-queue__table { border: 1px solid var(--sl-border); border-radius: var(--sl-radius-md); }
+.organizer-queue__table thead { background: var(--sl-page); }
+.organizer-queue__table th { color: var(--sl-muted); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.organizer-queue__table tbody tr:first-child { background: color-mix(in srgb, var(--sl-brand-soft) 65%, transparent); }
+
 .app-shell {
   min-height: 100vh;
   background: var(--sl-page);
