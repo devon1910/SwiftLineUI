@@ -3,12 +3,7 @@ import Confetti from "react-confetti";
 import { FiArrowUp, FiCheckCircle, FiClock, FiLogOut, FiPause, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { toast } from "react-toastify";
 import DidYouKnowSlider from "../DidYouKnowSlider";
-import {
-  connection,
-  ensureSignalRConnected,
-  useSignalRWithLoading,
-} from "../../services/SignalRConn.js";
-import { GetUserLineInfo } from "../../services/swiftlineService";
+import { getMyQueue, leaveMyQueue } from "../../services/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 
 const EMPTY_QUEUE = {
@@ -34,14 +29,13 @@ const MyQueue = () => {
   const [showWaitTimeArrow, setShowWaitTimeArrow] = useState(false);
   const previousPositionRef = useRef(null);
   const previousTimeRef = useRef(null);
-  const { invokeWithLoading } = useSignalRWithLoading();
 
   const getCurrentPosition = useCallback(async () => {
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await GetUserLineInfo();
+      const response = await getMyQueue();
       const lineInfo = response?.data?.data ?? EMPTY_QUEUE;
       setMyQueue(lineInfo);
       setQueueActivity(lineInfo.isNotPaused ?? true);
@@ -63,36 +57,11 @@ const MyQueue = () => {
   }, [getCurrentPosition]);
 
   useEffect(() => {
-    ensureSignalRConnected().catch((connectionError) => {
-      console.warn("Realtime queue updates are temporarily unavailable.", connectionError);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!connection) return undefined;
-
-    const handlePositionUpdate = (lineInfo) => {
-      if (!lineInfo) return;
-      setMyQueue(lineInfo);
-      setQueueActivity(lineInfo.isNotPaused ?? true);
-      setError("");
-    };
-
-    connection.on("ReceivePositionUpdate", handlePositionUpdate);
-    return () => connection.off("ReceivePositionUpdate", handlePositionUpdate);
-  }, []);
-
-  useEffect(() => {
-    if (!connection) return undefined;
-
-    const handleQueueStatusUpdate = (isQueueActive) => {
-      setQueueActivity(Boolean(isQueueActive));
-    };
-
-    connection.on("ReceiveQueueStatusUpdate", handleQueueStatusUpdate);
-    return () =>
-      connection.off("ReceiveQueueStatusUpdate", handleQueueStatusUpdate);
-  }, []);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") getCurrentPosition();
+    }, 15_000);
+    return () => window.clearInterval(timer);
+  }, [getCurrentPosition]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -142,14 +111,7 @@ const MyQueue = () => {
     setIsLeaving(true);
 
     try {
-      if (connection.state !== "Connected") {
-        toast.info("Connection lost. Attempting to reconnect...");
-        await ensureSignalRConnected();
-        toast.success("Reconnected successfully.");
-      }
-
-      const lineMemberId = myQueue?.lineMemberId;
-      await invokeWithLoading(connection, "ExitQueue", "", lineMemberId, "");
+      await leaveMyQueue();
       showToast.success("Exited Queue.");
       await getCurrentPosition();
     } catch (requestError) {

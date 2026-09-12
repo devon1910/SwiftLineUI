@@ -5,6 +5,7 @@ const publicEventApiUrl = normalizeBaseUrl(
   import.meta.env.VITE_NEXT_API_URL || import.meta.env.VITE_API_URL,
 );
 const organizerEventsUrl = `${publicEventApiUrl}organizer/events`;
+const queueApiUrl = `${publicEventApiUrl}`;
 
 export const validateToken = (token) => API.post("Auth/VerifyToken", null, { params: { token } });
 export const loginUser = (request) => API.post(`${publicEventApiUrl}Auth/Login`, request);
@@ -27,3 +28,6 @@ export const fetchEventById = (eventId) =>
   API.get(`${publicEventApiUrl}Event/GetEvent`, { params: { eventId } });
 
 export const GetUserLineInfo = () => API.get("Line/GetUserLineInfo");
+export const joinEventQueue = (eventId) => API.post(`${queueApiUrl}events/${eventId}/join`);
+export const getMyQueue = () => API.get(`${queueApiUrl}me/queue`);
+export const leaveMyQueue = () => API.post(`${queueApiUrl}me/queue/leave`);

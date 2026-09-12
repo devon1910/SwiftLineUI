@@ -5,13 +5,7 @@ import { useNavigate, useOutletContext, useSearchParams } from "react-router-dom
 import { toast } from "react-toastify";
 import EventCard from "../EventCard.jsx";
 import PaginationControls from "../common/PaginationControl.jsx";
-import {
-  connection,
-  ensureSignalRConnected,
-  useSignalRWithLoading,
-} from "../../services/SignalRConn.js";
-import { eventsList } from "../../services/swiftlineService";
-import { storeAuthTokens } from "../../services/authStorage";
+import { eventsList, joinEventQueue } from "../../services/swiftlineService";
 
 const EVENTS_PER_PAGE = 6;
 
@@ -60,7 +54,6 @@ export const SearchEvents = () => {
 
   const [searchParams, updateSearchParams] = useSearchParams();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const { invokeWithLoading } = useSignalRWithLoading();
   const latestRequestRef = useRef(0);
   const joinInFlightRef = useRef(false);
 
@@ -155,25 +148,7 @@ export const SearchEvents = () => {
     setJoiningEventId(event.id);
 
     try {
-      const response = await invokeWithLoading(
-        connection,
-        "JoinQueueGroup",
-        event.id,
-        userId
-      );
-
-      if (!response?.status) {
-        toast.error(response?.message ?? "Unable to join this queue.");
-        return;
-      }
-
-      if (response.isNewUser && response.accessToken) {
-        storeAuthTokens(response.accessToken);
-        localStorage.setItem("userId", response.userId);
-        localStorage.setItem("userName", response.username);
-        localStorage.setItem("userEmail", response.email);
-        await ensureSignalRConnected();
-      }
+      await joinEventQueue(event.id);
 
       setIsUserInQueue(true);
       toast.success("Joined queue successfully");
