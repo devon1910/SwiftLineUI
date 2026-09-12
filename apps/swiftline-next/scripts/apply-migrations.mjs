@@ -7,7 +7,12 @@ import pg from "pg";
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const migrationsDir = join(root, "migrations");
-const names = (await readdir(migrationsDir)).filter((name) => /^\d{8}_[a-z0-9_-]+\.sql$/i.test(name)).sort();
+const available = (await readdir(migrationsDir)).filter((name) => /^\d{8}_[a-z0-9_-]+\.sql$/i.test(name)).sort();
+const requested = process.argv.slice(2);
+const names = requested.length ? requested : available;
+for (const name of names) {
+  if (!available.includes(name)) throw new Error(`Unknown migration: ${name}`);
+}
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
 
 await client.connect();
