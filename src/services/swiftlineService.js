@@ -6,9 +6,9 @@ const publicEventApiUrl = normalizeBaseUrl(
 );
 
 export const validateToken = (token) => API.post("Auth/VerifyToken", null, { params: { token } });
-export const loginUser = (request) => API.post("Auth/Login", request);
+export const loginUser = (request) => API.post(`${publicEventApiUrl}Auth/Login`, request);
 export const SignUpUser = (request) => API.post("Auth/Signup", request);
-export const LogOut = () => API.post("Auth/Logout");
+export const LogOut = () => API.post(`${publicEventApiUrl}Auth/Logout`);
 
 export const eventsList = (page, eventsPerPage, search = "") =>
   API.get(`${publicEventApiUrl}Event/SearchEvents`, {

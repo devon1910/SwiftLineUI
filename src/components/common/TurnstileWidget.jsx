@@ -1,6 +1,5 @@
 import React from "react";
 import Turnstile, { useTurnstile } from "react-turnstile";
-import { VerifyTurnstileToken } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
 import { BotCheck_Error_Message } from "../../services/utils/constants";
 
@@ -17,16 +16,8 @@ const TurnstileWidget = ({ setTurnstileToken }) => {
         turnstile.reset();
       }}
       onVerify={(turnstileToken) => {
-        VerifyTurnstileToken({ turnstileToken }).then((response) => {
-          if (!response.data.data.success) {
-            showToast.error(BotCheck_Error_Message);
-            turnstile.reset();
-          }else{
-            // Keep the one-time token so the login/signup endpoint can verify it
-            // as part of the same security-sensitive request.
-            setTurnstileToken(turnstileToken);
-          }   
-        });
+        // The token is verified once, server-side, as part of login/signup.
+        setTurnstileToken(turnstileToken);
       }}
     />
   );

@@ -4,14 +4,15 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const publicEventApiUrl = `${String(
   import.meta.env.VITE_NEXT_API_URL || apiUrl || "",
 ).replace(/\/+$/, "")}/`;
+const nextAuthApiUrl = publicEventApiUrl;
 
 // Auth
 export const validateToken = (token) => API.post(`${apiUrl}Auth/VerifyToken?token=${token}`);
-export const refreshToken = (refreshTokenRequest) => API.post(`${apiUrl}Auth/RefreshToken`,refreshTokenRequest);
-export const loginUser = (loginRequest) => API.post(`${apiUrl}Auth/Login`, loginRequest);
+export const refreshToken = (refreshTokenRequest) => API.post(`${nextAuthApiUrl}Auth/RefreshToken`,refreshTokenRequest);
+export const loginUser = (loginRequest) => API.post(`${nextAuthApiUrl}Auth/Login`, loginRequest);
 export const SignUpUser = (SignUpRequest) => API.post(`${apiUrl}Auth/SignUp`, SignUpRequest);
 export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);
-export const LogOut = () => API.post(`${apiUrl}Auth/Logout`);
+export const LogOut = () => API.post(`${nextAuthApiUrl}Auth/Logout`);
 export const GetUserInfo = (authData) => API.get(`${apiUrl}Auth/GetAuthData?authCode=${authData}`);
 
 // Events

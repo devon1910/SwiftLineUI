@@ -8,6 +8,7 @@ import {
 
 const normalizeBaseUrl = (value) => `${String(value ?? "").replace(/\/+$/, "")}/`;
 const apiBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_URL);
+const authApiBaseUrl = normalizeBaseUrl(import.meta.env.VITE_NEXT_API_URL || import.meta.env.VITE_API_URL);
 const API = axios.create({ baseURL: apiBaseUrl });
 let refreshPromise = null;
 
@@ -47,7 +48,7 @@ API.interceptors.response.use(
     originalRequest._retry = true;
     try {
       if (!refreshPromise) {
-        refreshPromise = axios.post(`${apiBaseUrl}Auth/RefreshToken`, { accessToken, refreshToken })
+        refreshPromise = axios.post(`${authApiBaseUrl}Auth/RefreshToken`, { accessToken, refreshToken })
           .then((response) => {
             const auth = response?.data?.data;
             if (!auth?.accessToken || !auth?.refreshToken) throw new Error("Refresh response did not include valid tokens.");
