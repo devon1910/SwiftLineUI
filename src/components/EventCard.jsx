@@ -32,7 +32,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
     ? {
         label: "Live now",
         className:
-          "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-200",
+          "border-[#698474] bg-white text-[#2E4636] dark:border-[#8FAE98] dark:bg-[#1C1F24] dark:text-[#C3D8C9]",
       }
     : {
         label: "Upcoming",

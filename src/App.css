@@ -118,7 +118,7 @@
 
 .shell-button--primary {
   background: var(--sl-ink);
-  color: #f7fbf5;
+  color: var(--sl-page);
 }
 
 .shell-button--primary:hover {
@@ -584,7 +584,7 @@
 
 .dashboard__action--accent {
   background: var(--sl-ink);
-  color: #eef6ed;
+  color: var(--sl-page);
 }
 
 .dashboard__action--accent:hover {
@@ -607,7 +607,7 @@
 }
 
 .dashboard__action--accent .dashboard__action-number {
-  color: #a6c0af;
+  color: var(--sl-page);
 }
 
 .dashboard__action-icon {
@@ -637,7 +637,7 @@
 }
 
 .dashboard__action--accent h3 {
-  color: #f4faf0;
+  color: var(--sl-page);
 }
 
 .dashboard__action p {
@@ -649,7 +649,7 @@
 }
 
 .dashboard__action--accent p {
-  color: #bdd0c1;
+  color: var(--sl-page);
 }
 
 .dashboard__action-bottom {
@@ -914,7 +914,7 @@
 
 .app-shell .navbar {
   background: var(--sl-ink);
-  color: #f4faf0;
+  color: var(--sl-page);
 }
 
 .global-spinner-overlay {

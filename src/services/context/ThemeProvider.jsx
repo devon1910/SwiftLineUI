@@ -33,6 +33,10 @@ export function ThemeProvider({ children }) {
     } catch (err) {
       console.error("Failed to update localStorage:", err);
     }
+
+    document.documentElement.classList.toggle("dark", darkMode);
+    document.documentElement.style.colorScheme = darkMode ? "dark" : "light";
+    document.body.classList.toggle("dark-mode", darkMode);
   }, [darkMode]);
 
   // Helper function for theme classes

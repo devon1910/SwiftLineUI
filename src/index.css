@@ -1,27 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 :root {
   color-scheme: light;
-  --sl-ink: #18332e;
-  --sl-ink-strong: #102722;
-  --sl-text: #243a35;
-  --sl-muted: #64756e;
-  --sl-subtle: #8b9a93;
-  --sl-page: #f5f7f3;
-  --sl-surface: #ffffff;
-  --sl-surface-muted: #edf2ec;
-  --sl-surface-deep: #e1eae2;
-  --sl-border: #d7e1d9;
-  --sl-border-strong: #b9cbbd;
-  --sl-brand: #2f6f5d;
-  --sl-brand-dark: #205344;
-  --sl-brand-soft: #dcebdc;
-  --sl-accent: #d7ed91;
-  --sl-accent-strong: #c2df70;
-  --sl-coral: #c96850;
-  --sl-shadow-sm: 0 1px 2px rgba(24, 51, 46, 0.05), 0 5px 18px rgba(24, 51, 46, 0.04);
-  --sl-shadow-md: 0 12px 34px rgba(24, 51, 46, 0.09);
+  --sl-ink: #191A17;
+  --sl-ink-strong: #191A17;
+  --sl-text: #191A17;
+  --sl-muted: #5C605A;
+  --sl-subtle: #5C605A;
+  --sl-page: #F5F4F0;
+  --sl-surface: #FFFFFF;
+  --sl-surface-muted: #F5F4F0;
+  --sl-surface-deep: #F5F4F0;
+  --sl-border: #D9D7CF;
+  --sl-border-strong: #D9D7CF;
+  --sl-brand: #2E4636;
+  --sl-brand-dark: #2E4636;
+  --sl-brand-soft: #F5F4F0;
+  --sl-accent: #698474;
+  --sl-accent-strong: #698474;
+  --sl-coral: #C4571F;
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
   --sl-radius-sm: 0.625rem;
   --sl-radius-md: 1rem;
   --sl-radius-lg: 1.5rem;
@@ -32,25 +32,25 @@
 
 body.dark-mode {
   color-scheme: dark;
-  --sl-ink: #dce9df;
-  --sl-ink-strong: #f4f8f2;
-  --sl-text: #d5e2d8;
-  --sl-muted: #9eb0a5;
-  --sl-subtle: #788e82;
-  --sl-page: #12211e;
-  --sl-surface: #1a2d28;
-  --sl-surface-muted: #223a32;
-  --sl-surface-deep: #294339;
-  --sl-border: #345047;
-  --sl-border-strong: #4d6b5c;
-  --sl-brand: #8fc2a3;
-  --sl-brand-dark: #b4d6bd;
-  --sl-brand-soft: #29483b;
-  --sl-accent: #cce88a;
-  --sl-accent-strong: #ddf3a2;
-  --sl-coral: #ee9279;
-  --sl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 5px 18px rgba(0, 0, 0, 0.12);
-  --sl-shadow-md: 0 16px 38px rgba(0, 0, 0, 0.24);
+  --sl-ink: #F2F1EC;
+  --sl-ink-strong: #F2F1EC;
+  --sl-text: #F2F1EC;
+  --sl-muted: #A8ACA4;
+  --sl-subtle: #A8ACA4;
+  --sl-page: #14161A;
+  --sl-surface: #1C1F24;
+  --sl-surface-muted: #1C1F24;
+  --sl-surface-deep: #1C1F24;
+  --sl-border: #2D3138;
+  --sl-border-strong: #2D3138;
+  --sl-brand: #C3D8C9;
+  --sl-brand-dark: #C3D8C9;
+  --sl-brand-soft: #1C1F24;
+  --sl-accent: #8FAE98;
+  --sl-accent-strong: #8FAE98;
+  --sl-coral: #E27A3E;
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
   --sl-focus: rgba(143, 194, 163, 0.45);
 }
 
@@ -70,7 +70,7 @@ body {
   margin: 0;
   background: var(--sl-page);
   color: var(--sl-text);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -105,17 +105,47 @@ a {
 
 body.dark-mode .text-gray-900,
 body.dark-mode .text-gray-800,
-body.dark-mode .text-gray-700 {
+body.dark-mode .text-gray-700,
+body.dark-mode .text-gray-300,
+body.dark-mode .text-gray-200,
+body.dark-mode .text-gray-100,
+body.dark-mode .text-black,
+.dark .dark\:text-gray-100,
+.dark .dark\:text-gray-200 {
   color: var(--sl-ink-strong);
 }
 
 body.dark-mode .text-gray-600,
 body.dark-mode .text-gray-500,
-body.dark-mode .text-gray-400 {
+body.dark-mode .text-gray-400,
+.dark .dark\:text-gray-300,
+.dark .dark\:text-gray-400 {
   color: var(--sl-muted);
 }
 
 body.dark-mode .bg-white {
+  background-color: var(--sl-surface);
+}
+
+body.dark-mode .bg-gray-50,
+body.dark-mode .bg-gray-100,
+body.dark-mode .bg-gray-200,
+body.dark-mode .bg-gray-700,
+body.dark-mode .bg-gray-800,
+body.dark-mode .bg-gray-900 {
+  background-color: var(--sl-surface);
+}
+
+.dark .dark\:bg-gray-900,
+.dark .dark\:bg-gray-800,
+.dark .dark\:bg-gray-900\/60 {
+  background-color: var(--sl-surface);
+}
+
+.dark .dark\:bg-gray-700,
+.dark .dark\:bg-gray-700\/50,
+.dark .dark\:bg-gray-800\/50,
+.dark .dark\:bg-gray-400 {
   background-color: var(--sl-surface);
 }
 
