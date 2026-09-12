@@ -113,6 +113,7 @@ export const eventRepository: EventRepository = {
         LEFT JOIN public."AspNetUsers" AS viewer
           ON viewer."Id" = NULLIF($2::text, '')
         WHERE e."IsDeleted" = FALSE
+          AND e."Title" NOT IN ('General Clearance Test_Sept ''25', 'Testing for general clearance', 'Prueba', 'Clases 05-11 Sistemas de Salud')
           AND ($1::text = '' OR e."Title" ILIKE $1::text ESCAPE '\')
         ORDER BY e."CreatedAt" DESC NULLS LAST, e."Id" DESC
         LIMIT $3::integer

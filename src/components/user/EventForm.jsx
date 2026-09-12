@@ -132,18 +132,10 @@ const EventForm = () => {
       return false;
     }
 
-    if (eventStartTime == eventEndTime) {
-      toast.error("Event start and end time can't be the same");
+    if (eventEndTime <= eventStartTime) {
+      toast.error("End time must be after start time");
       return false;
     }
-
-    // const start = new Date(`1970-01-01T${eventStartTime}`);
-    // const end = new Date(`1970-01-01T${eventEndTime}`);
-
-    // if (start >= end) {
-    //   toast.error('End time must be after start time');
-    //   return false;
-    // }
     return true;
   };
 

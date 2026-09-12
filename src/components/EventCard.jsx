@@ -17,10 +17,11 @@ const formatEventTime = (value) => {
 
 const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin }) => {
   const queueStatusKnown = typeof isUserInQueue === "boolean";
-  const isLive = Boolean(event.hasStarted);
-  const isPaused = isLive && event.isActive === false;
+  const isOpen = Boolean(event.hasStarted) && event.isActive !== false;
+  const isLive = Boolean(event.isLive);
+  const isPaused = Boolean(event.hasStarted) && event.isActive === false;
   const canJoin =
-    isLive && !isPaused && queueStatusKnown && !isUserInQueue && !isJoining;
+    isOpen && queueStatusKnown && !isUserInQueue && !isJoining;
 
   const status = isPaused
     ? {
@@ -31,6 +32,12 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
     : isLive
     ? {
         label: "Live now",
+        className:
+          "border-[#698474] bg-white text-[#2E4636] dark:border-[#8FAE98] dark:bg-[#1C1F24] dark:text-[#C3D8C9]",
+      }
+    : isOpen
+    ? {
+        label: "Open",
         className:
           "border-[#698474] bg-white text-[#2E4636] dark:border-[#8FAE98] dark:bg-[#1C1F24] dark:text-[#C3D8C9]",
       }
@@ -48,7 +55,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
     ? "Queue is paused"
     : isUserInQueue
     ? "Already in queue"
-    : !isLive
+    : !event.hasStarted
     ? "Event not started"
     : "Join queue";
 

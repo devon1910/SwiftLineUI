@@ -41,6 +41,7 @@ export type PublicEventSearchItem = {
   usersInQueue: number;
   organizer: string;
   hasStarted: boolean;
+  isLive: boolean;
   staffCount: number;
   isActive: boolean;
   allowAnonymousJoining: boolean;

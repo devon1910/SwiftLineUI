@@ -149,7 +149,8 @@ export const SearchEvents = () => {
     setJoiningEventId(event.id);
 
     try {
-      const response = await joinEventQueue(event.id);
+      const requestedName = window.prompt("What should we call you? (optional)")?.trim();
+      const response = await joinEventQueue(event.id, requestedName || undefined);
       // Anonymous queues mint a scoped guest session on the server. Persist it
       // exactly like a normal login so polling and leave requests stay secure.
       if (response?.data?.data?.accessToken) saveAuthTokens(response);

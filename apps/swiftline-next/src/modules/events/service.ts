@@ -91,6 +91,7 @@ function mapSearchEvent(row: PublicEventSearchRow, now: Date): PublicEventSearch
     usersInQueue: integer(value(record, "usersInQueue", "UsersInQueue")),
     organizer: text(value(record, "organizer", "Organizer"), "SwiftLine organizer"),
     hasStarted: isWithinEventHours(start, end, now),
+    isLive: isWithinEventHours(start, end, now) && boolean(value(record, "isActive", "IsActive"), true) && integer(value(record, "usersInQueue", "UsersInQueue")) > 0,
     staffCount: integer(value(record, "staffCount", "StaffCount")),
     isActive: boolean(value(record, "isActive", "IsActive"), true),
     allowAnonymousJoining: boolean(value(record, "allowAnonymousJoining", "AllowAnonymousJoining")),

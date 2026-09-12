@@ -28,7 +28,7 @@ export const fetchEventById = (eventId) =>
   API.get(`${publicEventApiUrl}Event/GetEvent`, { params: { eventId } });
 
 export const GetUserLineInfo = () => API.get("Line/GetUserLineInfo");
-export const joinEventQueue = (eventId) => API.post(`${queueApiUrl}events/${eventId}/join`);
+export const joinEventQueue = (eventId, displayName) => API.post(`${queueApiUrl}events/${eventId}/join`, displayName ? { displayName } : {});
 export const getMyQueue = () => API.get(`${queueApiUrl}me/queue`);
 export const leaveMyQueue = () => API.post(`${queueApiUrl}me/queue/leave`);
 export const getOrganizerQueue = (eventId) => API.get(`${queueApiUrl}organizer/events/${eventId}/queue`);

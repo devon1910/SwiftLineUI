@@ -20,6 +20,9 @@ const eventSchema = z.object({
   longitude: z.coerce.number().finite().nullable().optional(),
   radiusInMeters: z.coerce.number().int().min(1).max(100_000).nullable().optional(),
 }).superRefine((event, context) => {
+  if (event.eventEndTime <= event.eventStartTime) {
+    context.addIssue({ code: "custom", path: ["eventEndTime"], message: "End time must be after start time." });
+  }
   if (event.enableGeographicRestriction && (event.latitude === null || event.latitude === undefined || event.longitude === null || event.longitude === undefined || !event.radiusInMeters)) {
     context.addIssue({ code: "custom", message: "Location and radius are required for geographic restrictions." });
   }

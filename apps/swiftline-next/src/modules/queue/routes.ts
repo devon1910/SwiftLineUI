@@ -7,8 +7,35 @@ import { generateRefreshToken, hashRefreshToken, issueAccessToken } from "@/modu
 
 const fail = (message: string, status = 400) => resultResponse(resultFailure(message, status, null));
 
+const guestAdjectives = ["Quiet", "Bright", "Kind", "Steady", "Swift", "Golden", "Calm", "Clever"];
+const guestNouns = ["Lantern", "Harbor", "Willow", "Comet", "Meadow", "River", "Cedar", "Sparrow"];
+
+function requestedGuestName(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const name = value.trim().replace(/\s+/g, " ");
+  return name && name.length <= 80 ? name : null;
+}
+
+function generatedGuestName(): string {
+  const adjective = guestAdjectives[Math.floor(Math.random() * guestAdjectives.length)];
+  const noun = guestNouns[Math.floor(Math.random() * guestNouns.length)];
+  return `${adjective} ${noun}`;
+}
+
+async function uniqueGuestName(client: { query: (text: string, values?: unknown[]) => Promise<{ rows: unknown[] }> }, requested: string | null): Promise<string> {
+  const base = requested ?? generatedGuestName();
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const candidate = attempt === 0 ? base : `${base} ${attempt + 1}`;
+    const existing = await client.query(`SELECT 1 FROM public."AspNetUsers" WHERE "NormalizedUserName"=$1 LIMIT 1`, [candidate.toUpperCase()]);
+    if (!existing.rows[0]) return candidate;
+  }
+  return `${base} ${randomUUID().slice(0, 4)}`;
+}
+
 export async function joinQueue(request: Request, eventId: string) {
   if (!/^\d+$/.test(eventId)) return fail("eventId must be a positive integer.");
+  const payload = await request.json().catch(() => null) as { displayName?: unknown } | null;
+  const requestedName = requestedGuestName(payload?.displayName);
   const authenticatedActor = await getOptionalAuth(request);
   const client = await getDbPool().connect();
   try {
@@ -22,11 +49,11 @@ export async function joinQueue(request: Request, eventId: string) {
     let guest: { id: string; username: string; refreshToken: string } | null = null;
     if (!userId) {
       const id = randomUUID();
-      const username = `Anonymous_${randomUUID().replace(/-/g, "").slice(0, 12)}`;
+      const username = await uniqueGuestName(client, requestedName);
       const email = `${id}@guest.swiftline.invalid`;
       const role = await client.query(`SELECT "Id" FROM public."AspNetRoles" WHERE "NormalizedName"='ANONYMOUS' LIMIT 1`);
       if (!role.rows[0]) { await client.query("ROLLBACK"); return fail("Anonymous queue access is not configured.", 503); }
-      await client.query(`INSERT INTO public."AspNetUsers" ("Id","UserName","NormalizedUserName","Email","NormalizedEmail","EmailConfirmed","PasswordHash","SecurityStamp","ConcurrencyStamp","PhoneNumberConfirmed","TwoFactorEnabled","LockoutEnabled","AccessFailedCount","Name","FullName","IsInQueue","LastEventJoined","HasAgreedToTermsOfServiceAndPrivacyPolicy","DateCreated") VALUES ($1,$2,$3,$4,$5,TRUE,NULL,$6,$7,FALSE,FALSE,FALSE,0,'Anonymous','Anonymous',FALSE,0,TRUE,now())`, [id, username, username.toUpperCase(), email, email.toUpperCase(), randomUUID(), randomUUID()]);
+      await client.query(`INSERT INTO public."AspNetUsers" ("Id","UserName","NormalizedUserName","Email","NormalizedEmail","EmailConfirmed","PasswordHash","SecurityStamp","ConcurrencyStamp","PhoneNumberConfirmed","TwoFactorEnabled","LockoutEnabled","AccessFailedCount","Name","FullName","IsInQueue","LastEventJoined","HasAgreedToTermsOfServiceAndPrivacyPolicy","DateCreated") VALUES ($1,$2,$3,$4,$5,TRUE,NULL,$6,$7,FALSE,FALSE,FALSE,0,$2,$2,FALSE,0,TRUE,now())`, [id, username, username.toUpperCase(), email, email.toUpperCase(), randomUUID(), randomUUID()]);
       await client.query(`INSERT INTO public."AspNetUserRoles" ("UserId","RoleId") VALUES ($1,$2)`, [id, role.rows[0].Id]);
       const refreshToken = generateRefreshToken();
       await client.query(`INSERT INTO public."AuthSessions" ("UserId","RefreshTokenHash","ExpiresAt","UserAgent","IpAddress") VALUES ($1,$2,$3,$4,$5)`, [id, hashRefreshToken(refreshToken), new Date(Date.now() + getEnv().AUTH_REFRESH_TOKEN_TTL_DAYS * 86_400_000), request.headers.get("user-agent")?.slice(0, 512) ?? null, request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null]);
