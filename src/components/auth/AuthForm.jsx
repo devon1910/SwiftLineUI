@@ -4,12 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
-import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
 
 const AuthForm = ({ setShowAuthModal }) => {
   const [activeTab, setActiveTab] = useState("login");
   const [resetPassword, setResetPassword] = useState(false);
-  const { darkMode } = useTheme(); // Use the theme hook
+  const darkMode = true;
   const navigate = useNavigate();
 
   const handleResetPassword = () => {
@@ -93,7 +92,7 @@ const AuthForm = ({ setShowAuthModal }) => {
   };
 
   return (
-    <main className={`auth-page ${darkMode ? "auth-page--dark" : ""}`}>
+    <main className="auth-page auth-page--dark">
       <section className="auth-page__intro" aria-label="SwiftLine introduction">
         <button type="button" className="auth-page__brand" onClick={() => navigate("/")}>
           the<span>Swift</span>line <ArrowUpRight size={16} aria-hidden="true" />
@@ -109,7 +108,7 @@ const AuthForm = ({ setShowAuthModal }) => {
         </div>
       </section>
       <section className="auth-page__panel">
-        <div className={`auth-card ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
+        <div className="auth-card">
           <p className="auth-card__eyebrow">Your SwiftLine account</p>
           <h2>{resetPassword ? "Reset your password" : activeTab === "login" ? "Welcome back" : "Join the line"}</h2>
           {renderTabs()}

@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --sl-ink: #191A17;
   --sl-ink-strong: #191A17;
   --sl-text: #191A17;

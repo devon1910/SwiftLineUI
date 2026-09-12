@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { loginUser } from "../../services/api/swiftlineService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { showToast } from "../../services/utils/ToastHelper";
@@ -8,42 +8,20 @@ import {
 } from "../../services/utils/authUtils";
 import FormInput from "./FormInput";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
-import TurnstileWidget from "../common/TurnstileWidget";
 
 const Login = ({ onResetPassword, setShowAuthModal }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
   const navigator = useNavigate();
   const location = useLocation();
   const from = location.state?.from || localStorage.getItem("from") || null;
   const { darkMode } = useTheme(); // Use the theme hook
-  const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
-
-  useEffect(() => {
-    const checkTurnstileReady = () => {
-      console.log("Checking if Turnstile is ready...", window);
-      if (window.turnstile) {
-        setIsTurnstileLoaded(true);
-      } else {
-        // Keep checking until Turnstile is available
-        setTimeout(checkTurnstileReady, 50);
-      }
-    };
-
-    checkTurnstileReady();
-  }, []);
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!turnstileToken) {
-      showToast.error("Please complete the security check");
-      return;
-    }
-
     try {
-      const response = await loginUser({ email, password, turnstileToken });
+      const response = await loginUser({ email, password });
       saveAuthTokens(response);
       handleAuthSuccess(response, navigator, from);
       setShowAuthModal(null);
@@ -55,10 +33,6 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
   };
 
   const handleGoogleSignIn = () => {
-    if (!turnstileToken) {
-      showToast.error("Please complete the security check");
-      return;
-    }
     const apiUrl = import.meta.env.VITE_API_URL;
     window.location.href = `${apiUrl}Auth/LoginWithGoogle`;
   };
@@ -148,16 +122,6 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
           >
             Forgot password?
           </button>
-        </div>
-        <div className="flex justify-center">
-          {!isTurnstileLoaded ? (
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
-              <span className="text-sm">Loading security check widget...</span>
-            </div>
-          ) : (
-            <TurnstileWidget setTurnstileToken={setTurnstileToken} />
-          )}
         </div>
         <button
           type="submit"

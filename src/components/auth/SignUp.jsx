@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CheckCircle } from "react-bootstrap-icons";
 import { SignUpUser } from "../../services/api/swiftlineService";
 import { showToast } from "../../services/utils/ToastHelper";
-import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import FormInput from "./FormInput";
 import PasswordRequirements from "./PasswordRequirements"; // Ensure this component is themed
 import { validatePassword } from "../../services/utils/authUtils";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
-import TurnstileWidget from "../common/TurnstileWidget";
 
 const SignUp = ({ setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -20,28 +18,9 @@ const SignUp = ({ setShowAuthModal }) => {
   ] = useState(true);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false); // This seems to control the success message view
   const [isLoading, setIsLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const location = useLocation(); // Use useLocation
-  const from = location.state?.from || localStorage.getItem("from") || null;
   const { darkMode } = useTheme(); // Use the theme hook
   const [showPasswordRequirements, setShowPasswordRequirements] =
     useState(false);
-
-  const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
-
-  useEffect(() => {
-    const checkTurnstileReady = () => {
-      console.log("Checking if Turnstile is ready...", window);
-      if (window.turnstile) {
-        setIsTurnstileLoaded(true);
-      } else {
-        // Keep checking until Turnstile is available
-        setTimeout(checkTurnstileReady, 50);
-      }
-    };
-
-    checkTurnstileReady();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,12 +30,6 @@ const SignUp = ({ setShowAuthModal }) => {
       showToast.error(
         "Password must be at least 6 characters long and contain at least one non-alphanumeric character and one digit."
       );
-      setIsLoading(false);
-      return;
-    }
-
-    if (!turnstileToken) {
-      showToast.error("Please complete the security check");
       setIsLoading(false);
       return;
     }
@@ -74,7 +47,6 @@ const SignUp = ({ setShowAuthModal }) => {
         email,
         password,
         fullName,
-        turnstileToken,
         hasAgreedToTermsOfServiceAndPrivacyPolicy,
       };
       const response = await SignUpUser(signUpRequest);
@@ -100,12 +72,6 @@ const SignUp = ({ setShowAuthModal }) => {
   };
 
   const handleGoogleSignIn = () => {
-    if (!turnstileToken) {
-      showToast.error("Please complete the security check");
-      setIsLoading(false);
-      return;
-    }
-
     if (!hasAgreedToTermsOfServiceAndPrivacyPolicy) {
       showToast.error(
         "You must agree to the Terms of Service and Privacy Policy to sign up."
@@ -247,18 +213,6 @@ const SignUp = ({ setShowAuthModal }) => {
               <PasswordRequirements password={password} darkMode={darkMode} />
             )}
             {/* Pass darkMode prop */}
-            <div className="flex justify-center">
-              {!isTurnstileLoaded ? (
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
-                  <span className="text-sm">
-                    Loading security check widget...
-                  </span>
-                </div>
-              ) : (
-                <TurnstileWidget setTurnstileToken={setTurnstileToken} />
-              )}
-            </div>
             <div className="flex items-center gap-2">
               <div className="w-10">
                 <input

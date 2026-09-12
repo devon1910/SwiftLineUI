@@ -33,7 +33,6 @@
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5",
     "react-tsparticles": "^2.12.2",
-    "react-turnstile": "^1.1.4",
     "tsparticles": "^3.8.1",
     "use-debounce": "^10.0.4",
     "vite-plugin-pwa": "^1.0.0"

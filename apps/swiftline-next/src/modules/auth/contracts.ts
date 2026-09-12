@@ -3,7 +3,6 @@ import { z } from "zod";
 export const loginSchema = z.object({
   email: z.string().trim().email().max(256),
   password: z.string().min(1).max(4096),
-  turnstileToken: z.string().min(1).max(4096),
 });
 
 export const refreshSchema = z.object({
@@ -13,7 +12,7 @@ export const refreshSchema = z.object({
 
 export const signupSchema = z.object({
   email: z.string().trim().email().max(256), password: z.string().min(6).max(4096),
-  fullName: z.string().trim().min(1).max(256), turnstileToken: z.string().min(1).max(4096),
+  fullName: z.string().trim().min(1).max(256),
   hasAgreedToTermsOfServiceAndPrivacyPolicy: z.literal(true),
 });
 export const verificationSchema = z.object({ token: z.string().min(32).max(512) });

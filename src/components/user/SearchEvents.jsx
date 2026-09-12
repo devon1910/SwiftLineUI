@@ -12,7 +12,7 @@ const EVENTS_PER_PAGE = 6;
 
 const EventCardSkeleton = () => (
   <div
-    className="h-full rounded-2xl border border-sage-100 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
+    className="event-card-skeleton"
     aria-hidden="true"
   >
     <div className="animate-pulse space-y-5">
@@ -196,7 +196,7 @@ export const SearchEvents = () => {
   const retry = () => fetchEvents(requestPage, requestSearch);
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
+    <main className="search-page min-h-[calc(100vh-4rem)] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
@@ -230,7 +230,7 @@ export const SearchEvents = () => {
                 onChange={handleSearchChange}
                 placeholder="e.g. Campus clinic"
                 autoComplete="off"
-                className="w-full rounded-xl border border-sage-200 bg-white py-3 pl-10 pr-11 text-sm text-gray-900 shadow-sm outline-none transition focus:border-sage-500 focus:ring-2 focus:ring-sage-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:ring-sage-900"
+                className="search-page__input w-full rounded-xl py-3 pl-10 pr-11 text-sm outline-none transition"
               />
               {searchTerm && (
                 <button
@@ -266,7 +266,7 @@ export const SearchEvents = () => {
 
         {isLoading ? (
           <div
-            className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+            className="event-card-grid grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
             aria-busy="true"
             aria-label="Loading events"
           >
@@ -319,7 +319,7 @@ export const SearchEvents = () => {
           </section>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div className="event-card-grid grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event) => (
                 <EventCard
                   key={event.id}

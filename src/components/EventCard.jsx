@@ -27,24 +27,24 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
     ? {
         label: "Queue paused",
         className:
-          "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200",
+          "event-card__status event-card__status--paused",
       }
     : isLive
     ? {
         label: "Live now",
         className:
-          "border-[#698474] bg-white text-[#2E4636] dark:border-[#8FAE98] dark:bg-[#1C1F24] dark:text-[#C3D8C9]",
+          "event-card__status event-card__status--live",
       }
     : isOpen
     ? {
         label: "Open",
         className:
-          "border-[#698474] bg-white text-[#2E4636] dark:border-[#8FAE98] dark:bg-[#1C1F24] dark:text-[#C3D8C9]",
+          "event-card__status event-card__status--open",
       }
     : {
         label: "Upcoming",
         className:
-          "border-sage-200 bg-sage-50 text-sage-700 dark:border-sage-900/50 dark:bg-sage-900/20 dark:text-sage-200",
+          "event-card__status event-card__status--upcoming",
       };
 
   const joinLabel = isJoining
@@ -61,7 +61,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
 
   return (
     <article
-      className={`event-card group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800 ${
+      className={`event-card group relative flex h-full flex-col overflow-hidden rounded-2xl border ${
         event.isShared
           ? "border-sage-400 dark:border-sage-600"
           : "border-sage-200 dark:border-gray-700"

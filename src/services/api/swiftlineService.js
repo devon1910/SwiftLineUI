@@ -12,7 +12,6 @@ export const validateToken = (token) => API.post(`${nextAuthApiUrl}Auth/VerifyTo
 export const refreshToken = (refreshTokenRequest) => API.post(`${nextAuthApiUrl}Auth/RefreshToken`,refreshTokenRequest);
 export const loginUser = (loginRequest) => API.post(`${nextAuthApiUrl}Auth/Login`, loginRequest);
 export const SignUpUser = (SignUpRequest) => API.post(`${nextAuthApiUrl}Auth/Signup`, SignUpRequest);
-export const VerifyTurnstileToken = (TurnsTileRequest) => API.post(`${apiUrl}Auth/VerifyTurnstileToken`, TurnsTileRequest);
 export const LogOut = () => API.post(`${nextAuthApiUrl}Auth/Logout`);
 export const GetUserInfo = (authData) => API.get(`${apiUrl}Auth/GetAuthData?authCode=${authData}`);
 

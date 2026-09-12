@@ -11,6 +11,7 @@
         "usersInQueue": 4,
         "organizer": "fixture-owner@example.test",
         "hasStarted": true,
+        "isLive": true,
         "staffCount": 2,
         "isActive": true,
         "allowAnonymousJoining": true,

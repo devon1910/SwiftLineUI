@@ -9,7 +9,7 @@ theSwiftLine is a virtual queue platform for attendees and event organisers. Cre
 - Join, monitor, and leave queues with position and wait-time polling.
 - Support anonymous joining with an individual revocable session — never a shared anonymous password.
 - Serve attendees and manage active/past members from the organiser dashboard.
-- Password signup with Turnstile, one-time email verification, secure ASP.NET Identity-compatible hashes, and rotating refresh sessions.
+- Password signup with one-time email verification, secure ASP.NET Identity-compatible hashes, and rotating refresh sessions.
 - Password login/logout, PWA support, and light/dark UI.
 - SMTP email outbox with PostgreSQL leases/retries and a free GitHub Actions delivery trigger.
 
@@ -44,7 +44,7 @@ In a second terminal, run the Vite UI from the repository root with `VITE_NEXT_A
 
 ## Production configuration
 
-Vercel project `swiftline` requires `DATABASE_URL`, JWT values, `TURNSTILE_SECRET_KEY`, `SWIFTLINE_APP_URL`, Google OAuth credentials, SMTP values, and `CRON_SECRET`. Add the same `CRON_SECRET` as a GitHub Actions secret. Never expose secrets with a `VITE_*` or `NEXT_PUBLIC_*` name.
+Vercel project `swiftline` requires `DATABASE_URL`, JWT values, `SWIFTLINE_APP_URL`, Google OAuth credentials, SMTP values, and `CRON_SECRET`. Add the same `CRON_SECRET` as a GitHub Actions secret. Never expose secrets with a `VITE_*` or `NEXT_PUBLIC_*` name.
 
 ## Checks
 
