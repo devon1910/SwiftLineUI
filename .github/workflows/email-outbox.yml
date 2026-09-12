@@ -1,0 +1,15 @@
+name: Process SwiftLine email outbox
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Process one bounded batch
+        run: curl --fail --silent --show-error --request POST "https://swiftline-olive.vercel.app/api/internal/email/process" --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
