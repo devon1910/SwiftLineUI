@@ -7,7 +7,7 @@ This directory contains the bounded first-slice implementation foundation. It is
 - Next.js exposes the exact legacy public event GET paths and reads the shared PostgreSQL schema directly.
 - The email worker claims rows from EmailDeliveryRequests using PostgreSQL leases and an advisory leader lock.
 - The email worker ships with an SMTP adapter; a provider-specific module may be injected when stronger delivery semantics are available.
-- The .NET API remains the owner of Identity, queue mutations, organizer writes, SignalR, push notifications, LineManager, AccountsCleanup, email-row creation, and schema migrations.
+- Next now contains password login, rotating refresh sessions, and logout routes compatible with existing ASP.NET Identity users. Queue mutations, organizer writes, signup/verification, Google auth, SignalR replacement, push notifications, LineManager, and AccountsCleanup remain migration work.
 - The .NET EmailDeliveryJob is conditionally registered through `Workers:EmailDeliveryEnabled` and defaults to enabled (`true`). Before the Node worker starts, deploy/restart .NET with `Workers__EmailDeliveryEnabled=false` and verify that email polling has stopped.
 
 ## Files and processes
@@ -16,6 +16,7 @@ This directory contains the bounded first-slice implementation foundation. It is
 - Dockerfile.worker is the existing separate worker image template. It runs worker-entrypoint.mjs and checks the worker health file.
 - compose.example.yml starts local PostgreSQL and provides opt-in web and email-worker profiles.
 - migrations/20260910_email_delivery_leases.sql is additive and must be applied after a backup/restore gate.
+- migrations/20260911_auth_sessions.sql is additive and must be applied before enabling the Next auth routes.
 
 The worker image uses the built-in SMTP adapter by default. `SWIFTLINE_EMAIL_MAILER_MODULE` may point to a module exporting `createMailer()` or `default.send()` to replace it.
 
