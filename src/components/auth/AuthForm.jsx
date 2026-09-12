@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { ArrowUpRight, Clock3, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
@@ -8,6 +10,7 @@ const AuthForm = ({ setShowAuthModal }) => {
   const [activeTab, setActiveTab] = useState("login");
   const [resetPassword, setResetPassword] = useState(false);
   const { darkMode } = useTheme(); // Use the theme hook
+  const navigate = useNavigate();
 
   const handleResetPassword = () => {
     setResetPassword(true);
@@ -53,7 +56,7 @@ const AuthForm = ({ setShowAuthModal }) => {
         Sign Up
       </button>
       <button
-        onClick={() => setShowAuthModal(null)}
+        onClick={() => setShowAuthModal?.(null) ?? navigate("/")}
         className={`absolute top-0 right-0 p-2 rounded-full transition-colors duration-200
           ${darkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"}
         `}
@@ -90,16 +93,30 @@ const AuthForm = ({ setShowAuthModal }) => {
   };
 
   return (
-    <div
-      className={`w-full max-w-md rounded-xl overflow-hidden shadow-2xl transition-colors duration-300
-        ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}
-      `}
-    >
-      <div className="p-6">
-        {renderTabs()}
-        <div className="mt-4">{renderContent()}</div> {/* Added mt-4 for spacing */}
-      </div>
-    </div>
+    <main className={`auth-page ${darkMode ? "auth-page--dark" : ""}`}>
+      <section className="auth-page__intro" aria-label="SwiftLine introduction">
+        <button type="button" className="auth-page__brand" onClick={() => navigate("/")}>
+          the<span>Swift</span>line <ArrowUpRight size={16} aria-hidden="true" />
+        </button>
+        <div className="auth-page__copy">
+          <p className="auth-page__eyebrow">Queue confidence</p>
+          <h1>Arrive informed.<br /><em>Move freely.</em></h1>
+          <p>See your place in line, keep your day moving, and get back when it is your turn.</p>
+        </div>
+        <div className="auth-page__proof">
+          <span><Clock3 size={17} /> Live queue updates</span>
+          <span><ShieldCheck size={17} /> Protected account access</span>
+        </div>
+      </section>
+      <section className="auth-page__panel">
+        <div className={`auth-card ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
+          <p className="auth-card__eyebrow">Your SwiftLine account</p>
+          <h2>{resetPassword ? "Reset your password" : activeTab === "login" ? "Welcome back" : "Join the line"}</h2>
+          {renderTabs()}
+          <div className="mt-4">{renderContent()}</div>
+        </div>
+      </section>
+    </main>
   );
 };
 

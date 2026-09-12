@@ -1,5 +1,23 @@
 /* SwiftLine's visual language: quiet surfaces, clear hierarchy, and an operational green. */
 
+.auth-page { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(25rem, .95fr); background: var(--sl-page); color: var(--sl-ink); }
+.auth-page__intro { min-height: 100vh; display: flex; flex-direction: column; padding: clamp(1.5rem, 4vw, 3.5rem); background: var(--sl-ink); color: var(--sl-page); }
+.auth-page__brand { display: inline-flex; width: fit-content; align-items: center; gap: .32rem; border: 0; background: transparent; color: inherit; font-size: 1.05rem; font-weight: 800; letter-spacing: -.055em; }
+.auth-page__brand span, .auth-page h1 em { color: var(--sl-accent-strong); font-style: normal; }
+.auth-page__copy { max-width: 34rem; margin: auto 0; }
+.auth-page__eyebrow, .auth-card__eyebrow { margin: 0 0 1rem; color: var(--sl-accent-strong); font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.auth-page h1 { margin: 0; font-size: clamp(3rem, 6vw, 5.7rem); font-weight: 800; letter-spacing: -.08em; line-height: .92; }
+.auth-page__copy > p:last-child { max-width: 28rem; margin: 1.5rem 0 0; color: color-mix(in srgb, var(--sl-page) 72%, transparent); font-size: 1rem; line-height: 1.7; }
+.auth-page__proof { display: flex; flex-wrap: wrap; gap: 1rem 1.35rem; color: color-mix(in srgb, var(--sl-page) 75%, transparent); font-size: .82rem; font-weight: 700; }
+.auth-page__proof span { display: inline-flex; align-items: center; gap: .45rem; }
+.auth-page__proof svg { color: var(--sl-accent-strong); }
+.auth-page__panel { display: grid; place-items: center; padding: clamp(1.5rem, 5vw, 5rem); }
+.auth-card { width: min(100%, 27rem); padding: clamp(1.75rem, 4vw, 2.75rem); border: 1px solid var(--sl-border); border-radius: var(--sl-radius-lg); box-shadow: var(--sl-shadow-md); }
+.auth-card__eyebrow { color: var(--sl-brand); }
+.auth-card h2 { margin: 0 0 1.75rem; color: var(--sl-ink-strong); font-size: clamp(1.75rem, 3vw, 2.3rem); font-weight: 800; letter-spacing: -.055em; }
+.auth-page--dark .auth-page__panel { background: #171a1e; }
+@media (max-width: 760px) { .auth-page { display: block; } .auth-page__intro { min-height: 26rem; padding: 1.5rem; } .auth-page__copy { margin: auto 0 1.5rem; } .auth-page h1 { font-size: clamp(3rem, 14vw, 4.5rem); } .auth-page__panel { padding: 1rem; margin-top: -1.25rem; position: relative; } .auth-card { width: 100%; } }
+
 .app-shell {
   min-height: 100vh;
   background: var(--sl-page);
