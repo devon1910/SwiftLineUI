@@ -889,15 +889,10 @@
 }
 
 .swiftline-footer__brand-mark {
-  display: grid;
   width: 1.8rem;
   height: 1.8rem;
-  place-items: center;
+  object-fit: contain;
   border-radius: 0.55rem;
-  background: var(--sl-ink);
-  color: var(--sl-accent);
-  font-size: 0.75rem;
-  font-weight: 800;
 }
 
 .swiftline-footer__brand p,

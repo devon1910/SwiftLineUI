@@ -3,7 +3,12 @@ export const Footer = () => {
     <footer className="swiftline-footer">
       <div className="swiftline-footer__inner">
         <div className="swiftline-footer__brand">
-          <span className="swiftline-footer__brand-mark" aria-hidden="true">S</span>
+          <img
+            className="swiftline-footer__brand-mark"
+            src="/android-chrome-192x192.png"
+            alt=""
+            aria-hidden="true"
+          />
           <div>
             <strong>SwiftLine</strong>
             <p>Clearer queues. Calmer days.</p>
