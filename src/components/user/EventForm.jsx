@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FiCheck, FiChevronDown, FiClock, FiPlus } from "react-icons/fi";
 import {  LoaderCircle } from "lucide-react";
+import { getEventSaveErrorMessage } from "../../services/eventFormUtils";
 
 const EventForm = () => {
   const location = useLocation();
@@ -99,11 +100,7 @@ const EventForm = () => {
         navigator("/myEvents");
       } catch (error) {
         console.error("Unable to save event", error);
-        toast.error(
-          error?.response?.data?.message ||
-          error?.response?.data?.data?.message ||
-          `Unable to ${isEditing ? "update" : "create"} this event. Please check the form and try again.`
-        );
+        toast.error(getEventSaveErrorMessage(error, isEditing));
       } finally {
         setIsSubmitting(false);
       }

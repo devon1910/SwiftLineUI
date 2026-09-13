@@ -1214,8 +1214,23 @@
 }
 
 @media (max-width: 640px) {
+  .app-shell,
+  .app-main,
+  .search-page,
   .auth-page {
     overflow-x: hidden;
+  }
+
+  .search-page > div,
+  .search-page section,
+  .search-page form,
+  .search-page__input,
+  .event-form,
+  .event-form__section,
+  .dashboard,
+  .dashboard > * {
+    min-width: 0;
+    max-width: 100%;
   }
 
   .auth-page__intro {
@@ -1230,10 +1245,14 @@
 
   .auth-page h1 {
     font-size: clamp(2.75rem, 12.5vw, 3.55rem);
+    letter-spacing: -0.065em;
+    overflow-wrap: anywhere;
   }
 
   .auth-card {
-    padding: 1.75rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.5rem;
   }
 
   .app-main__inner {
