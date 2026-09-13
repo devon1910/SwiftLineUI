@@ -7,7 +7,11 @@ import { createAuthRepository } from "./repository";
 import { loginWithPassword, refreshSession, type AuthSessionRepository } from "./service";
 import { processPendingEmails } from "@/modules/email/cron";
 
-type Dependencies = { repository?: AuthSessionRepository };
+type Dependencies = {
+  repository?: AuthSessionRepository;
+  signupUser?: typeof signup;
+  processEmails?: typeof processPendingEmails;
+};
 const metadata = (request: Request) => ({
   userAgent: request.headers.get("user-agent")?.slice(0, 512) ?? null,
   ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
@@ -43,10 +47,10 @@ export async function handleLogout(request: Request, dependencies: Dependencies 
 export async function handleSignup(request: Request, dependencies: Dependencies = {}) {
   const parsed = signupSchema.safeParse(await json(request));
   if (!parsed.success) return resultResponse(resultFailure("Invalid signup request.", 400, failedAuthResponse("Invalid signup request.")));
-  const created = await signup({ email: parsed.data.email, password: parsed.data.password, fullName: parsed.data.fullName, agreed: true });
+  const created = await (dependencies.signupUser ?? signup)({ email: parsed.data.email, password: parsed.data.password, fullName: parsed.data.fullName, agreed: true });
   if (created) {
     try {
-      await processPendingEmails();
+      await (dependencies.processEmails ?? processPendingEmails)();
     } catch (error) {
       console.error("Immediate verification email delivery failed; queued retry remains available.", error);
     }
