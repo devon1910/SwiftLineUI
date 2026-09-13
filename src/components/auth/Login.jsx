@@ -24,7 +24,7 @@ const Login = ({ onResetPassword, setShowAuthModal }) => {
       const response = await loginUser({ email, password });
       saveAuthTokens(response);
       handleAuthSuccess(response, navigator, from);
-      setShowAuthModal(null);
+      setShowAuthModal?.(null);
       showToast.success("Logged in successfully!"); // Added success toast
     } catch (error) {
       console.error("Login error:", error); // Use console.error

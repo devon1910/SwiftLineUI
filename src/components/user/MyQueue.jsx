@@ -134,12 +134,12 @@ const MyQueue = () => {
 
   if (isLoading && !myQueue) {
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
+      <main className="queue-page min-h-[calc(100vh-4rem)] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl" role="status" aria-busy="true">
           <div className="animate-pulse space-y-5">
             <div className="h-4 w-28 rounded bg-sage-100 dark:bg-gray-700" />
             <div className="h-10 w-64 rounded bg-gray-100 dark:bg-gray-700" />
-            <div className="h-72 rounded-2xl border border-sage-100 bg-white dark:border-gray-700 dark:bg-gray-800" />
+            <div className="queue-surface h-72 rounded-2xl border" />
           </div>
           <span className="sr-only">Loading your queue</span>
         </div>
@@ -149,8 +149,8 @@ const MyQueue = () => {
 
   if (error && !myQueue) {
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
-        <section className="mx-auto max-w-3xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm dark:border-red-900/50 dark:bg-gray-800" role="alert">
+      <main className="queue-page min-h-[calc(100vh-4rem)] px-4 py-8 sm:px-6 lg:px-8">
+        <section className="queue-surface mx-auto max-w-3xl rounded-2xl border p-8 text-center" role="alert">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             Your queue is unavailable
           </h1>
@@ -171,7 +171,7 @@ const MyQueue = () => {
   }
 
   return (
-    <main className="queue-page min-h-[calc(100vh-4rem)] bg-sage-50 px-4 py-8 dark:bg-gray-900 sm:px-6 lg:px-8">
+    <main className="queue-page min-h-[calc(100vh-4rem)] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <header className="queue-page__header mb-8">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-sage-600 dark:text-sage-300">
@@ -210,7 +210,7 @@ const MyQueue = () => {
         )}
 
         {!hasQueue ? (
-          <section className="rounded-2xl border border-sage-200 bg-white px-6 py-14 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <section className="queue-surface rounded-2xl border px-6 py-14 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-sage-50 text-sage-600 dark:bg-sage-900/30 dark:text-sage-300">
               <FiUsers className="h-7 w-7" aria-hidden="true" />
             </div>
@@ -223,7 +223,7 @@ const MyQueue = () => {
           </section>
         ) : (
           <section
-            className="queue-active relative overflow-hidden rounded-2xl border border-sage-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            className="queue-active queue-surface relative overflow-hidden rounded-2xl border"
             aria-labelledby="active-queue-title"
           >
             {showConfetti && (

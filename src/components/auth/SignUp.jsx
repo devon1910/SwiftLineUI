@@ -6,6 +6,7 @@ import FormInput from "./FormInput";
 import PasswordRequirements from "./PasswordRequirements"; // Ensure this component is themed
 import { validatePassword } from "../../services/utils/authUtils";
 import { useTheme } from "../../services/utils/useTheme"; // Import useTheme
+import { useNavigate } from "react-router-dom";
 
 const SignUp = ({ setShowAuthModal }) => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ const SignUp = ({ setShowAuthModal }) => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false); // This seems to control the success message view
   const [isLoading, setIsLoading] = useState(false);
   const { darkMode } = useTheme(); // Use the theme hook
+  const navigate = useNavigate();
   const [showPasswordRequirements, setShowPasswordRequirements] =
     useState(false);
 
@@ -111,8 +113,10 @@ const SignUp = ({ setShowAuthModal }) => {
               Contact support if you need help.
             </p>
             <button
+              type="button"
               onClick={() => {
-                setShowAuthModal(null);
+                setShowAuthModal?.(null);
+                navigate("/", { replace: true });
               }}
               className={`mt-3 text-sm font-medium transition-colors duration-200
                 ${

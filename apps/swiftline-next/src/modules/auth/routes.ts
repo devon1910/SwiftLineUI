@@ -5,6 +5,7 @@ import { failedAuthResponse, loginSchema, refreshSchema, signupSchema, verificat
 import { signup, verifyEmail } from "./registration";
 import { createAuthRepository } from "./repository";
 import { loginWithPassword, refreshSession, type AuthSessionRepository } from "./service";
+import { processPendingEmails } from "@/modules/email/cron";
 
 type Dependencies = { repository?: AuthSessionRepository };
 const metadata = (request: Request) => ({
@@ -43,6 +44,13 @@ export async function handleSignup(request: Request, dependencies: Dependencies 
   const parsed = signupSchema.safeParse(await json(request));
   if (!parsed.success) return resultResponse(resultFailure("Invalid signup request.", 400, failedAuthResponse("Invalid signup request.")));
   const created = await signup({ email: parsed.data.email, password: parsed.data.password, fullName: parsed.data.fullName, agreed: true });
+  if (created) {
+    try {
+      await processPendingEmails();
+    } catch (error) {
+      console.error("Immediate verification email delivery failed; queued retry remains available.", error);
+    }
+  }
   const message = "If this address can be registered, a verification email has been queued.";
   return resultResponse(resultOk({ status: Boolean(created), message }, message));
 }

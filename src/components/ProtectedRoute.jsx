@@ -1,10 +1,11 @@
 // ProtectedRoute.jsx
 import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { getStoredAccessToken } from '../services/authStorage';
 
 const ProtectedRoute = () => {
   const location = useLocation();
+  const parentContext = useOutletContext();
 
   // Define routes that should bypass authentication
   const publicRoutes = ['/VerifyToken'];
@@ -16,7 +17,7 @@ const ProtectedRoute = () => {
   
   // If it's a public route, allow access without authentication
   if (isPublicRoute) {
-    return <Outlet />;
+    return <Outlet context={parentContext} />;
   }
 
   const token = getStoredAccessToken();
@@ -33,7 +34,7 @@ const ProtectedRoute = () => {
   }
 
   // If the user is logged in, render the child components.
-  return <Outlet />;
+  return <Outlet context={parentContext} />;
 };
 
 export default ProtectedRoute;

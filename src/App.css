@@ -48,7 +48,9 @@
 
 .queue-page { background: var(--sl-page); }
 .queue-page__header { padding-bottom: 1.75rem; border-bottom: 1px solid var(--sl-border); }
-.queue-active { border-color: var(--sl-border-strong); box-shadow: var(--sl-shadow-md); }
+.queue-surface,
+.queue-facts { border-color: var(--sl-border); background: var(--sl-surface); box-shadow: none; }
+.queue-active { border-color: var(--sl-border-strong); background: var(--sl-surface); box-shadow: var(--sl-shadow-md); }
 .queue-active::before { position: absolute; top: 0; left: 0; width: .32rem; height: 100%; background: var(--sl-brand); content: ""; }
 .queue-stat { position: relative; overflow: hidden; border-color: var(--sl-border); background: var(--sl-page); }
 .queue-stat::after { position: absolute; right: -1.5rem; bottom: -2rem; width: 6rem; height: 6rem; border: 1px solid var(--sl-border); border-radius: 999px; content: ""; opacity: .7; }
