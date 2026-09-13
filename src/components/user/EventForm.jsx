@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { createEvent, fetchEventById, updateEvent } from "../../services/swiftlineService";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {  FiClock, FiPlus, FiCheck } from "react-icons/fi";
+import { FiCheck, FiChevronDown, FiClock, FiPlus } from "react-icons/fi";
 import {  LoaderCircle } from "lucide-react";
 
 const EventForm = () => {
@@ -30,6 +30,7 @@ const EventForm = () => {
   const [latitude, setLatitude] = useState(editingEvent?.latitude ?? null);
   const [longitude, setLongitude] = useState(editingEvent?.longitude ?? null);
   const [radiusInMeters, setRadiusInMeters] = useState(editingEvent?.radiusInMeters ?? 0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [eventStartTime, setStartTime] = useState(
     editingEvent ? editingEvent.eventStartTime.slice(0, -3) : ""
@@ -61,11 +62,12 @@ const EventForm = () => {
       .catch(() => toast.error("Unable to load the event for editing."));
   }, [routeEventId, editingEvent]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const eventId = Number(routeEventId ?? editingEvent?.id ?? 0);
     if (validateEventStartEnd()) {
+      setIsSubmitting(true);
       const newEvent = {
         eventId,
         title,
@@ -81,31 +83,29 @@ const EventForm = () => {
         address: address || null,
         latitude,
         longitude,
-        radiusInMeters: Number(radiusInMeters),
+        radiusInMeters: enableGeographicRestriction
+          ? Number(radiusInMeters)
+          : null,
       };
 
-      if (isEditing) {
-        updateEvent(newEvent)
-          .then(() => {})
-          .catch((error) => {
-            console.log(error);
-            toast.error(
-              "There was an error in editing events. Please try again later."
-            );
-          });
+      try {
+        if (isEditing) {
+          await updateEvent(newEvent);
+          toast.success("Event updated.");
+        } else {
+          await createEvent(newEvent);
+          toast.success("Event created.");
+        }
         navigator("/myEvents");
-        //setEvents(updatedEvents);
-      } else {
-        createEvent(newEvent)
-          .then(() => {
-            navigator("/myEvents");
-          })
-          .catch((error) => {
-            console.log(error);
-            toast.error(
-              "There was an error in creating event. Please try again later."
-            );
-          });
+      } catch (error) {
+        console.error("Unable to save event", error);
+        toast.error(
+          error?.response?.data?.message ||
+          error?.response?.data?.data?.message ||
+          `Unable to ${isEditing ? "update" : "create"} this event. Please check the form and try again.`
+        );
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -247,10 +247,7 @@ const EventForm = () => {
               ))}
             </select>
 
-            {/* Dropdown Arrow (Optional for Styling) */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              ▼
-            </div>
+            <FiChevronDown className="event-form__control-icon absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
           </div>
         </div>
 
@@ -274,10 +271,7 @@ const EventForm = () => {
               ))}
             </select>
 
-            {/* Dropdown Arrow (Optional for Styling) */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              ▼
-            </div>
+            <FiChevronDown className="event-form__control-icon absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
           </div>
         </div>
       </div>
@@ -304,6 +298,7 @@ const EventForm = () => {
       {/* Submit Button */}
       <button
         type="submit"
+        disabled={isSubmitting}
         className="event-form__submit w-full bg-emerald-600 hover:bg-emerald-700 font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 mt-2 flex items-center justify-center gap-2"
       >
         {isEditing ? (
@@ -314,7 +309,7 @@ const EventForm = () => {
         ) : (
           <>
             <FiPlus className="w-5 h-5" />
-            Create Event
+            {isSubmitting ? "Creating event…" : "Create Event"}
           </>
         )}
       </button>

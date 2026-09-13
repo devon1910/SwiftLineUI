@@ -10,15 +10,18 @@ const eventSchema = z.object({
   averageTime: z.coerce.number().int().min(0).max(1_440),
   eventStartTime: time,
   eventEndTime: time,
-  capacity: z.coerce.number().int().min(1).max(100_000),
-  staffCount: z.coerce.number().int().min(1).max(1_000),
+  capacity: z.coerce.number().int().min(1, "Queue capacity must be at least 1.").max(100_000),
+  staffCount: z.coerce.number().int().min(1, "Staff serving must be at least 1.").max(1_000),
   allowAnonymousJoining: z.boolean().default(false),
   allowAutomaticSkips: z.boolean().default(true),
   enableGeographicRestriction: z.boolean().default(false),
   address: z.string().trim().max(500).nullable().optional(),
   latitude: z.coerce.number().finite().nullable().optional(),
   longitude: z.coerce.number().finite().nullable().optional(),
-  radiusInMeters: z.coerce.number().int().min(1).max(100_000).nullable().optional(),
+  radiusInMeters: z.preprocess(
+    (value) => value === 0 || value === "0" || value === "" ? null : value,
+    z.coerce.number().int().min(1, "Geographic radius must be at least 1 metre.").max(100_000).nullable().optional(),
+  ),
 }).superRefine((event, context) => {
   if (event.eventEndTime <= event.eventStartTime) {
     context.addIssue({ code: "custom", path: ["eventEndTime"], message: "End time must be after start time." });
@@ -27,6 +30,8 @@ const eventSchema = z.object({
     context.addIssue({ code: "custom", message: "Location and radius are required for geographic restrictions." });
   }
 });
+
+export const validateOrganizerEvent = (value: unknown) => eventSchema.safeParse(value);
 
 async function body(request: Request) { try { return await request.json(); } catch { return null; } }
 async function actor(request: Request) { return getOptionalAuth(request); }

@@ -151,7 +151,7 @@ const EventCard = ({ event, isUserInQueue, isJoining = false, onShare, onJoin })
             onClick={() => onJoin?.(event)}
             className={`w-full rounded-xl px-4 py-3 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 hover:scale-100 ${
               canJoin
-                ? "bg-sage-600 text-white hover:bg-sage-700"
+                ? "border border-sage-300 bg-sage-600 text-white hover:border-sage-200 hover:bg-sage-700"
                 : "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
             }`}
             aria-label={`${joinLabel} for ${event.title || "this event"}`}

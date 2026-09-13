@@ -68,8 +68,9 @@ const MyEvents = () => {
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Create a line, share it, and keep the day moving.</p>
           </div>
           <button
+            type="button"
             onClick={() => handleNavigation()}
-            className="events-portfolio__create bg-sage-500 text-white px-5 py-3 rounded-lg font-medium hover:bg-sage-600 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2"
+            className="events-portfolio__create w-full justify-center px-5 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 md:w-auto"
           >
             Create event <FiArrowUpRight aria-hidden="true" />
           </button>
@@ -83,9 +84,9 @@ const MyEvents = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="events-portfolio__grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userEvents.map((event) => (
-              <article key={event.id} className="events-portfolio__card relative rounded-xl shadow-md border border-sage-200 dark:border-gray-700">
+              <article key={event.id} className="events-portfolio__card relative flex h-full flex-col rounded-xl border">
                 {/* Delete Button */}
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
@@ -95,7 +96,7 @@ const MyEvents = () => {
                   <FiTrash2 className="w-5 h-5" />
                 </button>
 
-                <div className="p-6 flex flex-col gap-4">
+                <div className="flex h-full flex-col gap-4 p-5 sm:p-6">
                   <p className="events-portfolio__event-label">Event #{event.id}</p>
                   {/* Title */}
                   <h3 className="text-xl  font-semibold text-gray-900 dark:text-gray-100 pr-6">
@@ -103,12 +104,12 @@ const MyEvents = () => {
                   </h3>
 
                   {/* Description */}
-                  <p className="dark:text-gray-500 text-sm leading-relaxed">
+                  <p className="events-portfolio__description text-sm leading-relaxed">
                     {event.description}
                   </p>
 
                   {/* Buttons */}
-                  <div className="flex flex-col gap-2 mt-2">
+                  <div className="mt-auto flex flex-col gap-2 pt-2">
                     <button
                       onClick={() =>
                         navigate(`/events/${event.id}/manage`)
